@@ -1,0 +1,112 @@
+import React from "react";
+import { Table } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import classes from "../pages/DischargeSummary/DischargeSummary.module.css";
+import styles from "./Styles.module.css";
+import ReadMoreTextArea from "./ReadMoreTextArea";
+import TextareaAutosize from "react-textarea-autosize";
+
+const VitalsOnDischargeTable = (props) => {
+  const handleTextChange = (e, label) => {
+    let obj =
+      localStorage.getItem("vitalsOnDischargeObj") == null
+        ? {}
+        : JSON.parse(localStorage.getItem("vitalsOnDischargeObj"));
+    obj[label] = e.target.value;
+    localStorage.setItem("vitalsOnDischargeObj", JSON.stringify(obj));
+  };
+  return (
+    <div className={styles.patientTableDiv}>
+      <Table responsive size="sm" className={styles.patientInfoTable}>
+        <tbody>
+          <tr>
+            <td className={styles.tableCell}>Temperature</td>
+            <td className={styles.tableCell}>
+              <TextareaAutosize
+                rows={1}
+                className={styles.insideTableTextAutoSize}
+                placeholder={
+                  localStorage.getItem("vitalsOnDischargeObj") == null ||
+                  JSON.parse(localStorage.getItem("vitalsOnDischargeObj"))[
+                    "Temperature"
+                  ] == null
+                    ? "Type Here"
+                    : JSON.parse(localStorage.getItem("vitalsOnDischargeObj"))[
+                        "Temperature"
+                      ]
+                }
+                onChange={(e) => handleTextChange(e, "Temperature")}
+              ></TextareaAutosize>
+              <span>F</span>
+            </td>
+          </tr>
+          <tr>
+            <td className={styles.tableCell}>PR</td>
+            <td className={styles.tableCell}>
+              <TextareaAutosize
+                rows={2}
+                className={styles.insideTableTextAutoSize}
+                placeholder={
+                  localStorage.getItem("vitalsOnDischargeObj") == null ||
+                  JSON.parse(localStorage.getItem("vitalsOnDischargeObj"))[
+                    "PR"
+                  ] == null
+                    ? "Type Here"
+                    : JSON.parse(localStorage.getItem("vitalsOnDischargeObj"))[
+                        "PR"
+                      ]
+                }
+                onChange={(e) => handleTextChange(e, "PR")}
+              ></TextareaAutosize>
+               <span>bpm</span>
+            </td>
+          </tr>
+          <tr>
+            <td className={styles.tableCell}>RR</td>
+            <td className={styles.tableCell}>
+              <TextareaAutosize
+                rows={2}
+                className={styles.insideTableTextAutoSize}
+                placeholder={
+                  localStorage.getItem("vitalsOnDischargeObj") == null ||
+                  JSON.parse(localStorage.getItem("vitalsOnDischargeObj"))[
+                    "RR"
+                  ] == null
+                    ? "Type Here"
+                    : JSON.parse(localStorage.getItem("vitalsOnDischargeObj"))[
+                        "RR"
+                      ]
+                }
+                onChange={(e) => handleTextChange(e, "RR")}
+              ></TextareaAutosize>
+              <span>bpm</span>
+            </td>
+          </tr>
+          <tr>
+            <td className={styles.tableCell}>BP</td>
+            <td className={styles.tableCell}>
+              <TextareaAutosize
+                rows={2}
+                className={styles.insideTableTextAutoSize}
+                placeholder={
+                  localStorage.getItem("vitalsOnDischargeObj") == null ||
+                  JSON.parse(localStorage.getItem("vitalsOnDischargeObj"))[
+                    "BP"
+                  ] == null
+                    ? "Type Here"
+                    : JSON.parse(localStorage.getItem("vitalsOnDischargeObj"))[
+                        "BP"
+                      ]
+                }
+                onChange={(e) => handleTextChange(e, "BP")}
+              ></TextareaAutosize>
+              <span>mmHg</span>
+            </td>
+          </tr>
+        </tbody>
+      </Table>
+    </div>
+  );
+};
+
+export default VitalsOnDischargeTable;

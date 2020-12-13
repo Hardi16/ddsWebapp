@@ -1,0 +1,267 @@
+import React, { useEffect, useState } from "react";
+import { Table, Spinner, Form, Col, Row } from "react-bootstrap";
+import ReactHTMLTableToExcel from 'react-html-table-to-excel'; 
+import axios from "axios";
+import classes from "../pages/Dashboard/Dashboard.module.css";
+import { hostAddress, serverPort } from "../assets/config";
+
+const OrgDetailsTable = (props) => {
+  const [display, setDisplay] = useState();
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [getorgDeptAppointmentCountListTable, setOrgDeptAppointmentCountListTable]  = useState();
+  const hideDisplay = () => {
+    setDisplay(null);
+  };
+
+  function handeDatePicker1(e) {
+    console.log("StartDate:" + e.target.value);
+    setStartDate(e.target.value);
+  }
+  function handeDatePicker2(e) {
+    console.log("EndDate:" + e.target.value);
+    setEndDate(e.target.value);
+  }
+
+
+  function pad2(n) {
+    return n < 10 ? "0" + n : n;
+  }
+  useEffect(() => {
+    if(startDate=="" && endDate==""){
+      let sdateDiffFormat = (new Date());
+      let sdate =
+      sdateDiffFormat.getFullYear().toString() +
+      "-" +
+      pad2(sdateDiffFormat.getMonth() + 1) +
+      "-" +
+      pad2(sdateDiffFormat.getDate());
+      setStartDate(sdate);
+      console.log("startdate", sdate);
+
+      let sdateDiffFormat1 = (new Date());
+      let edate =
+      sdateDiffFormat1.getFullYear().toString() +
+      "-" +
+      pad2(sdateDiffFormat1.getMonth() + 1) +
+      "-" +
+      pad2(sdateDiffFormat1.getDate() );
+      setEndDate(edate);
+    console.log("enddate", edate);
+
+    let data = {
+      orgId: props.orgId,
+      dateStr1: sdate,
+       dateStr2: edate,
+    };
+    console.log("data1", data);
+
+    setDisplay(null);
+    axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+    axios
+      .put(
+        hostAddress +
+          "https://dev2.evolko.com/RestEasy/DashboardWebService/getPatientOrgDeptAppointmentList",
+        data
+      )
+      .then((response) => {
+        console.log("getPatientOrgDeptAppointmentList", response.data);
+        let getPatientOrgDeptAppointmentListResponse =
+          response.data["ptAppointmentOrgDeptList"];
+        let orgTableBody = getPatientOrgDeptAppointmentListResponse.map(
+          (item) => {
+            return (
+              <tr>
+                <td>{item["clinicName"]}</td>
+                <td>{item["doctorName"]}</td>
+                <td>{item["patientName"]}</td>
+                <td>{item["patientContact"]}</td>
+                <td>{item["apptDate"]}</td>
+                <td>{item["startTime"]}</td>
+              </tr>
+            );
+          }
+        );
+        let orgTableStucture = (
+          <div className={classes.tableContainer}>
+            <div
+              className={[
+                classes.tableHeader,
+                classes.tableHeaderWithHide,
+              ].join(" ")}
+            >
+              <Row className="w-100">
+                <Col lg={5}>
+                <div className={classes.tableHeadLeft} style={{"paddingTop": "8px"}}>{props.orgName}</div>
+                </Col>
+                <Col lg={7}>
+                <div  className={[classes.tableHeadRight, classes.pointer].join(" ")} >
+                  <Row>
+                  <Col lg={3} style={{"whiteSpace": "nowrap","paddingTop": "8px"}}>
+                      <span style={{"fontSize": "15px"}}>Select Appointment Date  &nbsp;</span>
+                      </Col>
+                    <Col lg={3}>
+                    <input  type="date" className="form-control"
+                     onChange={handeDatePicker1}
+                     placeholder="Select Start Date"
+                     value={startDate}/> 
+                    </Col>
+                    <Col lg={3}>
+                    <input  type="date" className="form-control"
+                     onChange={handeDatePicker2}
+                     placeholder="Select End Date"
+                     value={endDate}/> 
+                      </Col>
+                       <Col lg={3}>
+                      <ReactHTMLTableToExcel style={"float","right"} 
+                                                className="btn btn-secondary ml-3"  
+                                                table="orgAppointment"  
+                                                filename="OrgDeptReportExcel"  
+                                                sheet="Sheet"  
+                                                buttonText="Download Excel" />  
+                      </Col>
+                  </Row>
+                  </div>
+              
+                </Col>
+              </Row>
+            </div>
+            <div className={classes.tableBody} >
+              <Table striped hover id="orgAppointment">
+                <thead>
+                  <tr>
+                    <th>Clinic name</th>
+                    <th>Doctor Name</th>
+                    <th>Patient Name</th>
+                    <th>Patient Contact</th>
+                    <th>Appointment Date</th>
+                    <th>Start Time</th>
+                  </tr>
+                </thead>
+                <tbody>{orgTableBody}</tbody>
+              </Table>
+            </div>
+          </div>
+        );
+        setOrgDeptAppointmentCountListTable(
+          orgTableStucture
+        );
+      })
+      .catch((err) => {
+        console.log("err.status");
+        console.log("error orgDetailsTable", err);
+      });
+    }
+    else{
+      let data = {
+        orgId: props.orgId,
+        dateStr1: startDate,
+        dateStr2: endDate
+       };
+      console.log("data2", data);
+      setDisplay(null);
+      axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+      axios
+        .put(
+          hostAddress +
+            "https://dev2.evolko.com/RestEasy/DashboardWebService/getPatientOrgDeptAppointmentList",
+          data
+        )
+        .then((response) => {
+          console.log("getPatientOrgDeptAppointmentList", response.data);
+          let getPatientOrgDeptAppointmentListResponse =
+            response.data["ptAppointmentOrgDeptList"];
+          let orgTableBody = getPatientOrgDeptAppointmentListResponse.map(
+            (item) => {
+              return (
+                <tr>
+                  <td>{item["clinicName"]}</td>
+                  <td>{item["doctorName"]}</td>
+                  <td>{item["patientName"]}</td>
+                  <td>{item["patientContact"]}</td>
+                  <td>{item["apptDate"]}</td>
+                  <td>{item["startTime"]}</td>
+                </tr>
+              );
+            }
+          );
+          let orgTableStucture = (
+            <div className={classes.tableContainer}>
+              <div
+                className={[
+                  classes.tableHeader,
+                  classes.tableHeaderWithHide,
+                ].join(" ")}
+              >
+                <Row className="w-100">
+                  <Col lg={5}>
+                  <div className={classes.tableHeadLeft} style={{"paddingTop": "8px"}}>{props.orgName}</div>
+                  </Col>
+                  <Col lg={7}>
+                  <div  className={[classes.tableHeadRight, classes.pointer].join(" ")} >
+                    <Row>
+                      <Col lg={3} style={{"whiteSpace": "nowrap","paddingTop": "8px"}}>
+                      <span style={{"fontSize": "15px"}}>Select Appointment Date  &nbsp;</span>
+                      </Col>
+                      <Col lg={3}>
+                      <input  type="date" className="form-control"
+                      onChange={handeDatePicker1}
+                      placeholder="Select Start Date"
+                      value={startDate}/> 
+                      </Col>
+                      <Col lg={3}>
+                      <input  type="date" className="form-control"
+                      onChange={handeDatePicker2}
+                      placeholder="Select End Date"
+                      value={endDate}/> 
+                        </Col>
+                        <Col lg={3}>
+                        <ReactHTMLTableToExcel  style={"float","right"} 
+                                                  className="btn btn-secondary ml-3" 
+                                                  table="orgAppointment"  
+                                                  filename="OrgDeptReportExcel"  
+                                                  sheet="Sheet"  
+                                                  buttonText="Download Excel" />  
+                        </Col>
+                    </Row>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+              <div className={classes.tableBody}>
+                <Table striped hover id="orgAppointment">
+                  <thead>
+                    <tr>
+                      <th>Clinic name</th>
+                      <th>Doctor Name</th>
+                      <th>Patient Name</th>
+                      <th>Patient Contact</th>
+                      <th>Appointment Date</th>
+                      <th>Start Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>{orgTableBody}</tbody>
+                </Table>
+              </div>
+            </div>
+          ); 
+         setOrgDeptAppointmentCountListTable(
+            orgTableStucture
+          );
+        })
+        .catch((err) => {
+          console.log("err.status");
+          console.log("error orgDetailsTable", err);
+        });
+    }
+   
+  }, [props.orgId, startDate, endDate]);
+
+  return (
+    <div className={classes.mainContainer}>
+        {getorgDeptAppointmentCountListTable}
+    </div>
+  );
+};
+
+export default OrgDetailsTable;

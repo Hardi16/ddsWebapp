@@ -1,0 +1,364 @@
+import React, { useState, useEffect } from "react";
+import {
+  Row,
+  Modal,
+  Button,
+  Form,
+  Col,
+  Dropdown,
+  DropdownButton,
+  Card,
+} from "react-bootstrap";
+import classes from "./Styles.module.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { addDays, subDays } from "date-fns";
+import getMonth from "date-fns/getYear";
+import getYear from "date-fns/getYear";
+import { parseISO, format } from "date-fns";
+import data from "./countrycode";
+import { CloseOutlined } from "@material-ui/icons";
+import axios from "axios";
+import { hostAddress } from "../assets/config";
+import { currentServer } from "../assets/config";
+
+
+const DoctorRegistration = (props) => {
+  const [doctorName ,setDoctorName] = useState("");
+  const [docRegNumber , setDoctorRegNumber] = useState("");
+  const [gender ,setSex] = useState("");
+  const [degree ,setDegree] = useState("");
+  const [speciality ,setSpeciality] = useState("");
+  const [email ,setEmail] = useState("");
+  const [mobileNumber ,setMobileNumber] = useState("");
+  const [ClinicName ,setClinicName] = useState("");
+  const [address ,setAddress] = useState("");
+  const [city ,setCity] = useState("");
+  const [pin ,setPin] = useState("");
+
+  const registerDoctor = () => {
+    let data = {
+      "ClinicCity": city,
+  "ClinicTiming": "",
+  "averageDailyFootFall": "",
+  "clinicAddress": address,
+  "clinicId": 0,
+  "clinicMobileNumber": "+918090974003",
+  "clinicName":ClinicName ,
+  "countOfPtRecord": "",
+  "degree": "Md",
+  "demoGiven": "",
+  "dob": "1985-05-20",
+  "doctorImagePath": "",
+  "drName": doctorName,
+  "drTitle": "Dr.",
+  "email": email,
+  "hasAssistant": "",
+  "initialSetupFeeStatus": "",
+  "loginUserId": 0,
+  "mobileNo": mobileNumber,
+  "patientBrochures": "",
+  "patientRecordKeeping": "",
+  "pinCode": pin,
+  "posterGiven": "",
+  "registrationNumber": docRegNumber,
+  "sex": gender,
+  "signedUp": "Yes",
+  "specialization": "Cardiology",
+  "specializationId": 12,
+  "visitDate": "9-Oct-2020 ",
+  "visitTime": "8:49 PM",
+  "visitedPerson": "",
+  "initial_fee_detail": [
+    
+  ]
+
+    };
+    axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+    axios
+      .put(
+        hostAddress +
+        "https://dev2.evolko.com/RestEasy/DoctorRegistrationWebService/createCXMAccount",
+        data
+      )
+      .then((response) => {
+      })
+      .catch((err) => {});
+  }
+  return (
+    <div>
+      <div className={classes.mainRegistationContainer}>
+        {/* <div className={classes.registationHeader}>
+          <div className={classes.left}>
+            <img
+              className={classes.img}
+              src={require("../assets/logo-white.png")}
+            />
+          </div>
+        </div> */}
+        <div className={classes.registerInner}>
+          <div className={classes.title}></div>
+          <h2 className="welcomeTxt">Registration Page</h2>
+          <Form>
+            <Form.Group
+              as={Row}
+              controlId="formGridName"
+              className={classes.rowbottommargin}
+            >
+              <Form.Label column sm={2}>
+                Doctor Name<span className={classes.red}> *</span>
+              </Form.Label>
+              <Col sm={8}>
+                <Form.Control
+                  type="text"
+                  placeholder="Doctor Name"
+                  onChange={(e) => setDoctorName(e.target.value)}
+                />
+                <Form.Control.Feedback type="invalid">
+                  Please enter a valid name.
+                </Form.Control.Feedback>
+              </Col>
+            </Form.Group>
+            <Form.Group
+              as={Row}
+              controlId="formGridName"
+              className={classes.rowbottommargin}
+            >
+            <Form.Label column sm={2}>
+                Doctor Registration Number<span className={classes.red}> *</span>
+              </Form.Label>
+              <Col sm={8}>
+                <Form.Control
+                  type="text"
+                  placeholder="Doctor Registration Number"
+                  onChange={(e) => setDoctorRegNumber(e.target.value)}
+                />
+                <Form.Control.Feedback type="invalid">
+                  Please enter a valid Registration Number.
+                </Form.Control.Feedback>
+              </Col>
+            </Form.Group>
+            <Form.Group
+              as={Row}
+              controlId="formGridSex"
+              className={classes.rowbottommargin}
+            >
+              <Form.Label column sm={2}>
+                Sex<span className={classes.red}> *</span>
+              </Form.Label>
+              <Col sm={8}>
+                <div id="" name="" className={classes.selectGender}>
+                  <div class="floatBlock">
+                    <label for="male">
+                      {" "}
+                      <input
+                        type="radio"
+                        value="Male"
+                        name="sex"
+                        id="#radio1"
+                          onChange={(e) => {
+                            console.log(e.target.value);
+                            setSex(e.target.value);
+                          }}
+                      />{" "}
+                      Male &nbsp;
+                    </label>
+                  </div>
+                  <div className="floatBlock">
+                    <label for="female">
+                      {" "}
+                      <input
+                        type="radio"
+                        value="Female"
+                        name="sex"
+                        id="#radio2"
+                          onChange={(e) => {
+                            console.log(e.target.value);
+                            setSex(e.target.value);
+                          }}
+                      />{" "}
+                      Female{" "}
+                    </label>
+                  </div>
+                </div>
+              </Col>
+            </Form.Group>
+            <Form.Group
+              as={Row}
+              controlId="formGridName"
+              className={classes.rowbottommargin}
+            >
+              <Form.Label column sm={2}>
+                Degree<span className={classes.red}> *</span>
+              </Form.Label>
+              <Col sm={8}>
+                <Form.Control
+                  type="text"
+                  placeholder="Degree"
+                  onChange={(e) => setDegree(e.target.value)}
+                />
+                <Form.Control.Feedback type="invalid">
+                  Please enter a degree.
+                </Form.Control.Feedback>
+              </Col>
+            </Form.Group>
+            <Form.Group
+              as={Row}
+              controlId="formGridName"
+              className={classes.rowbottommargin}
+            >
+              <Form.Label column sm={2}>
+                Speciality<span className={classes.red}> *</span>
+              </Form.Label>
+              <Col sm={8}>
+                <Dropdown className={classes.drpSpeciality}>
+                  <Dropdown.Toggle>
+                    {/* {localStorage.getItem("countrycode")} */}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {" "}
+                    <Dropdown.Header>Select Speciality</Dropdown.Header>
+                    {/* {countryList.map((s) => (
+                    <Dropdown.Item
+                      value={}
+                      onClick={(e) => {
+                        setCountrycode(s.dial_code);
+                        localStorage.setItem("countrycode", s.dial_code);
+                      }}
+                    >
+                      {s.dial_code}
+                    </Dropdown.Item>
+                  ))} */}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </Col>
+            </Form.Group>
+
+            <Form.Group
+              as={Row}
+              controlId="formGridName"
+              className={classes.rowbottommargin}
+            >
+              <Form.Label column sm={2}>
+                Email
+              </Form.Label>
+              <Col sm={8}>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter your Email"
+                   onChange={(e) => setEmail(e.target.value)}
+                />
+                <Form.Control.Feedback type="invalid">
+                  Please enter a valid email.
+                </Form.Control.Feedback>
+              </Col>
+            </Form.Group>
+            <Form.Group
+              as={Row}
+              controlId="formGridName"
+              className={classes.rowbottommargin}
+            >
+              <Form.Label column sm={2}>
+                Mobile No.
+              </Form.Label>
+              <Col sm={8}>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter Mobile Number"
+                  onChange={(e) => setMobileNumber(e.target.value)}
+                />
+              </Col>
+            </Form.Group>
+            <Form.Group
+              as={Row}
+              controlId="formGridName"
+              className={classes.rowbottommargin}
+            >
+              <Form.Label column sm={2}>
+                Clinic Name
+              </Form.Label>
+              <Col sm={8}>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter Clinic Name"
+                   onChange={(e) => setClinicName(e.target.value)}
+                />
+              </Col>
+            </Form.Group>
+            <Form.Group
+              as={Row}
+              controlId="formGridName"
+              className={classes.rowbottommargin}
+            >
+              <Form.Label column sm={2}>
+                Address<span className={classes.red}> *</span>
+              </Form.Label>
+              <Col sm={8}>
+                <Form.Control
+                  type="text"
+                  placeholder="Address"
+                   onChange={(e) => setAddress(e.target.value)}
+                />
+                <Form.Control.Feedback type="invalid">
+                  Please enter a valid address.
+                </Form.Control.Feedback>
+              </Col>
+            </Form.Group>
+            <Form.Group
+              as={Row}
+              controlId="formGridName"
+              className={classes.rowbottommargin}
+            >
+              <Form.Label column sm={2}>
+                City<span className={classes.red}> *</span>
+              </Form.Label>
+              <Col sm={8}>
+                <Form.Control
+                  type="text"
+                  placeholder="City"
+                   onChange={(e) => setCity(e.target.value)}
+                />
+                {/* <Form.Control.Feedback type="invalid">
+                Please enter a valid address.
+              </Form.Control.Feedback> */}
+              </Col>
+            </Form.Group>
+            <Form.Group
+              as={Row}
+              controlId="formGridName"
+              className={classes.rowbottommargin}
+            >
+              <Form.Label column sm={2}>
+                Pin Code
+              </Form.Label>
+              <Col sm={8}>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter Pin Code"
+                   onChange={(e) => setPin(e.target.value)}
+                />
+                {/* <Form.Control.Feedback type="invalid">
+                Please enter a valid address.
+              </Form.Control.Feedback> */}
+              </Col>
+            </Form.Group>
+          </Form>
+          <Row className="mb-3">
+            <Col sm={{ span: 8, offset: 2 }}>
+              <Button
+                className={classes.btnaddPatient}
+                variant="primary"
+                type="submit"
+                 onClick={() => registerDoctor()}
+              >
+                Save
+              </Button>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DoctorRegistration;

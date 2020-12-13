@@ -1,0 +1,57 @@
+import React, { useState } from "react";
+import { Button } from "react-bootstrap";
+import styles from "./Styles.module.css";
+import classes from "../pages/DischargeSummary/DischargeSummary.module.css";
+import { Redirect } from "react-router";
+import HamburgerDropdown from "./HamburgerDropdown";
+import SearchMedicine from "./SearchMedicine";
+import "loading-dots/loading-dots.css";
+import { Dot } from "react-animated-dots";
+
+const DSCreateLeftPaneLanding = (props) => {
+  return (
+    <>
+      <div className={classes.leftPaneHeaderFix}>
+        <div className={classes.leftPaneHeaderDSCreate}>
+          {/* <div className={classes.leftHeaderImageContainer}>
+            <img
+              alt=""
+              className={classes.leftHeaderImage}
+              src="https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png"
+            ></img>
+          </div> */}
+          <div className={classes.leftHeaderHeading}>
+            <div className={classes.leftHeaderHeadingTitle}>
+              <Button
+                className={classes.createPageClinicNameBtn}
+                onClick={() =>
+                  props.setRedirect(<Redirect to="/dischargeSummaryPage" />)
+                }
+              >
+                {localStorage.getItem("clinicName")}
+              </Button>
+            </div>
+            <div className={classes.leftHeaderSubHeading}>
+              {localStorage.getItem("doctorName")}
+            </div>
+            <div className={classes.leftHeaderSubHeadingRight}>
+              {localStorage.getItem("docSpecialityName")}
+            </div>
+          </div>
+          {/* <HamburgerDropdown></HamburgerDropdown> */}
+        </div>
+        <div className={classes.leftPaneSearchCreatePage}></div>
+        <div className={styles.dotsParentDiv}>
+          <div className={styles.leftPaneContentCreateLanding}>
+            <div>
+              <h1 className={styles.dotsH}>.....</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className={classes.leftContentScroll}> {props.leftContent}</div>
+    </>
+  );
+};
+
+export default DSCreateLeftPaneLanding;

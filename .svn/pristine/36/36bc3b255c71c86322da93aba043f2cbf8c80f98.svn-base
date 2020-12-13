@@ -1,0 +1,276 @@
+.mainContainer{
+    width:100%;
+    height:100%;
+    display: flex;
+    flex-direction: column;
+}
+.tableHeader{
+    padding: 12px;
+    color: rgba(13,27,62,0.7);
+    font-weight: bold;
+    text-transform: uppercase;
+    width:auto;
+}
+.tableBody{
+    width:auto;
+}
+.tableContainer{
+    background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    margin:  13px ;
+    width:auto;
+    height: auto;
+    flex:1;
+    border-radius: 0.25rem;
+}
+.tableContainer:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    border-radius: 0.25rem;
+}
+.chartParent{    
+    display: flex;
+    flex-direction: 'row';
+    justify-content: 'space-around';
+    width: 100%;
+    flex:1;
+}
+.chartHeader{
+    border-bottom: 1px solid lightgrey;
+    padding: 12px;
+    color: rgba(13,27,62,0.7);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.chartBody{
+    padding: 25px;
+}
+.chartContainer{
+    background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    margin: 13px;
+    height: auto;
+    flex:1;
+    width:auto;
+    border-radius: 0.25rem;
+}
+.chartContainer:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    border-radius: 0.25rem;
+}
+.buttonActive {
+    background-color: #3f6ad8;
+    color: white;
+    margin: 5px;
+    border-radius: 0.5rem;
+    padding: 10px;
+    line-height: 10px;
+  }
+.buttonPassive {
+    background-color: white;
+    color: #495057;
+    margin: 5px;
+    border-radius: 0.5rem;
+    padding: 10px;
+    line-height: 10px;
+    outline:0;
+  }
+  .buttonPassive:hover {
+    background-color: white;
+    color: #3f6ad8;
+    margin: 5px;
+    border-radius: 0.5rem;
+    padding: 10px;
+    line-height: 10px;
+    outline:0;
+  }
+
+  .buttonPassive:focus {
+    background-color: #3f6ad8;
+    color: white;
+    margin: 5px;
+    border-radius: 0.5rem;
+    padding: 10px;
+    line-height: 10px;
+    outline:0;
+  }
+.button-download-as-xls{
+    margin-top: 30px;
+}
+.allBtns{
+    display: flex;
+    flex-direction: 'row';
+    justify-content: 'space-around';
+    width: 100%;
+    flex:1;
+    margin: 5px;
+}
+.pageHeading{
+    margin: 20px 13px 0px 13px;
+    font-size: 20px;
+    color:#495057;
+}
+td{
+    text-align: center;
+}
+thead{
+    text-align: center;
+    color: #495057;
+    font-size: 18px;
+}
+.orgname{
+    text-align: left;
+}
+.cardsForTotalContainer{
+    display: flex;
+    flex-direction: row;
+    flex:1;
+    justify-content: 'space-around';
+    width: 100%;
+    z-index:-1;
+}
+.cardsForTotal{
+    background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.2s;
+    margin: 13px;
+    height: auto;
+    flex:1;
+    width:auto;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    align-items: center;
+}
+.cardsForTotal:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    border-radius: .25rem;
+}
+.cardsMidnight{
+    background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%) !important;
+}
+.cardsAriel{
+    background-image: radial-gradient(circle 248px at center, #16d9e3 0%, #30c7ec 47%, #46aef7 100%) !important;
+}
+.cardsSuccess{
+    background-color: #3ac47d !important;
+}
+.cardContentContainer{
+    display: flex;
+    flex: 1;
+    position: relative;
+    align-items: center;
+    color: #fff !important;
+    box-sizing: border-box;
+}
+
+.heading{
+    opacity: .5;
+    font-weight: 400;
+    font-size: .8rem;
+}
+.subheading{
+    opacity: .8;
+    font-weight: bold;
+}
+.cardContentRight{
+    font-weight: bold;
+    font-size: 1.8rem;
+    display: block;
+    margin-left: auto;
+}
+.tableSpinner{
+display: flex;
+flex-direction: row;
+justify-content: center;
+padding: 30px;
+}
+.informBtnContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin:13px;
+}
+.informBtn{
+    background-color:#16AAFF;
+    outline:0;
+    border:0;
+    padding:6px 48px;
+}
+.informBtn:focus{
+    background-color:#16AAFF;
+    outline:0;
+    border:0;
+}
+.pointer{
+    cursor:pointer;
+    color:#3f6ad8;
+}
+.tableHeadLeft{
+    float:left;
+}
+.tableHeadRight{
+    float:right;
+}
+.tableHeaderWithHide{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between
+}
+.informTextArea{
+    border-radius: 3%;
+    border-color: lightgrey;
+}
+.informLabelLate{
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    min-width: 19px;
+}
+.rightTemp{
+    right:0;
+    color:white;
+}
+
+.dashboardTab{
+    margin-top: 10px;
+    z-index: 10;
+    border-bottom: none!important;
+}
+.dashboardTab a{
+    background-color: #fff;
+    color:#212529;
+    margin: 5px;
+    border-radius: 0.5rem;
+    border-top-left-radius: 0.5rem!important;
+    border-top-right-radius: 0.5rem!important;
+    padding: 10px;
+    line-height: 10px;
+}
+.dashboardTab a.active{
+    background-color: #3f6ad8!important;
+    color: white;
+    border-color: transparent;
+}
+.dashboardTab a:focus,.dashboardTab a:hover{
+    outline: none;
+}
+thead tr th{
+    white-space: nowrap;
+}
+.doctorDropdownSemantic{
+    width:150px!important;
+    height: 33px!important;
+    white-space: nowrap!important;
+    text-transform: capitalize;
+}
+
+@media only screen and (max-width: 767px) {
+.cardsForTotalContainer, .chartParent{
+    flex-direction: column;
+}
+.tableBody{
+    width: 100%;
+    overflow:auto;
+}
+}

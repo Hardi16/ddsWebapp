@@ -1,0 +1,439 @@
+import React, { useState, useEffect } from "react";
+import styles from "./Styles.module.css";
+import { Modal, Button, Card } from "react-bootstrap";
+
+const MedicineDetailsModal = (props) => {
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  useEffect(() => {
+    let allMedicineDeets = JSON.parse(localStorage.getItem("allMedicineDeets"));
+    if (
+      allMedicineDeets != null &&
+      allMedicineDeets[props.medicineName] != null
+    ) {
+      let routeVal = allMedicineDeets[props.medicineName]["routeVal"];
+      setRouteTextBoxVal(routeArr.includes(routeVal) ? "Type Here" : routeVal);
+      setRouteVal(routeVal);
+      let tempObj = {};
+      tempObj[routeVal] = true;
+      setRouteStyleObj(tempObj);
+      setRoutePrompt(Math.random());
+      console.log("routeStyleObj", routeStyleObj);
+
+      let durVal = allMedicineDeets[props.medicineName]["durVal"];
+      setDurTextBoxVal(durArr.includes(durVal) ? "Type Here" : durVal);
+      setDurVal(durVal);
+      tempObj = {};
+      tempObj[durVal] = true;
+      setDurStyleObj(tempObj);
+      setDurPrompt(Math.random());
+      console.log("durStyleObj", durStyleObj);
+
+      let remarksVal = allMedicineDeets[props.medicineName]["remarksVal"];
+      setRemarksTextBoxVal(
+        remarksArr.includes(remarksVal) ? "Type Here" : remarksVal
+      );
+      setRemarksVal(remarksVal);
+      tempObj = {};
+      tempObj[remarksVal] = true;
+      setRemarksStyleObj(tempObj);
+      setRemarksPrompt(Math.random());
+      console.log("remarksStyleObj", remarksStyleObj);
+    }
+  }, [props.modalPrompt]);
+  const handleSave = () => {
+    handleClose();
+
+    let tempObj = { value: routeVal, label: routeVal };
+    let routeOptions = JSON.parse(localStorage.getItem("routeOptions"));
+    if (!routeOptions.includes(JSON.stringify(tempObj))) {
+      console.log("routeOptions", routeOptions);
+      routeOptions.push(JSON.stringify(tempObj));
+      localStorage.setItem("routeOptions", JSON.stringify(routeOptions));
+    }
+    setRoutePrompt(Math.random());
+
+    tempObj = { value: durVal, label: durVal };
+    let durationOptions = JSON.parse(localStorage.getItem("durationOptions"));
+    if (!durationOptions.includes(JSON.stringify(tempObj))) {
+      console.log("durationOptions", durationOptions);
+      durationOptions.push(JSON.stringify(tempObj));
+      localStorage.setItem("durationOptions", JSON.stringify(durationOptions));
+    }
+    setDurPrompt(Math.random());
+
+    tempObj = { value: remarksVal, label: remarksVal };
+    let remarksOptions = JSON.parse(localStorage.getItem("remarksOptions"));
+    if (!remarksOptions.includes(JSON.stringify(tempObj))) {
+      console.log("remarksOptions", remarksOptions);
+      remarksOptions.push(JSON.stringify(tempObj));
+      localStorage.setItem("remarksOptions", JSON.stringify(remarksOptions));
+    }
+    setRemarksPrompt(Math.random());
+
+    props.setDeetsOfModal(props.medicineName, {
+      routeVal: routeVal,
+      freqVal: freqVal,
+      quantityVal: quantityVal,
+      durVal: durVal,
+      remarksVal: remarksVal,
+    });
+  };
+
+  const [routeVal, setRouteVal] = useState("");
+  const [routeStyleObj, setRouteStyleObj] = useState({});
+  const [routeContent, setRouteContent] = useState();
+  const [routePrompt, setRoutePrompt] = useState();
+  const [routeTextBoxVal, setRouteTextBoxVal] = useState("Type Here");
+  const routeArr = [
+    "Orally",
+    "IV",
+    "IM",
+    "S/C",
+    "ID",
+    "Inhaler",
+    "Sublingual",
+    "Apply Locally",
+    "Suppository",
+  ];
+  const handleRouteSelect = (e) => {
+    let etargetval = e.target.value;
+    setRouteVal(etargetval);
+    let tempObj = {};
+    tempObj[etargetval] = !tempObj[etargetval];
+    setRouteTextBoxVal(
+      routeArr.includes(etargetval) ? "Type Here" : etargetval
+    );
+    setRouteStyleObj(tempObj);
+    setRoutePrompt(Math.random());
+  };
+  useEffect(() => {
+    console.log("routeStyleObj", routeStyleObj);
+    console.log("routeVal", routeVal);
+    let routeBtns = routeArr.map((routeItem) => {
+      return (
+        <Button
+          className={
+            routeStyleObj[routeItem]
+              ? styles.mediDeetsModalBtnsActive
+              : styles.mediDeetsModalBtnsPassive
+          }
+          value={routeItem}
+          onClick={(e) => handleRouteSelect(e)}
+        >
+          {routeItem}
+        </Button>
+      );
+    });
+    setRouteContent(
+      <>
+        {routeBtns}
+        <div className={styles.mediDeetsModalTextboxBtn}>
+          <input
+            type="text"
+            placeholder={
+              routeTextBoxVal == "" || routeArr.includes(routeTextBoxVal)
+                ? "Type Here"
+                : routeTextBoxVal
+            }
+            className={styles.mediDeetsModalTextbox}
+            onChange={(e) => {
+              handleRouteSelect(e);
+            }}
+          ></input>
+        </div>
+      </>
+    );
+  }, [routePrompt]);
+
+  const [freqVal, setFreqVal] = useState("");
+  const [freqStyleObj, setFreqStyleObj] = useState({});
+  const [freqContent, setFreqContent] = useState();
+  const [freqPrompt, setFreqPrompt] = useState();
+  const [freqTextBoxVal, setFreqTextBoxVal] = useState("Type Here");
+  const freqArr = [
+    "OID",
+    "BID",
+    "TID",
+    "QID",
+    "6 Times",
+    "8 Times",
+    "SoS",
+    "Stat",
+    "Once",
+  ];
+  const handleFreqSelect = (e) => {
+    let etargetval = e.target.value;
+    setFreqVal(etargetval);
+    let tempObj = {};
+    tempObj[etargetval] = !tempObj[etargetval];
+    setFreqTextBoxVal(freqArr.includes(etargetval) ? "Type Here" : etargetval);
+    setFreqStyleObj(tempObj);
+    setFreqPrompt(Math.random());
+  };
+  useEffect(() => {
+    console.log("freqStyleObj", freqStyleObj);
+    console.log("freqVal", freqVal);
+    let freqBtns = freqArr.map((freqItem) => {
+      return (
+        <Button
+          className={
+            freqStyleObj[freqItem]
+              ? styles.mediDeetsModalBtnsActive
+              : styles.mediDeetsModalBtnsPassive
+          }
+          value={freqItem}
+          onClick={(e) => handleFreqSelect(e)}
+        >
+          {freqItem}
+        </Button>
+      );
+    });
+    setFreqContent(
+      <>
+        {freqBtns}
+        <div className={styles.mediDeetsModalTextboxBtn}>
+          <input
+            type="text"
+            placeholder={
+              freqTextBoxVal == "" || freqArr.includes(freqTextBoxVal)
+                ? "Type Here"
+                : freqTextBoxVal
+            }
+            className={styles.mediDeetsModalTextbox}
+            onChange={(e) => {
+              handleFreqSelect(e);
+            }}
+          ></input>
+        </div>
+      </>
+    );
+  }, [freqPrompt]);
+
+  const [quantityVal, setQuantityVal] = useState("");
+  const [quantityStyleObj, setQuantityStyleObj] = useState({});
+  const [quantityContent, setQuantityContent] = useState();
+  const [quantityPrompt, setQuantityPrompt] = useState();
+  const [quantityTextBoxVal, setQuantityTextBoxVal] = useState("Type Here");
+  const handleQuantitySelect = (e) => {
+    let etargetval = e.target.value;
+    setQuantityVal(etargetval);
+    let tempObj = {};
+    tempObj[etargetval] = !tempObj[etargetval];
+    setQuantityTextBoxVal(etargetval);
+    setQuantityStyleObj(tempObj);
+    setQuantityPrompt(Math.random());
+  };
+  useEffect(() => {
+    console.log("quantityStyleObj", quantityStyleObj);
+    console.log("quantityVal", quantityVal);
+    setQuantityContent(
+      <>
+        <div className={styles.mediDeetsModalTextboxBtn}>
+          <input
+            type="text"
+            placeholder={
+              quantityTextBoxVal == "" ? "Type Here" : quantityTextBoxVal
+            }
+            className={styles.mediDeetsModalTextbox}
+            onChange={(e) => {
+              handleQuantitySelect(e);
+            }}
+          ></input>
+        </div>
+      </>
+    );
+  }, [quantityPrompt]);
+
+  const [durVal, setDurVal] = useState("");
+  const [durStyleObj, setDurStyleObj] = useState({});
+  const [durContent, setDurContent] = useState();
+  const [durPrompt, setDurPrompt] = useState();
+  const [durTextBoxVal, setDurTextBoxVal] = useState("Type Here");
+  const durArr = ["1 Day", "3 Days", "7 Days", "1 Month", "Lifetime"];
+  const handleDurSelect = (e) => {
+    let etargetval = e.target.value;
+    setDurVal(etargetval);
+    let tempObj = {};
+    tempObj[etargetval] = !tempObj[etargetval];
+    setDurStyleObj(tempObj);
+    setDurTextBoxVal(durArr.includes(etargetval) ? "Type Here" : etargetval);
+    setDurPrompt(Math.random());
+  };
+  useEffect(() => {
+    console.log("durStyleObj", durStyleObj);
+    console.log("durVal", durVal);
+    let durBtns = durArr.map((durItem) => {
+      return (
+        <Button
+          className={
+            durStyleObj[durItem]
+              ? styles.mediDeetsModalBtnsActive
+              : styles.mediDeetsModalBtnsPassive
+          }
+          value={durItem}
+          onClick={(e) => handleDurSelect(e)}
+        >
+          {durItem}
+        </Button>
+      );
+    });
+    setDurContent(
+      <>
+        {durBtns}
+        <div className={styles.mediDeetsModalTextboxBtn}>
+          <input
+            type="text"
+            placeholder={
+              durTextBoxVal == "" || durArr.includes(durTextBoxVal)
+                ? "Type Here"
+                : durTextBoxVal
+            }
+            className={styles.mediDeetsModalTextbox}
+            onChange={(e) => {
+              handleDurSelect(e);
+            }}
+          ></input>
+        </div>
+      </>
+    );
+  }, [durPrompt]);
+
+  const [remarksVal, setRemarksVal] = useState("");
+  const [remarksStyleObj, setRemarksStyleObj] = useState({});
+  const [remarksContent, setRemarksContent] = useState();
+  const [remarksPrompt, setRemarksPrompt] = useState();
+  const [remarksTextBoxVal, setRemarksTextBoxVal] = useState("Type Here");
+  const remarksArr = [
+    "Along with Food",
+    "After Food",
+    "Before Food",
+    "With LID message",
+    "After Breakfast",
+    "After Lunch",
+    "After Dinner",
+    "Before Breakfast",
+    "Before Lunch",
+    "Before Dinner",
+    "At Bedtime",
+  ];
+  const handleRemarksSelect = (e) => {
+    let etargetval = e.target.value;
+    setRemarksVal(etargetval);
+    let tempObj = {};
+    tempObj[etargetval] = !tempObj[etargetval];
+    setRemarksTextBoxVal(
+      remarksArr.includes(etargetval) ? "Type Here" : etargetval
+    );
+    setRemarksStyleObj(tempObj);
+    setRemarksPrompt(Math.random());
+  };
+  useEffect(() => {
+    console.log("remarksStyleObj", remarksStyleObj);
+    console.log("remarksVal", remarksVal);
+    let remarksBtns = remarksArr.map((remarksItem) => {
+      return (
+        <Button
+          className={
+            remarksStyleObj[remarksItem]
+              ? styles.mediDeetsModalBtnsActive
+              : styles.mediDeetsModalBtnsPassive
+          }
+          value={remarksItem}
+          onClick={(e) => handleRemarksSelect(e)}
+        >
+          {remarksItem}
+        </Button>
+      );
+    });
+    setRemarksContent(
+      <>
+        {remarksBtns}
+        <div className={styles.mediDeetsModalTextboxBtn}>
+          <input
+            type="text"
+            placeholder={
+              remarksTextBoxVal == "" || remarksArr.includes(remarksTextBoxVal)
+                ? "Type Here"
+                : remarksTextBoxVal
+            }
+            className={styles.mediDeetsModalTextbox}
+            onChange={(e) => {
+              handleRemarksSelect(e);
+            }}
+          ></input>
+        </div>
+      </>
+    );
+  }, [remarksPrompt]);
+
+  return (
+    <>
+      <button onClick={handleShow} className={styles.pencilBtn}>
+        <img
+          className={styles.pencilImg}
+          src="https://i.ya-webdesign.com/images/pencil-icon-png-2.png"
+        />
+      </button>
+      <Modal
+        show={show}
+        onHide={handleClose}
+        size="lg"
+        className={styles.medicineDeetsModal}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{props.medicineName}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Card className={styles.routesAndStuffCard}>
+            <Card.Body>
+              <Card.Title>Route</Card.Title>
+              <Card.Text>{routeContent}</Card.Text>
+            </Card.Body>
+          </Card>
+          {/* <Card className={styles.routesAndStuffCard}>
+            <Card.Body>
+              <Card.Title>Frequency</Card.Title>
+              <Card.Text>{freqContent}</Card.Text>
+            </Card.Body>
+          </Card>
+          <Card className={styles.routesAndStuffCard}>
+            <Card.Body>
+              <Card.Title>Quantity</Card.Title>
+              <Card.Text>{quantityContent}</Card.Text>
+            </Card.Body>
+          </Card> */}
+          <Card className={styles.routesAndStuffCard}>
+            <Card.Body>
+              <Card.Title>Duration</Card.Title>
+              <Card.Text>{durContent}</Card.Text>
+            </Card.Body>
+          </Card>
+          <Card className={styles.routesAndStuffCard}>
+            <Card.Body>
+              <Card.Title>Remarks</Card.Title>
+              <Card.Text>{remarksContent}</Card.Text>
+            </Card.Body>
+          </Card>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleClose}>
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              handleSave();
+            }}
+          >
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+};
+
+export default MedicineDetailsModal;

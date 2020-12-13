@@ -1,0 +1,197 @@
+import React, { useState, useEffect } from "react";
+import { Table, Dropdown } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import classes from "../pages/DischargeSummary/DischargeSummary.module.css";
+import styles from "./Styles.module.css";
+import ReadMoreTextArea from "./ReadMoreTextArea";
+import TextareaAutosize from "react-textarea-autosize";
+import axios from "axios";
+import { hostAddress } from "../assets/config";
+import { currentServer } from "../assets/config";
+
+const FollowupTable = (props) => {
+  const [docName, setDocName] = useState("");
+  const [speciality, setSpeciality] = useState("");
+  const [docId, setDocId] = useState("");
+  const [scheduledDate, setScheduledDate] = useState(
+    localStorage.getItem("scheduleDate") == null
+      ? new Date()
+      : new Date(localStorage.getItem("scheduleDate"))
+  );
+  const handeleDateChange = (date, label) => {
+    date = date.toString().split(" ");
+    let dateGood = date[2] + " " + date[1] + " " + date[3];
+    let obj =
+      localStorage.getItem("patientInformationObj") == null
+        ? {}
+        : JSON.parse(localStorage.getItem("patientInformationObj"));
+    obj[label] = dateGood;
+    localStorage.setItem("patientInformationObj", JSON.stringify(obj));
+  };
+  const handleTextChange = (e, label) => {
+    let obj =
+      localStorage.getItem("plansForMedicalFollowUpObj") == null
+        ? {}
+        : JSON.parse(localStorage.getItem("plansForMedicalFollowUpObj"));
+    obj[label] = label == "Doctor Name" ? e : e.target.value;
+    localStorage.setItem("plansForMedicalFollowUpObj", JSON.stringify(obj));
+  };
+  useEffect(() => {
+    let data = {
+      clinicId: localStorage.getItem("clinicId"),
+    };
+    axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+
+    axios
+      .put(
+        hostAddress +
+          currentServer +
+          "/RestEasy/DischargeSummaryWebService/findDoctorByClinic",
+        data
+      )
+      .then((response) => {
+        console.log("findDoctorByClinic response", response.data);
+
+        let doctors =
+          response.data == null || response.data["ptAppointmentOrgList"] == null
+            ? []
+            : response.data["ptAppointmentOrgList"];
+        let doctorsDrodownVar = null;
+        console.log("doctors=", doctors);
+        localStorage.setItem("allDoctors", JSON.stringify(doctors));
+      })
+      .catch((err) => {});
+  }, []);
+  useEffect(() => {
+    let getSpecialityForDoctorData = {
+      doctorId: docId,
+    };
+    axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+    axios
+      .put(
+        hostAddress +
+          currentServer +
+          "/RestEasy/DischargeSummaryWebService/getSpecialityForDoctor",
+        getSpecialityForDoctorData
+      )
+      .then((response) => {
+        console.log("getSpecialityForDoctor", response.data);
+        setSpeciality(response.data["speciality_name"]);
+      })
+      .catch((err) => console.log("err", err));
+  }, [docName]);
+  return (
+    <div className={styles.patientTableDiv}>
+      <Table responsive size="sm" className={styles.patientInfoTable}>
+        <tbody>
+          <tr>
+            <td className={styles.tableCell}>Doctor Name</td>
+            <td className={styles.tableCell}>
+              <Dropdown>
+                <Dropdown.Toggle
+                  variant="secondary-outline"
+                  id="dropdown-basic"
+                >
+                  {docName == "" ? "Select Doctor" : docName}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  {JSON.parse(localStorage.getItem("allDoctors")) == null
+                    ? null
+                    : JSON.parse(localStorage.getItem("allDoctors")).map(
+                        (item) => {
+                          return (
+                            <Dropdown.Item
+                              onClick={() => {
+                                setDocName(item["doctorName"]);
+                                setDocId(item["doctorId"]);
+                                handleTextChange(
+                                  item["doctorName"],
+                                  "Doctor Name"
+                                );
+                              }}
+                            >
+                              {item["doctorName"]}
+                            </Dropdown.Item>
+                          );
+                        }
+                      )}
+                </Dropdown.Menu>
+              </Dropdown>
+              {/* <TextareaAutosize
+                rows={1}
+                className={[
+                  styles.insideTableTextAutoSizeGrey,
+                  styles.greyBackground,
+                ].join(" ")}
+                placeholder={
+                  localStorage.getItem("plansForMedicalFollowUpObj") == null ||
+                  JSON.parse(
+                    localStorage.getItem("plansForMedicalFollowUpObj")
+                  )["Doctor Name"] == null
+                    ? "Type Here"
+                    : JSON.parse(
+                        localStorage.getItem("plansForMedicalFollowUpObj")
+                      )["Doctor Name"]
+                }
+                onChange={(e) => handleTextChange(e, "Doctor Name")}
+              ></TextareaAutosize> */}
+            </td>
+          </tr>
+          <tr>
+            <td className={styles.tableCell}>Speciality</td>
+            <td className={styles.tableCell}>
+              {speciality == "" ? "speciality" : speciality}
+              {/* <TextareaAutosize
+                rows={1}
+                className={[
+                  styles.insideTableTextAutoSizeGrey,
+                  styles.greyBackground,
+                ].join(" ")}
+                placeholder={
+                  localStorage.getItem("plansForMedicalFollowUpObj") == null ||
+                  JSON.parse(
+                    localStorage.getItem("plansForMedicalFollowUpObj")
+                  )["Speciality"] == null
+                    ? "Type Here"
+                    : JSON.parse(
+                        localStorage.getItem("plansForMedicalFollowUpObj")
+                      )["Speciality"]
+                }
+                onChange={(e) => handleTextChange(e, "Speciality")}
+              ></TextareaAutosize> */}
+            </td>
+          </tr>
+          <tr>
+            <td className={styles.tableCell}>Schedule</td>
+            <td className={styles.tableCell}>
+              {" "}
+              <DatePicker
+                dateFormat="dd/MM/yyyy"
+                className={styles.datepickerCreatePgGrey}
+                selected={scheduledDate}
+                onChange={(date) => {
+                  localStorage.setItem("scheduleDate", date);
+                  props.setPrompt(Math.random());
+                  setScheduledDate(date);
+                }}
+              />
+            </td>
+            {/* <td>
+              <TextareaAutosize
+                rows={1}
+                className={[
+                  styles.insideTableTextAutoSizeGrey,
+                  styles.greyBackground,
+                ].join(" ")}
+                placeholder="Type Here"
+              ></TextareaAutosize>
+            </td> */}
+          </tr>
+        </tbody>
+      </Table>
+    </div>
+  );
+};
+
+export default FollowupTable;

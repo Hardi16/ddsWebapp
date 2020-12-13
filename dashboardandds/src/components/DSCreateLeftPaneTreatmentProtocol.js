@@ -1,0 +1,516 @@
+import React, { useState, useEffect } from "react";
+import { Button, Badge } from "react-bootstrap";
+import styles from "./Styles.module.css";
+import classes from "../pages/DischargeSummary/DischargeSummary.module.css";
+import { hostAddress } from "../assets/config";
+import { Redirect } from "react-router";
+import HamburgerDropdown from "./HamburgerDropdown";
+import SearchTreatmentProtocol from "./SearchTreatmentProtocol";
+import axios from "axios";
+import { currentServer } from "../assets/config";
+import _ from "lodash";
+
+let protArr = [],
+  protObj = {};
+const DSCreateLeftPaneTreatmentProtocol = (props) => {
+  const [treatmentProtocolContent, setTreatmentProtocolContent] = useState(
+    null
+  );
+  const [isSelected, setIsSelected] = useState(
+    localStorage.getItem("selectedTreatmentProtocol") == null ? false : true
+  );
+  const [prompt, setPrompt] = useState(0);
+  useEffect(() => {
+    let data = {
+      doctorID: localStorage.getItem("doctorId"),
+      // specialityId: localStorage.getItem("specialityId"),
+      checkInType: "Discharge Summary",
+      lastSynchronizedTimeFromServer: 1,
+    };
+
+    axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+    axios
+      .put(
+        hostAddress +
+          currentServer +
+          "/RestEasy/PatientWebService/fetchProtocol",
+        data
+      )
+      .then((response) => {
+        console.log(
+          "fetchProtocol response",
+          JSON.parse(response.data["protocolDetail"])
+        );
+        protArr =
+          JSON.parse(response.data["protocolDetail"]) == null
+            ? []
+            : JSON.parse(response.data["protocolDetail"]);
+        setTreatmentProtocolContent(
+          protArr.map((item) => {
+            protObj[item["protocolName"]] = item["protocolData"];
+            return (
+              <Button
+                // variant="outline-secondary"
+                className={styles.treatProtRow}
+                variant={
+                  localStorage.getItem("selectedTreatmentProtocol") == null ||
+                  localStorage.getItem("selectedTreatmentProtocol") !=
+                    item["protocolName"]
+                    ? "outline-secondary"
+                    : "secondary"
+                }
+                onClick={() => {
+                  localStorage.setItem(
+                    "selectedTreatmentProtocol",
+                    item["protocolName"]
+                  );
+                  setPrompt(Math.random());
+                  setIsSelected(true);
+                  localStorage.setItem("protocolDetails", JSON.stringify(item));
+                }}
+              >
+                {item["protocolName"]}
+              </Button>
+            );
+          })
+        );
+      })
+      .catch((err) => {
+        console.log("searchInitialMedicine err", err);
+      });
+  }, [props.leftPrompt, prompt, localStorage.getItem("doctorId")]);
+  const handleSearch = (e) => {
+    let val = e.target.value;
+    setTreatmentProtocolContent(
+      protArr.map((item) => {
+        if (_.lowerCase(item["protocolName"]).startsWith(val))
+          return (
+            <Button
+              // variant="outline-secondary"
+              className={styles.treatProtRow}
+              variant={
+                localStorage.getItem("selectedTreatmentProtocol") == null ||
+                localStorage.getItem("selectedTreatmentProtocol") !=
+                  item["protocolName"]
+                  ? "outline-secondary"
+                  : "secondary"
+              }
+              onClick={() => {
+                localStorage.setItem(
+                  "selectedTreatmentProtocol",
+                  item["protocolName"]
+                );
+                setPrompt(Math.random());
+                setIsSelected(true);
+                localStorage.setItem("protocolDetails", JSON.stringify(item));
+              }}
+            >
+              {item["protocolName"]}
+            </Button>
+          );
+      })
+    );
+  };
+  const handleClick = () => {
+    let item = JSON.parse(localStorage.getItem("protocolDetails"));
+    console.log("fetchitem", item);
+    let data = {
+      evolkoVisitId: item["visitId"],
+      protocolId: item["protocolId"],
+      checkInType: item["status"] == 2 ? "Discharge Summary" : "",
+      patientID: localStorage.getItem("patientId"),
+      doctorId: localStorage.getItem("doctorId"),
+      clinicID: localStorage.getItem("clinicId"),
+    };
+    // let data = {
+    //   evolkoVisitId: 216274,
+    //   protocolId: 2313,
+    //   checkInType: "Discharge Summary",
+    //   patientID: 1765372357,
+    //   doctorID: 79758759759,
+    //   clinicID: 8765876348,
+    // };
+    console.log("fetchProtocolDetailReq", data);
+    axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+    axios
+      .put(
+        hostAddress +
+          currentServer +
+          "/RestEasy/PatientWebService/fetchProtocolDetail",
+        data
+      )
+      .then((response) => {
+        console.log("fetchProtocolDetail resp", response.data);
+        parseSavedObjectToLocalStorage(response.data["protocolDetail"]);
+        // window.location.reload();
+        // props.setCreateDsStateChange(Math.random());
+        // props.setPrompt(Math.random());
+        // props.setLeftPaneLabel("LandingLeftDSC");
+      })
+      .catch((err) => console.log("err", err));
+  };
+  const parseSavedObjectToLocalStorage = (protObj) => {
+    let savedObject = JSON.parse(protObj);
+    console.log("savedObject", savedObject);
+    let cardStringToStringCase = [
+      "Chief Complaint",
+      "Investigations at the Hospital",
+      "Procedure Done",
+      "Procedure Findings",
+      "Course in the Hospital",
+      "Treatment Given",
+      "Advice on Discharge",
+      "HealthRADAR",
+      "Diagnosis at Discharge",
+      "History of Present Illness",
+    ];
+    let cardStringToObjectCase = [
+      "Diet on Discharge",
+      "Therapy Orders",
+      "Activity Orders",
+      "Condition on Discharge",
+      "Disposition To",
+      "Allergies",
+    ];
+    let cardObjToObjCase = ["Physical Exam at Discharge", "Next Follow Up"];
+
+    for (let i in savedObject) {
+      console.log("itemInSaveobj", savedObject[i]["displayText"]);
+      let obj = savedObject[i];
+      let label = obj["displayText"];
+      let lsKey = label;
+      switch (lsKey) {
+        case "HealthRADAR":
+          lsKey = "HealthRADAR Monitoring (Duration, Condition)";
+          break;
+        case "Diet on Discharge":
+          lsKey = "Dietary Instructions";
+          break;
+        case "Next Follow Up":
+          lsKey = "Plans for Medical Follow-up";
+          break;
+        case "Condition on Discharge":
+          lsKey = "Condition at Discharge";
+          break;
+        case "Diagnosis at Discharge":
+          lsKey = "Diagnosis On Discharge";
+          break;
+        case "Diagnosis on Admission":
+          lsKey = "Diagnosis On Admission";
+          break;
+      }
+      let camelCaseName = _.camelCase(lsKey);
+      let camelCaseNameWObj = _.camelCase(lsKey + "Obj");
+
+      if (cardStringToStringCase.includes(label)) {
+        let lsObj = obj["_description"];
+        localStorage.setItem(camelCaseName, lsObj);
+      } else if (cardStringToObjectCase.includes(label)) {
+        let lsObj = {};
+        let descArr = obj["_description"].split(",");
+        descArr.forEach((item) => {
+          lsObj[item] = true;
+        });
+        localStorage.setItem(camelCaseName, JSON.stringify(lsObj));
+      } else if (cardObjToObjCase.includes(label)) {
+        let grpArr = obj["groupedDetails"];
+        let lsObj = {};
+        grpArr.forEach((item) => {
+          let key = item["_name"];
+          let val = item["_description"];
+          lsObj[key] = val;
+        });
+        localStorage.setItem(camelCaseNameWObj, JSON.stringify(lsObj));
+      }
+      // else if (label == "Patient Information") {
+      //   console.log("PIobj", obj);
+      //   let lsObj = {};
+      //   obj["groupedDetails"].forEach((item) => {
+      //     lsObj[item["_name"]] = item["_description"];
+      //   });
+      //   localStorage.setItem("patientInformationObj", JSON.stringify(lsObj));
+      // }
+      else if (label == "History") {
+        let arr = obj["groupedDetails"];
+        arr.forEach((item) => {
+          let desc = item["_description"];
+          let name = item["_name"];
+          let lsArr = desc.split(",");
+          let lsObj = {};
+          for (let i in lsArr) {
+            let key = lsArr[i].split("-")[0];
+            let val = lsArr[i].split("-")[1];
+            lsObj[key] = lsObj[key] == null ? {} : lsObj[key];
+            lsObj[key][val] = true;
+          }
+          if (!(Object.keys(lsObj).length == 1 && Object.keys(lsObj)[0] == ""))
+            localStorage.setItem(
+              _.camelCase(name + "Obj"),
+              JSON.stringify(lsObj)
+            );
+        });
+      } else if (label == "Advised Investigation") {
+        let arr = obj["selectedRxList"];
+        let invArr = [];
+        arr.forEach((item) => {
+          let desc = item["investigationName"];
+          invArr.push(desc);
+        });
+        localStorage.setItem("advisedInvestigations", JSON.stringify(invArr));
+      } else if (label == "Diagnosis") {
+        let name = "Diagnosis On Admission";
+        let arr = obj["sectionObjectlist"];
+        let diagArr = [];
+        arr.forEach((item) => {
+          let secondObj = item["sectionObjectlist"];
+          let desc = secondObj[0]["printValue"];
+          diagArr.push(desc);
+        });
+        localStorage.setItem(_.camelCase(name), JSON.stringify(diagArr));
+      }
+      // else if (
+      //   obj["_name"] == "Vitals" ||
+      //   obj["_name"] == "Vitals on Discharge"
+      // ) {
+      //   let lsKeyName =
+      //     obj["_name"] == "Vitals"
+      //       ? "vitalsOnAdmissionObj"
+      //       : "vitalsOnDischargeObj";
+      //   let arr = obj["groupedDetails"];
+      //   let vitalsObj = {};
+      //   arr.forEach((item) => {
+      //     let key = item["_name"];
+      //     let val = item["_description"];
+      //     vitalsObj[key] = val;
+      //   });
+      //   localStorage.setItem(lsKeyName, JSON.stringify(vitalsObj));
+      // }
+      // else if (
+      //   obj["_name"] == "Obs Profile" ||
+      //   obj["_name"] == "Obs Score" ||
+      //   obj["_name"] == "Gynae & Obs History"
+      // ) {
+      //   let arr = obj["groupedDetails"];
+      //   let obsObj = {};
+      //   arr.forEach((item) => {
+      //     let key = item["_name"];
+      //     let val = item["_description"];
+      //     obsObj[key] = val;
+      //   });
+      //   let obsLSObj =
+      //     localStorage.getItem("historyOfPresentIllnessObj") == null
+      //       ? {}
+      //       : JSON.parse(localStorage.getItem("historyOfPresentIllnessObj"));
+      //   obsLSObj[obj["_name"]] = obsObj;
+      //   localStorage.setItem(
+      //     "historyOfPresentIllnessObj",
+      //     JSON.stringify(obsLSObj)
+      //   );
+      // }
+      else if (
+        obj["_name"] != "Vitals" &&
+        obj["_name"] != "Vitals on Discharge" &&
+        obj["parentSection"] == "Clinical Exam"
+      ) {
+        let arr = obj["groupedDetails"];
+        let obsObj = {};
+        let obj2 = {};
+        arr.forEach((item) => {
+          let key = item["_name"];
+          let valArr = item["_description"].split(",");
+          let obj1 = {};
+          valArr.forEach((ele) => {
+            let k1 = ele.split("-")[0]; //clinically
+            let v1 = ele.split("-")[1]; //nad
+            let obj3 = {};
+            obj3[v1] = true;
+            obj1[k1] = obj3;
+          });
+          obj2[key] = obj1;
+        });
+
+        let phyExamLSObj =
+          localStorage.getItem("physicalExamOnAdmissionObj") == null
+            ? {}
+            : JSON.parse(localStorage.getItem("physicalExamOnAdmissionObj"));
+        phyExamLSObj[obj["_name"]] = obj2;
+        localStorage.setItem(
+          "physicalExamOnAdmissionObj",
+          JSON.stringify(phyExamLSObj)
+        );
+      } else if (label == "Medicines") {
+        let meditoAddArr = [];
+        obj["selectedRxList"].forEach((medi) => {
+          let remarks = medi["rxRemarks"];
+          let durationLabel = medi["durationLabel"];
+          let frequency = medi["frequency"];
+          let route = medi["rxNotes"];
+          let mediName = medi["medicineDisplayStr"];
+          let brandName = medi["brandDrugName"];
+          let quantity = medi["quantityUnit"];
+
+          let mediObj =
+            JSON.parse(localStorage.getItem("mediObj")) == null
+              ? {}
+              : JSON.parse(localStorage.getItem("mediObj"));
+          let allMedicineDeets =
+            JSON.parse(localStorage.getItem("allMedicineDeets")) == null
+              ? {}
+              : JSON.parse(localStorage.getItem("allMedicineDeets"));
+          let freqValObj =
+            JSON.parse(localStorage.getItem("freqValObj")) == null
+              ? {}
+              : JSON.parse(localStorage.getItem("freqValObj"));
+          let quantValObj =
+            JSON.parse(localStorage.getItem("quantValObj")) == null
+              ? {}
+              : JSON.parse(localStorage.getItem("quantValObj"));
+          let brandValue =
+            JSON.parse(localStorage.getItem("brandValue")) == null
+              ? {}
+              : JSON.parse(localStorage.getItem("brandValue"));
+          //
+          mediObj[mediName] = true;
+          let allMediDeetsItem = {};
+          allMediDeetsItem["routeVal"] = route;
+          allMediDeetsItem["durVal"] = durationLabel;
+          allMediDeetsItem["remarksVal"] = remarks;
+          allMedicineDeets[mediName] = allMediDeetsItem;
+          freqValObj[mediName] = frequency;
+          quantValObj[mediName] = [quantity];
+          brandValue[mediName] = brandName;
+          //
+          localStorage.setItem("mediObj", JSON.stringify(mediObj));
+          localStorage.setItem(
+            "allMedicineDeets",
+            JSON.stringify(allMedicineDeets)
+          );
+          localStorage.setItem("freqValObj", JSON.stringify(freqValObj));
+          localStorage.setItem("quantValObj", JSON.stringify(quantValObj));
+          localStorage.setItem("brandValue", JSON.stringify(brandValue));
+          //
+          meditoAddArr.push(mediName);
+        });
+        localStorage.setItem("mediToAddArr", meditoAddArr);
+      }
+    }
+    props.setCreateDsStateChange(Math.random());
+    props.setPrompt(Math.random());
+    localStorage.setItem("protocolSet", true);
+    setAllSectionsInString();
+  };
+  const setAllSectionsInString = () => {
+    if (localStorage.getItem("protocolSet")) {
+      let str =
+        localStorage.getItem("cardsLabel") +
+        localStorage.getItem("deletedSection") +
+        localStorage.getItem("conditionAtDischarge") +
+        localStorage.getItem("chiefComplaint") +
+        localStorage.getItem("dietaryInstructions") +
+        localStorage.getItem("courseInTheHospital") +
+        localStorage.getItem("dateOfDischarge") +
+        localStorage.getItem("durationOptions") +
+        localStorage.getItem("historyOfIllnessPages") +
+        localStorage.getItem("investigationsAtTheHospital") +
+        localStorage.getItem("phyExamSelectedOneId") +
+        localStorage.getItem("treatmentGiven") +
+        localStorage.getItem("procedureFindings") +
+        localStorage.getItem("therapyOrdersContent") +
+        localStorage.getItem("therapyOrders") +
+        localStorage.getItem("procedureDone") +
+        localStorage.getItem("phyExamAllPagesOfSelectedOne") +
+        localStorage.getItem("cardStyler") +
+        localStorage.getItem("pastSurgicalHistoryObj") +
+        localStorage.getItem("diagnosisOnDischarge") +
+        localStorage.getItem("scheduleDate") +
+        localStorage.getItem("conditionAtDischargeContent") +
+        localStorage.getItem("allergies") +
+        localStorage.getItem("phyExamPageNumber") +
+        localStorage.getItem("vitalsOnAdmissionObj") +
+        localStorage.getItem("physicalExamContent") +
+        localStorage.getItem("familyHistoryObj") +
+        localStorage.getItem("remarksOptions") +
+        localStorage.getItem("pastMedicalHistoryObj") +
+        localStorage.getItem("activityOrdersContent") +
+        localStorage.getItem("dateOfAdmission") +
+        localStorage.getItem("plansForMedicalFollowUpObj") +
+        localStorage.getItem("vitalsOnDischargeObj") +
+        localStorage.getItem("lsObj") +
+        localStorage.getItem("uploadFiles") +
+        localStorage.getItem("routeOptions") +
+        localStorage.getItem("dispositionToContent") +
+        localStorage.getItem("healthRadarMonitoringDurationCondition") +
+        localStorage.getItem("diagnosisOnAdmission") +
+        localStorage.getItem("dietaryInstructionsContent") +
+        localStorage.getItem("activityOrders") +
+        localStorage.getItem("physicalExamAtDischargeObjNad") +
+        localStorage.getItem("dispostionTo") +
+        localStorage.getItem("historyOfPresentIllnessObj") +
+        localStorage.getItem("patientsSignTextbox") +
+        localStorage.getItem("siteObj") +
+        localStorage.getItem("savedObject") +
+        localStorage.getItem("advisedInvestigations") +
+        localStorage.getItem("adviceOnDischarge");
+
+      localStorage.setItem("protocolDataString", str);
+      localStorage.setItem("isDirtySave", false);
+    }
+    return false;
+  };
+
+  return (
+    <>
+      {/* <div className={classes.leftPaneHeaderDSCreate}>
+        <div className={classes.leftHeaderHeading}>
+          <div className={classes.leftHeaderHeadingTitle}>
+            <Button
+              className={classes.createPageClinicNameBtn}
+              onClick={() =>
+                props.setRedirect(<Redirect to="/dischargeSummaryPage" />)
+              }
+            >
+              {localStorage.getItem("clinicName")}
+            </Button>
+          </div>
+          <div className={classes.leftHeaderSubHeading}>
+            {localStorage.getItem("doctorName")}
+          </div>
+          <div className={classes.leftHeaderSubHeadingRight}>
+            {localStorage.getItem("docSpecialityName")}
+          </div>
+        </div>
+      </div> */}
+      <div className={styles.leftPaneTreatmentProtocolStyle}>
+        <div className={classes.leftPaneContentCreate}>
+          <div className={styles.leftPaneTreatmentProtocolHeading}>
+            Treatment Protocol
+          </div>
+          <div>
+            <input
+              className={styles.textBox}
+              type="text"
+              placeholder="Search Protocol"
+              onChange={(e) => handleSearch(e)}
+            ></input>
+          </div>
+          {/* <div className={styles.tpApplyChgBtn}> */}
+          {isSelected ? (
+            <Button
+              // className={styles.tpApplyChgBtn}
+              className={classes.applyBtnTP}
+              onClick={() => {
+                handleClick();
+              }}
+            >
+              Apply Changes
+            </Button>
+          ) : null}
+          {/* </div> */}
+          <div className={styles.treatProts}>{treatmentProtocolContent}</div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default DSCreateLeftPaneTreatmentProtocol;

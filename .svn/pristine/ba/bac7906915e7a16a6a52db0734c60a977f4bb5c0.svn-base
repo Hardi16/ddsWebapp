@@ -1,0 +1,517 @@
+import React, { useState, useEffect } from "react";
+import {
+  Row,
+  Modal,
+  Button,
+  Form,
+  Col,
+  Dropdown,
+  DropdownButton,
+} from "react-bootstrap";
+import classes from "./Styles.module.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import axios from "axios";
+import data from "./countrycode";
+import { CloseOutlined } from "@material-ui/icons";
+
+const AddModal = (props) => {
+  let months = {
+    Jan: "01",
+    Feb: "02",
+    Mar: "03",
+    Apr: "04",
+    May: "05",
+    Jun: "06",
+    Jul: "07",
+    Aug: "08",
+    Sep: "09",
+    Oct: "10",
+    Nov: "11",
+    Dec: "12",
+  };
+
+  const [name, setName] = useState("");
+  const [date, setDate] = useState("");
+  const [sex, setSex] = useState("");
+  const [age, setAge] = useState("");
+  const [email, setEmail] = useState("");
+  const [DOB, setDOB] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState(localStorage.getItem("city"));
+  const [state, setState] = useState(localStorage.getItem("state"));
+  const [country, setCountry] = useState(localStorage.getItem("country"));
+  const [selectedCountryName, setSelectedCountryName] = useState(
+    localStorage.getItem("country")
+  );
+  const [pin, setPin] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [countrycode, setCountrycode] = useState(
+    localStorage.getItem("countrycode")
+  );
+  const [dispDate, setDispDate] = useState();
+  const [oldnewValue, setOldnewValue] = useState("Old");
+  const [validated, setValidated] = useState(false);
+
+  // getjson country data
+  let countryList = data;
+
+  function pad2(n) {
+    return n < 10 ? "0" + n : n;
+  }
+
+  function newdateformatt(n) {
+    let newDateFormat;
+    const monthNameList = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    if (n == "01") {
+      newDateFormat = monthNameList[0];
+    } else if (n == "02") {
+      newDateFormat = monthNameList[1];
+    } else if (n == "03") {
+      newDateFormat = monthNameList[2];
+    } else if (n == "04") {
+      newDateFormat = monthNameList[3];
+    } else if (n == "05") {
+      newDateFormat = monthNameList[4];
+    } else if (n == "06") {
+      newDateFormat = monthNameList[5];
+    } else if (n == "07") {
+      newDateFormat = monthNameList[6];
+    } else if (n == "08") {
+      newDateFormat = monthNameList[7];
+    } else if (n == "09") {
+      newDateFormat = monthNameList[8];
+    } else if (n == "10") {
+      newDateFormat = monthNameList[9];
+    } else if (n == "11") {
+      newDateFormat = monthNameList[10];
+    } else {
+      newDateFormat = monthNameList[11];
+    }
+    return newDateFormat;
+  }
+
+  const handleAgeChange = (e) => {
+    let age = e.target.value;
+    let todaydate = new Date();
+    let newDateofbirth, year;
+    let dateDiffFormat =
+      todaydate.getFullYear() -
+      age +
+      "-" +
+      pad2(todaydate.getDate()) +
+      "-" +
+      pad2(todaydate.getMonth() + 1);
+    let dateArr = [];
+    dateArr = dateDiffFormat.split("-");
+    let newDate = dateArr[0] + "-" + dateArr[2] + "-" + dateArr[1];
+    let newDate1 = dateArr[2] + "/" + dateArr[2] + "/" + dateArr[0];
+
+    setDispDate(newDate1);
+
+    //Change date format dd/mmm/yyyy
+    let monthnum = dateArr[2];
+    let monthName = newdateformatt(monthnum);
+    newDateofbirth = dateArr[1] + "/" + monthName + "/" + dateArr[0];
+    setDOB(newDateofbirth);
+  };
+
+  const handleDateChange = (date) => {
+    let dateofbirth = date;
+    let newdob, newdateofbirth, newDateFormat;
+
+    if (dateofbirth != "") {
+      newdateofbirth =
+        dateofbirth.getFullYear().toString() +
+        "-" +
+        pad2(dateofbirth.getMonth() + 1) +
+        "-" +
+        pad2(dateofbirth.getDate());
+    }
+
+    let dateArr = newdateofbirth.split("-");
+    let monthnum = dateArr[1];
+    let birthyear = dateArr[0];
+    let tdate = new Date();
+
+    let tyear = pad2(tdate.getFullYear().toString());
+    let countage = Math.floor(tyear) - Math.floor(birthyear);
+   
+    setAge(countage);
+    console.log("Age", countage);
+  };
+
+  // populate country code
+  const handleSetCountryCode = (e) => {
+    let code = e.target.value;
+  };
+
+  const callAddPatient = (event) => {
+    let patientDetails = {
+      firstName: name,
+      dateAdmitted: date,
+      gender: sex,
+      age: age,
+      emailID: email,
+      oldnewValue: "New",
+      dateofBirth: dispDate,
+      addressLine1: address,
+      city: city,
+      state: state,
+      country: country,
+      pinCode: pin,
+      mobileNo1: mobile,
+    };
+
+    if (name === "") {
+      alert("Please select your name");
+    } else if (DOB === "") {
+      alert("Please select your date of birth");
+    } else if (sex === "") {
+      alert("Please select your gender");
+    } else if (mobile.length != 10) {
+      alert("Please enter 10 digit mobile name");
+    } else if (city === "") {
+      alert("Please select your city");
+    } else if (state === "") {
+      alert("Please select your state");
+    } else if (country === "") {
+      alert("Please select your country");
+    } else {
+      props.onHide();
+      props.addPatient(patientDetails);
+    }
+  };
+
+  return (
+    <Modal
+      {...props}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+      backdrop="static"
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Patient Registration
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form noValidate validated={validated}>
+          <Form.Group
+            as={Row}
+            controlId="formGridName"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm>
+              Name<span className={classes.red}> *</span>
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                type="text"
+                placeholder="Enter your name"
+                onChange={(e) => setName(e.target.value)}
+              />
+              <Form.Control.Feedback type="invalid">
+                Please enter a valid email.
+              </Form.Control.Feedback>
+            </Col>
+          </Form.Group>
+
+          <Form.Group
+            as={Row}
+            controlId="formGridName"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm>
+              Age
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                type="text"
+                placeholder="Enter your age"
+                name="age"
+                value={age}
+                onChange={(e) => {
+                  setAge(e.target.value);
+                  handleAgeChange(e);
+                  localStorage.setItem("startage", e);
+                }}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            controlId="formGridName"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm>
+              DOB
+            </Form.Label>
+            <Col sm="9" className={classes.dobDatepicker}>
+              <DatePicker
+                className={classes.datepickerCreatePg}
+                value={DOB}
+                dateFormat="dd/MMM/yyyy"
+                onChange={(date) => {
+                  console.log("date1 ", date);
+                  let dateDiffFormat =
+                    date.getFullYear() +
+                    "-" +
+                    pad2(date.getDate()) +
+                    "-" +
+                    pad2(date.getMonth() + 1);
+                  let dateArr = dateDiffFormat.split("-");                 
+                  let monthnum = dateArr[2];
+                  let newDate;
+                  newdateformatt(monthnum);
+                  newDate =
+                    dateArr[1] + "/" + monthnum + "/" + dateArr[0];
+                  setDOB(newDate);
+                  handleDateChange(date);
+                }}
+              />
+            </Col>
+          </Form.Group>
+
+          <Form.Group
+            as={Row}
+            controlId="formGridSex"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Sex<span className={classes.red}> *</span>
+            </Form.Label>
+            <Col sm="9">
+              <div id="" name="" className={classes.selectGender}>
+                <div class="floatBlock">
+                  <label for="male">
+                    {" "}
+                    <input
+                      type="radio"
+                      value="Male"
+                      name="sex"
+                      id="#radio1"
+                      onChange={(e) => {
+                        console.log(e.target.value);
+                        setSex(e.target.value);
+                      }}
+                    />{" "}
+                    Male &nbsp;
+                  </label>
+                </div>
+                <div class="floatBlock">
+                  <label for="female">
+                    {" "}
+                    <input
+                      type="radio"
+                      value="Female"
+                      name="sex"
+                      id="#radio2"
+                      onChange={(e) => {
+                        console.log(e.target.value);
+                        setSex(e.target.value);
+                      }}
+                    />{" "}
+                    Female{" "}
+                  </label>
+                </div>
+              </div>
+            </Col>
+          </Form.Group>
+
+          <Form.Group
+            as={Row}
+            controlId="formGridMobile"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Mobile No.<span className={classes.red}> *</span>
+            </Form.Label>
+            <Col sm="2">
+              <Dropdown className={classes.drpCreateCode}>
+                <Dropdown.Toggle>
+                  {localStorage.getItem("countrycode")}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {" "}
+                  <Dropdown.Header>Select Country</Dropdown.Header>
+                  {countryList.map((s) => (
+                    <Dropdown.Item
+                      value={s.dial_code}
+                      onClick={(e) => {
+                        setCountrycode(s.dial_code);
+                        localStorage.setItem("countrycode", s.dial_code);
+                      }}
+                    >
+                      {s.dial_code}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+            </Col>
+            <Col sm="7">
+              <Form.Control
+                required
+                keyboardType="numeric"
+                placeholder="Mobile  No."
+                pattern="\d{3}[\-]\d{3}[\-]\d{4}"
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  setMobile(e.target.value);
+                  let mobile = e.target.value.replace(".", "");
+                  if (isNaN(mobile)) {
+                    alert("Please enter valid mobile number");
+                  }
+                }}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            controlId="formGridEmail"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm>
+              Email
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                type="email"
+                placeholder="Enter your email"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            controlId="formGridAddress1"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Address
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                placeholder="1234 Main St"
+                onChange={(e) => setAddress(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            controlId="formGridCity"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              City<span className={classes.red}> *</span>
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                placeholder="City"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            controlId="formGridState"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              State<span className={classes.red}> *</span>
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                placeholder="State"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+
+          <Form.Group
+            as={Row}
+            controlId="formGridCountry"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Country<span className={classes.red}> *</span>
+            </Form.Label>
+            <Col sm="9">
+              <Dropdown className={classes.drpCreateCountry}>
+                <Dropdown.Toggle className={classes.countryName}>
+                  {localStorage.getItem("country") == null
+                    ? { selectedCountryName }
+                    : localStorage.getItem("country")}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {" "}
+                  <Dropdown.Header>Select Country</Dropdown.Header>
+                  {countryList.map((s) => (
+                    <Dropdown.Item
+                      value={country}
+                      onClick={(e) => {
+                        handleSetCountryCode(e);
+                        setCountry(s.name);
+                        setCountrycode(s.dial_code);
+                        localStorage.setItem("country", s.name);
+                        localStorage.setItem("countrycode", s.dial_code);
+                      }}
+                    >
+                      {s.name}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+            </Col>
+          </Form.Group>
+
+          <Form.Group
+            as={Row}
+            controlId="formGridPin"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Pincode
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                placeholder="Pincode"
+                onChange={(e) => setPin(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <div className={classes.addDiscardDiv}>
+          <Button
+            className={classes.btnaddPatient}
+            variant="primary"
+            type="submit"
+            onClick={() => callAddPatient()}
+          >
+            Save
+          </Button>
+        </div>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
+export default AddModal;

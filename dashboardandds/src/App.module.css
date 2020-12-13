@@ -1,0 +1,57 @@
+html {
+  min-height: 100%; /* make sure it is at least as tall as the viewport */
+  position: relative;
+}
+body {
+  background-color: #f3f3f3;
+  padding: 0px;
+  margin: 0px;
+  min-height: 100%;
+  height: auto;
+}
+html,
+body,
+#app,
+#app > div {
+  height: 100%;
+}
+.main {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  min-height: inherit;
+}
+.navbar {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index:99;
+}
+.page {
+  flex: 1;
+  padding: 20px;
+  margin-top: 60px;
+  width: 100%;
+  min-height: 100%;
+}
+.footer {
+  position: fixed;
+  bottom: 0;
+  text-align: right;
+  color: #5472c0;
+  background-color: white;
+  padding: 15px;
+  width: 100%;
+  flex: 1;
+  height: 50px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  margin-bottom: 0px;
+}

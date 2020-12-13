@@ -1,0 +1,472 @@
+import React, { useState, useEffect } from "react";
+import styles from "./mainDashboard.module.css";
+import classes from "./Dashboard.module.css";
+import BarChart from "../../components/BarChart";
+import { Table, Button, Spinner, Tab, Tabs } from "react-bootstrap";
+import { Redirect } from "react-router";
+import Navbar from "../../components/Navbar";
+import CardForTotal from "../../components/CardForTotal";
+import OrgDetailsTable from "../../components/OrgDetailsTable";
+import DashboardCityDoctorsList from "./DashboardCityDoctorsList";
+import DoctorDetailsTable from "../../components/DoctorDetailsTable";
+// import InformPatientsTable from "../../components/InformPatientsTable";
+import DashboardCountAppointmentPerWeek from "./DashboardCountAppointmentPerWeek";
+import DashboardTMOReferralsList from "./DashboardTMOReferralsList";
+import DashboardNewDoctorList from "./DashboardNewDoctorList";
+import DashboardNewTmoList from "./DashboardNewTmoList";
+import DashboardTmoRefferalPatientsTotalCount from "./DashboardTmoRefferalPatientsTotalCount";
+import DashboardWishFoundation from "./DashboardWishFoundation";
+import DashboardCutis from "./DashboardCutis";
+import axios from "axios";
+import { hostAddress } from "../../assets/config";
+
+const Dashboard = (props) => {
+  const [redirect, setRedirect] = useState(null);
+  const [
+    patientAppointmentCountListTable,
+    setPatientAppointmentCountListTable,
+  ] = useState(
+    <div className={classes.tableSpinner}>
+      <Spinner animation="border"></Spinner>
+    </div>
+  );
+  const [selectedRoleId, setSelectedRoleId] = useState(
+    localStorage.getItem("roleId")
+  );
+  const [selectedUserId, setSelectedUserId] = useState(
+    localStorage.getItem("userId")
+  );
+  const [selectedClinicId, setSelectedClinicId] = useState(
+    localStorage.getItem("clinicId")
+  );
+
+  const [totDueToday, setTotDueToday] = useState(
+    <Spinner animation="grow" size="sm" />
+  );
+  const [totCompleted, setTotCompleted] = useState(
+    <Spinner animation="grow" size="sm" />
+  );
+  const [totRemaining, setTotRemaining] = useState(
+    <Spinner animation="grow" size="sm" />
+  );
+  const [totRunningLate, setTotRunningLate] = useState(
+    <Spinner animation="grow" size="sm" />
+  );
+
+  const [totCancelled, setTotCancelled] = useState(
+    <Spinner animation="grow" size="sm" />
+  );
+  const [totRefund, setTotRefund] = useState(
+    <Spinner animation="grow" size="sm" />
+  );
+  const [orgDetailsTable, setOrgDetailsTable] = useState(null);
+  // const [informPatientsTable, setInformPatientsTable] = useState(null);
+  const stateOnlineAppointments = {
+    labels: ["January", "February", "March", "April", "May"],
+    datasets: [
+      {
+        label: "Online Appointments",
+        backgroundColor: "blue",
+        borderColor: "rgba(0,0,0,1)",
+        borderWidth: 0,
+        data: [65, 59, 80, 81, 56],
+      },
+    ],
+  };
+  const stateRunLate = {
+    labels: ["January", "February", "March", "April", "May"],
+    datasets: [
+      {
+        label: "Run Late",
+        backgroundColor: "greenyellow",
+        borderColor: "rgba(0,0,0,1)",
+        borderWidth: 0,
+        data: [65, 59, 80, 81, 56],
+      },
+    ],
+  };
+  const showOrgInfo = (orgId, orgName) => {
+    localStorage.setItem("orgId", orgId);
+    localStorage.setItem("orgName", orgName);
+    window.open("/orgInfo", "_blank");
+    // setOrgDetailsTable(<OrgDetailsTable orgId={orgId} orgName={orgName} />);
+  };
+
+  // const informPatients = () => {
+  //   setInformPatientsTable(
+  //     <InformPatientsTable checker={Math.random()}></InformPatientsTable>
+  //   );
+  // };
+  useEffect(() => {
+    let data = {
+      userId: selectedUserId,
+      roleId: selectedRoleId,
+    };
+    console.log("User data", data);
+    axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+    axios
+      .put(
+        hostAddress +
+          "https://dev2.evolko.com/RestEasy/DashboardWebService/getPatientAppointmentCountList",
+        data
+      )
+
+      .then((response) => {
+        console.log("get PatientAppointmentCountListResponse: ", response.data);
+        let total_Appointments = 0;
+        let total_AnsweredAppointments = 0;
+        let total_WaitingAppointments = 0;
+        let total_RunningLateAppointments = 0;
+        let total_CancelledAppointments = 0;
+        let total_RefundAppointments = 0;
+
+        let getPatientAppointmentCountListResponse =
+          response.data["ptAppointmentCountList"];
+        let getPatientAppointmentCountListTableBody = getPatientAppointmentCountListResponse.map(
+          (item) => {
+            if (item["orgName"] == "Total") {
+              setTotDueToday(item["countOfAppointments"]);
+              setTotCompleted(item["countOfAnsweredAppointments"]);
+              setTotRemaining(item["countOfWaitingAppointments"]);
+              setTotRunningLate(item["countOfRunningLateAppointments"]);
+              setTotCancelled(item["countOfCancelledAppointments"]);
+              setTotRefund(item["countOfRefundAppointments"]);
+            } else {
+              total_Appointments =
+                Math.floor(total_Appointments) +
+                Math.floor(item["countOfAppointments"]);
+              total_AnsweredAppointments =
+                Math.floor(total_AnsweredAppointments) +
+                Math.floor(item["countOfAnsweredAppointments"]);
+              total_WaitingAppointments =
+                Math.floor(total_WaitingAppointments) +
+                Math.floor(item["countOfWaitingAppointments"]);
+              total_RunningLateAppointments =
+                Math.floor(total_RunningLateAppointments) +
+                Math.floor(item["countOfRunningLateAppointments"]);
+              total_CancelledAppointments =
+                Math.floor(total_CancelledAppointments) +
+                Math.floor(item["countOfCancelledAppointments"]);
+              total_RefundAppointments =
+                Math.floor(total_RefundAppointments) +
+                Math.floor(item["countOfRefundAppointments"]);
+              setTotDueToday(total_Appointments);
+              setTotCompleted(total_AnsweredAppointments);
+              setTotRemaining(total_WaitingAppointments);
+              setTotRunningLate(total_RunningLateAppointments);
+              setTotCancelled(total_CancelledAppointments);
+              setTotRefund(total_RefundAppointments);
+            }
+            return (
+              <tr>
+                <td className={classes.orgname}>
+                  <div
+                    className={classes.pointer}
+                    onClick={() => showOrgInfo(item["orgId"], item["orgName"])}
+                  >
+                    {item["orgName"]}
+                  </div>
+                </td>
+                <td>{item["countOfAppointments"]}</td>
+                <td>{item["countOfAnsweredAppointments"]}</td>
+                <td>{item["countOfWaitingAppointments"]}</td>
+                <td>{item["countOfRunningLateAppointments"]}</td>
+                <td>{item["countOfCancelledAppointments"]}</td>
+                <td>{item["countOfRefundAppointments"]}</td>
+              </tr>
+            );
+          }
+        );
+        let getPatientAppointmentCountListTable = (
+          <Table striped hover className="table">
+            <thead>
+              <tr>
+                <th className="text-left">Organization</th>
+                <th>Due Today</th>
+                <th>Completed</th>
+                <th>Remaining</th>
+                <th>Running Late {">"} 30 min</th>
+                <th>Cancelled</th>
+                <th>Refund</th>
+              </tr>
+            </thead>
+            <tbody>{getPatientAppointmentCountListTableBody}</tbody>
+          </Table>
+        );
+        setPatientAppointmentCountListTable(
+          getPatientAppointmentCountListTable
+        );
+      })
+      .catch((err) => {
+        console.log("err.status");
+        console.log("dashboard error", err);
+      });
+    return () => {};
+  }, []);
+
+  const [key, setKey] = useState("ONLINE_APPOINTMENTS");
+  return (
+    <div>
+      <div className={classes.navbar}>
+        <Navbar />
+      </div>
+      <div className={classes.mainContainer}>
+        {!localStorage.getItem("userId") ? <Redirect to="/login" /> : null}
+        {redirect}
+
+        {localStorage.getItem("roleId") == "15" &&
+        localStorage.getItem("clinicId") == "300003" ? (
+          <Tabs
+            className={classes.dashboardTab}
+            id="controlled-tab-example"
+            activeKey={key}
+            onSelect={(k) => setKey(k)}
+          >
+            <Tab eventKey="ONLINE_APPOINTMENTS" title="Online Appointments">
+              <div className={classes.pageHeading}>
+                <h3>Online Appointments</h3>
+              </div>
+              <div className={classes.cardsForTotalContainer}>
+                <CardForTotal
+                  css={[
+                    classes.cardsForTotal,
+                    classes.cardsMidnight,
+                    classes.cardContentContainer,
+                  ].join(" ")}
+                  heading="Total Appointment"
+                  subheading="Due Today"
+                  content={totDueToday}
+                />
+                <CardForTotal
+                  css={[
+                    classes.cardsForTotal,
+                    classes.cardsAriel,
+                    classes.cardContentContainer,
+                  ].join(" ")}
+                  heading="Total Appointment"
+                  subheading="Completed"
+                  content={totCompleted}
+                />
+                <CardForTotal
+                  css={[
+                    classes.cardsForTotal,
+                    classes.cardsSuccess,
+                    classes.cardContentContainer,
+                  ].join(" ")}
+                  heading="Total Appointment"
+                  subheading="Remaining"
+                  content={totRemaining}
+                />
+                <CardForTotal
+                  css={[
+                    classes.cardsForTotal,
+                    classes.cardsMidnight,
+                    classes.cardContentContainer,
+                  ].join(" ")}
+                  heading="Total Appointment"
+                  subheading="Running Late"
+                  content={totRunningLate}
+                />
+                <CardForTotal
+                  css={[
+                    classes.cardsForTotal,
+                    classes.cardsAriel,
+                    classes.cardContentContainer,
+                  ].join(" ")}
+                  heading="Total Appointment"
+                  subheading="Cancelled"
+                  content={totCancelled}
+                />
+                <CardForTotal
+                  css={[
+                    classes.cardsForTotal,
+                    classes.cardsSuccess,
+                    classes.cardContentContainer,
+                  ].join(" ")}
+                  heading="Total Appointment"
+                  subheading="Refund"
+                  content={totRefund}
+                />
+              </div>
+              <div className={classes.chartParent}>
+                <div className={classes.chartContainer}>
+                  <div className={classes.chartHeader}>ONLINE APPOINTMENTS</div>
+                  <div className={classes.chartBody}>
+                    <DashboardCountAppointmentPerWeek />
+                  </div>
+                </div>
+                <div className={classes.chartContainer}>
+                  <div className={classes.chartHeader}>RUN LATE</div>
+                  <div className={classes.chartBody}>
+                    <BarChart state={stateRunLate} text="Run Late" />
+                  </div>
+                </div>
+                <div className={classes.chartContainer}>
+                  <div className={classes.chartHeader}>NOT COMPLETED</div>
+                  <div className={classes.chartBody}></div>
+                </div>
+              </div>
+              {/* <div className={classes.informBtnContainer}>
+                <Button
+                  className={classes.informBtn}
+                  onClick={() => informPatients()}
+                >
+                  Inform Patients
+                </Button>
+              </div> */}
+              <div className={classes.tableContainer}>
+                <div className={classes.tableHeader}>ONLINE APPOINTMENTS</div>
+                <div className={classes.tableBody}>
+                  {patientAppointmentCountListTable}
+                </div>
+              </div>
+            </Tab>
+            <Tab eventKey="Doctors_By_City" title="Doctors By City">
+              <div className={classes.pageHeading}>
+                <h3>Doctors By City</h3>
+              </div>
+              <div className={classes.cardsForTotalContainer}>
+                <CardForTotal
+                  css={[
+                    classes.cardsForTotal,
+                    classes.cardsMidnight,
+                    classes.cardContentContainer,
+                  ].join(" ")}
+                  heading="Total Appointment"
+                  subheading="Due Today"
+                  content={totDueToday}
+                />
+                <CardForTotal
+                  css={[
+                    classes.cardsForTotal,
+                    classes.cardsAriel,
+                    classes.cardContentContainer,
+                  ].join(" ")}
+                  heading="Total Appointment"
+                  subheading="Completed"
+                  content={totCompleted}
+                />
+                <CardForTotal
+                  css={[
+                    classes.cardsForTotal,
+                    classes.cardsSuccess,
+                    classes.cardContentContainer,
+                  ].join(" ")}
+                  heading="Total Appointment"
+                  subheading="Remaining"
+                  content={totRemaining}
+                />
+                <CardForTotal
+                  css={[
+                    classes.cardsForTotal,
+                    classes.cardsMidnight,
+                    classes.cardContentContainer,
+                  ].join(" ")}
+                  heading="Total Appointment"
+                  subheading="Running Late"
+                  content={totRunningLate}
+                />
+                <CardForTotal
+                  css={[
+                    classes.cardsForTotal,
+                    classes.cardsAriel,
+                    classes.cardContentContainer,
+                  ].join(" ")}
+                  heading="Total Appointment"
+                  subheading="Cancelled"
+                  content={totCancelled}
+                />
+                <CardForTotal
+                  css={[
+                    classes.cardsForTotal,
+                    classes.cardsSuccess,
+                    classes.cardContentContainer,
+                  ].join(" ")}
+                  heading="Total Appointment"
+                  subheading="Refund"
+                  content={totRefund}
+                />
+              </div>
+              <div className={classes.chartParent}>
+                <div className={classes.chartContainer}>
+                  <div className={classes.chartHeader}>ONLINE APPOINTMENTS</div>
+                  <div className={classes.chartBody}>
+                    <BarChart
+                      state={stateOnlineAppointments}
+                      text="ONLINE APPOINTMENTS"
+                    />
+                  </div>
+                </div>
+                <div className={classes.chartContainer}>
+                  <div className={classes.chartHeader}>RUN LATE</div>
+                  <div className={classes.chartBody}>
+                    <BarChart state={stateRunLate} text="Run Late" />
+                  </div>
+                </div>
+                <div className={classes.chartContainer}>
+                  <div className={classes.chartHeader}>NOT COMPLETED</div>
+                  <div className={classes.chartBody}></div>
+                </div>
+              </div>
+              <DashboardCityDoctorsList />
+            </Tab>
+            <Tab eventKey="New_Accounts" title="New Accounts">
+              <div>
+                <DashboardNewDoctorList />
+              </div>
+            </Tab>
+            <Tab eventKey="Tmo_Accounts" title="New Tmo Deatils">
+              <div>
+                <DashboardNewTmoList />
+              </div>
+            </Tab>
+            <Tab eventKey="OPD_Triage" title="OPD Triage"></Tab>
+            <Tab eventKey="RADAR_Review" title="RADAR Review"></Tab>
+            <Tab eventKey="TMO_Referrals" title="TMO Referrals">
+              <div>
+                <DashboardTMOReferralsList />
+              </div>
+              <br />
+            </Tab>
+            <Tab
+              eventKey="TMO_ReferralsTotalPatients"
+              title="TMO Referred Patients"
+            >
+              <DashboardTmoRefferalPatientsTotalCount />
+            </Tab>
+            <Tab eventKey="Quality_Advice" title="Quality Advice"></Tab>
+            <Tab eventKey="Lifestyle_Review" title="Lifestyle Review"></Tab>
+          </Tabs>
+        ) : null}
+
+        {/* Cutis Dashbaord  */}
+        {localStorage.getItem("roleId") == "31" &&
+        localStorage.getItem("clinicId") == "600052768" ? (
+          <div>
+            <div className={classes.pageHeading}>
+              <h3>Online Appointments</h3>
+            </div>
+            <div>
+              <DashboardCutis />
+            </div>
+          </div>
+        ) : null}
+        {/* Wish Foundation Dashbaord  */}
+        {localStorage.getItem("roleId") == "31" &&
+        localStorage.getItem("clinicId") == "600053690" ? (
+          <div>
+            <div className={classes.pageHeading}>
+              <h3>Wish Foundation</h3>
+            </div>
+            <DashboardWishFoundation />
+          </div>
+        ) : null}
+
+        <div className={classes.orgDetailsTable}>{orgDetailsTable}</div>
+        {/* <div className={classes.informPatientsTable}>{informPatientsTable}</div> */}
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;

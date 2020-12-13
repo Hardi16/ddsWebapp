@@ -1,0 +1,83 @@
+import React, { useState, useEffect } from "react";
+import {
+  Row,
+  Modal,
+  Button,
+  Form,
+  Col,
+  Dropdown,
+  DropdownButton,
+} from "react-bootstrap";
+import classes from "./Styles.module.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { addDays, subDays } from "date-fns";
+import getMonth from "date-fns/getYear";
+import getYear from "date-fns/getYear";
+import { parseISO, format } from "date-fns";
+import data from "./countrycode";
+import { CloseOutlined } from "@material-ui/icons";
+import { Redirect } from "react-router";
+import  Login  from "../pages/Login/Login";
+import axios from "axios";
+import { hostAddress } from "../assets/config";
+import { currentServer } from "../assets/config";
+
+
+const VerifyOtpNumber = () => {
+  const [redirect, setRedirect] = useState(null);
+  
+  const redirectToSelfRegistration = (event) =>{
+    setRedirect(
+      <Redirect
+        to={{
+          pathname: "/DoctorSelfRegistration",
+        }}
+      />
+    );
+  }
+  
+  return (
+    <div>
+      <div>
+      <h4>
+        You will shortly receive the
+        <span>Verificaiton code on the mobile number +918299857721</span>{" "}
+      </h4>
+      <Row className="mb-3">
+        <Col sm={12}>
+          <Button type="submit" className={classes.btnLogin} variant="primary">
+            Enter the 5-digit code
+          </Button>
+        </Col>
+      </Row>
+      <Row className="my-3">
+        <Col sm="2">
+          <Form.Control required type="text" />
+        </Col>
+        <Col sm="2">
+          <Form.Control required type="text" />
+        </Col>
+        <Col sm="1">-</Col>
+        <Col sm="2">
+          <Form.Control required type="text" />
+        </Col>
+        <Col sm="2">
+          <Form.Control required type="text" />
+        </Col>
+        <Col sm="2">
+          <Form.Control required type="text" />
+        </Col>
+      </Row>
+      <div className="">
+        <Button className="" variant="primary" type="submit"  onClick={redirectToSelfRegistration}>
+          Submit
+        </Button>
+      </div>
+    </div>
+     
+    </div>
+  );
+};
+
+export default VerifyOtpNumber;

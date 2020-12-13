@@ -1,0 +1,850 @@
+body {
+  background-color: black;
+  /* #f3f3f3 */
+}
+.mainContainer {
+  display: flex;
+  flex-direction: row;
+  background-color: black;
+  width: 100%;
+  color: white;
+  min-height: 100vh;
+  max-height: 100%;
+}
+.leftPane {
+  flex: 1;
+  background-color: black;
+  border-right: 1px solid gray;
+  min-height: 100vh;
+  width: 100px;
+}
+.leftPaneCreatePage {
+  flex: 1;
+  border-right: 1px solid gray;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  max-height: 100%;
+  /* background-color: rgb(56, 56, 56); */
+}
+.rightPane {
+  flex: 3;
+  /* border-left: 0.5px solid gray; */
+}
+.rightPaneCreatePage {
+  flex: 3;
+  overflow: scroll;
+  max-height: 100%;
+  height: 100vh;
+}
+.leftPaneHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
+  width: 100%;
+  /* border-right: 0.5px solid grey; */
+
+  /* border-right: 1px solid grey; */
+}
+.leftPaneHeaderDSCreate {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 13px 0;
+  width: 100%;
+  /* border-right: 0.5px solid grey; */
+
+  /* border-right: 1px solid grey; */
+}
+.leftHeaderImage {
+  height: 90%;
+  width: 90%;
+}
+.leftHeaderImageContainer {
+  flex: 1;
+  padding: 0;
+  /* border-right: 1px solid white; */
+}
+.leftHeaderHeading {
+  /* flex: 3; */
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+.leftHeaderHeadingTitle {
+  font-weight: bold;
+  font-size: 22px;
+  color: #cac7c7;
+}
+
+.hamburgerDiv {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+.hamburger {
+  height: 50px;
+}
+.hamburgerBtn {
+  background-color: black;
+  border: 0px;
+  padding: 0px;
+}
+.hamburgerBtn:focus {
+  background-color: black;
+  border: 0px;
+  padding: 0px;
+  outline: 0;
+}
+.searchbar {
+  color: white;
+  background-color: rgb(56, 56, 56);
+  border: none;
+}
+.searchbar:focus {
+  color: white;
+  background-color: rgb(56, 56, 56);
+  border: none;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+.leftPaneSearch {
+  padding: 15px;
+  display: flex;
+  /* border-right: 1px solid grey; */
+  flex-direction: row;
+  justify-content: space-between;
+}
+.leftPaneContent {
+  display: flex;
+  justify-content: center;
+  padding: 30px 20px;
+  /* border-right: 0.5px solid grey; */
+}
+form {
+  width: 100%;
+}
+
+.addNewBtn {
+  width: 100%;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: blue;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+}
+/* scroll*/
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(36, 35, 35);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555;
+  opacity: 0.5;
+}
+
+/* ::-webkit-scrollbar-thumb:hover {
+  background: #555;
+} */
+.patientDetails {
+  width: 100%;
+  height: calc(100vh - 210px);
+  overflow-y: auto;
+  /* direction: rtl; */
+}
+.patientDetailsContainer {
+  position: relative;
+  min-height: calc(100% - 160px);
+}
+.patientCardBtn {
+  width: 100%;
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 0px;
+  outline: 0;
+}
+.patientCardBtn:hover {
+  width: 100%;
+  background-color: rgb(146, 146, 146);
+  color: black;
+  border: none;
+  padding: 0px;
+  outline: 0;
+}
+.patientCardBtn:focus {
+  width: 100%;
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 0px;
+  outline: 0;
+}
+.tempCard1Wrapper {
+  display: flex;
+  flex-direction: row;
+}
+.tempCard1 {
+  margin: 30px;
+  background-color: #cac7c7;
+  color: black;
+  padding: 0px;
+  border-radius: 0.8rem;
+}
+.tempCard1 .card-body {
+  color: #666;
+  font-weight: 500;
+}
+.tempSubtitle {
+  color: #666;
+  font-weight: bold;
+}
+.rightPane {
+  display: flex;
+  flex-direction: row;
+}
+.tempCard1 {
+  flex: 8;
+}
+.collapse {
+  flex: 1;
+  position: relative;
+}
+.filterBtn {
+  border: 0;
+  width: 40px;
+}
+.filterBtn:focus {
+  border: 0;
+  outline: 0;
+  width: 40px;
+}
+.filterDropRx {
+  margin: 20px 0 0;
+  width: 40px;
+  background-color: rgb(156, 156, 156);
+  border: 0;
+}
+.filterDropCal {
+  margin: 20px 0 0;
+  width: 40px;
+  background-color: rgb(255, 78, 78);
+  border: 0;
+}
+.filterDropRupee {
+  margin: 20px 0 0;
+  width: 40px;
+  background-color: rgb(18, 172, 77);
+  border: 0;
+}
+.filterDropMicroscope {
+  margin: 20px 0 0;
+  width: 40px;
+  background-color: rgb(247, 234, 55);
+  border: 0;
+  color: black;
+}
+.filterDropImage {
+  margin: 20px 0 0;
+  width: 40px;
+  background-color: rgb(205, 78, 255);
+  border: 0;
+}
+.filterDropDiv {
+  display: flex;
+  flex-direction: column;
+  border: 0;
+}
+.datepicker {
+  padding: 5px;
+  border-radius: 5px;
+  width: 100px;
+  margin-left: 10px;
+  margin-top: 2px;
+  border-width: 0px;
+  background-color: #f1f1f1;
+}
+.datepickerCreatePg {
+  border-radius: 5px;
+  width: 100px;
+  padding: 2px;
+  margin-left: 10px;
+  margin-top: 2px;
+  border-width: 0px;
+  background-color: inherit;
+  outline: 0;
+}
+.searchDiv {
+  flex: 3;
+}
+.dateDiv {
+  flex: 1;
+}
+.clinicName {
+  background-color: inherit;
+  border: 0;
+  font-weight: bold;
+  font-size: 17px;
+  color: #cac7c7;
+}
+.clinicName:hover {
+  background-color: inherit;
+  border: 0;
+  font-size: 17px;
+  outline: 0;
+}
+.clinicName:active {
+  background-color: inherit;
+  border: 0;
+  font-size: 17px;
+  outline: 0;
+}
+.leftPaneSearchCreatePage {
+  width: 100%;
+  /* margin: 40px 0 0 0px; */
+  background-color: rgb(56, 56, 56);
+
+  border-bottom: 1px solid grey;
+  /* border-top-right-radius: 28px; */
+  /* border-top-left-radius: 28px; */
+}
+.createPageClinicNameBtn {
+  background-color: inherit;
+  border: 0px;
+  font-weight: bold;
+  font-size: 19px;
+  color: #cac7c7;
+}
+.createPageClinicNameBtn:hover {
+  background-color: black;
+  border: 0px;
+  outline: 0;
+  font-weight: bold;
+  font-size: 19px;
+  color: #cac7c7;
+}
+.createPageClinicNameBtn:focus {
+  background-color: black;
+  border: 0px;
+  outline: 0;
+  font-weight: bold;
+  font-size: 19px;
+  color: #cac7c7;
+}
+.mediLeftContentInnerDiv {
+  height: 100%;
+}
+.addBtn {
+  z-index: 100;
+  position: fixed;
+  bottom: 40px;
+  left: 40px;
+  border-radius: 50%;
+  padding: 18px 15px 18px 15px;
+  font-size: 20px;
+  font-weight: bold;
+  border: 0;
+  background-color: rgb(0, 180, 0);
+}
+.applyBtnTP {
+  z-index: 100;
+  position: fixed;
+  bottom: 40px;
+  left: 40px;
+  border-radius: 4px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border: 0;
+}
+
+.mediTabBarBtn {
+  margin: 0px 5px 0px 5px;
+}
+.clearBtn {
+  right: 10px;
+}
+.barName {
+}
+.barDiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.starUnc {
+  color: rgb(66, 66, 66);
+}
+.starUnc:hover {
+  color: orange;
+}
+.starCh {
+  color: orange;
+}
+.tabHeading {
+  color: white;
+}
+.tabContent {
+  color: white;
+}
+.tabsStyler {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  color: white;
+}
+.tabsStyler:hover {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  color: white;
+}
+.leftHeaders {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 100%;
+  font-weight: bold;
+  color: lightgray;
+}
+.leftPaneContentCreate {
+  display: flex;
+  justify-content: center;
+  padding: 20px 30px 30px 30px;
+  flex-direction: column;
+  width: 100%;
+  background-color: rgb(56, 56, 56);
+  /* border-bottom-right-radius: 28px; */
+  /* border-bottom-left-radius: 28px; */
+}
+
+.leftHeaderBtnPassive {
+  background-color: inherit;
+}
+.leftHeaderBtnPassive:hover {
+  /* background-color: lightgrey; */
+  /* color: black; */
+  border: 0px;
+  outline: 0px;
+}
+.leftHeaderBtnPassive:focus {
+  /* background-color: lightgrey;  */
+  /* color: black; */
+  border: 0px;
+  outline: 0px;
+}
+.leftHeaderBtnActive {
+  /* background-color: white; */
+  /* color: black; */
+  border: 0px;
+  outline: 0px;
+}
+.leftHeaderBtnActive:focus {
+  /* background-color: white; */
+  /* color: black; */
+  border: 0px;
+  outline: 0px;
+}
+.grpHeader {
+  color: gray;
+  text-align: center;
+  width: 100%;
+  padding-top: 25px;
+}
+
+/*DischargeSummaryPatientDetails css*/
+.mainDischargeSummary {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.rightTopLeft {
+  display: flex;
+  flex: 1 1;
+}
+.rightTop {
+  /* flex: 1; */
+  padding: 20px;
+  border-bottom: 1px solid grey;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  overflow: hidden;
+  padding-bottom: 0;
+  height: 106px;
+  max-height: 106px;
+}
+.rightMid {
+  flex: 6 1;
+  padding: 20px 20px;
+  /* border: 1px solid grey; */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.tempCardholder {
+  flex: 8 1;
+  margin: 30px 0;
+  background-color: #cac7c7;
+  color: black;
+  padding: 0px;
+  border-radius: 0.8rem;
+}
+.nameDischargeSummary {
+  flex: 10 1;
+  color: turquoise;
+  font-size: 25px;
+}
+.perAge {
+  display: block;
+  font-size: 15px;
+  color: #fff;
+}
+.imgActions {
+  width: 45px;
+  margin-right: 20px;
+}
+.patientCardProfile {
+  flex: 1 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.patientCardProfile img {
+  height: 65px;
+  width: 65px;
+  border-radius: 65px;
+  background-color: #343131;
+}
+.patientCardNameStuff {
+  flex: 3 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 5px 10px;
+}
+
+.patientDate {
+  flex: 1;
+  align-items: flex-end;
+  padding: 5px;
+  margin-right: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+.patientName {
+  flex: 1;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: left;
+}
+.patientAgeStuff {
+  flex: 1;
+  font-size: 15px;
+}
+.RightPaneSearch {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1;
+}
+.RightPaneSearch form {
+  width: 100%;
+}
+.patientCardContainer {
+  display: flex;
+  flex-direction: row;
+  border-top: 1px solid rgb(58, 58, 58);
+  /* border-bottom: 1px solid rgb(58, 58, 58); */
+  width: 100%;
+  padding: 10px 5px;
+}
+.addNewBtnSmallDiv {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+.addNewBtnSmall {
+  width: 60px;
+  height: 60px;
+  border-radius: 60px;
+  background-color: blue;
+  border: none;
+  margin: 10px;
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 0;
+}
+.txtBlue {
+  color: blue;
+}
+.approvalBtn {
+  background-color: transparent;
+  border: none;
+  position: absolute;
+  right: 0;
+}
+.approvalBtn:focus,
+.approvalBtn:hover,
+.approvalBtn:active {
+  background-color: transparent !important;
+  border: none;
+  box-shadow: none !important;
+}
+.approvalBtn i {
+  color: rgba(58, 58, 58, 0.5);
+  font-size: 30px;
+}
+.ApprovalDropDiv {
+  padding-top: 50px;
+}
+.ApprovalDropDiv button {
+  background-color: blue;
+  margin-bottom: 15px;
+  padding: 15px 20px;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 0.8rem;
+  white-space: nowrap;
+}
+.doctorListContainer ul {
+  list-style: none;
+  width: 100%;
+  padding-left: 0;
+}
+.doctorListContainer ul li {
+  background-color: #4f4f4f;
+  border-radius: 0.5rem;
+  padding: 10px 10px;
+  margin-bottom: 15px;
+}
+.doctorListContainer ul li.active {
+  background-color: blue;
+}
+.tempDoctorCard {
+  background: transparent;
+  color: #4f4f4f;
+}
+.aprovalNote textarea {
+  width: 500px;
+  margin: 30px 0;
+  background-color: #cac7c7;
+  color: black;
+  padding: 0px;
+  border-radius: 0.8rem;
+  padding: 10px;
+}
+.btnSend {
+  background-color: blue;
+  padding: 15px 20px;
+  border: none;
+  width: 200px;
+}
+.leftHeaderHeadingDataOp {
+  flex: 3;
+  text-align: center;
+  align-items: center;
+  justify-content: space-evenly;
+  display: flex;
+  flex-direction: column;
+}
+.leftHeaderHeadingTitleDataOp {
+  font-weight: bold;
+  font-size: 19px;
+  color: #cac7c7;
+}
+.docName {
+  background-color: inherit;
+  border: 0;
+  font-weight: bold;
+  font-size: 18px;
+  color: #cac7c7;
+}
+.docName:hover {
+  background-color: inherit;
+  border: 0;
+  font-size: 18px;
+  outline: 0;
+  color: #cac7c7;
+  opacity: 0.8;
+}
+.docName:active {
+  background-color: inherit;
+  border: 0;
+  font-size: 18px;
+  outline: 0;
+}
+.searchDivDsApprove {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+}
+.searchBarApprovePage {
+  flex: 1;
+  margin-right: 10px;
+}
+.addBtnApprove {
+  /* font-size: small; */
+}
+.doctorListDsApprovePagePassive {
+  width: 100%;
+  margin: 10px 10px 10px 0;
+  background-color: rgb(80, 80, 80);
+  color: white;
+  font-weight: bold;
+  border: 0;
+  text-align: left;
+}
+.doctorListDsApprovePagePassive:hover {
+  width: 100%;
+  margin: 10px 10px 10px 0;
+  background-color: rgb(40, 188, 199);
+  color: black;
+  font-weight: bold;
+  border: 0;
+  text-align: left;
+}
+.doctorListDsApprovePagePassive:focus {
+  width: 100%;
+  margin: 10px 10px 10px 0;
+  background-color: rgb(40, 188, 199);
+  color: black;
+  font-weight: bold;
+  border: 0px;
+  text-align: left;
+  outline: 0;
+}
+.doctorListDsApprovePageActive {
+  width: 100%;
+  margin: 10px 10px 10px 0;
+  background-color: rgb(40, 188, 199);
+  color: black;
+  font-weight: bold;
+  border: 0;
+  text-align: left;
+}
+.doctorCardApprovalPage {
+  width: 50%;
+  height: 70%;
+  margin: 40px;
+  color: black;
+  background-color: rgb(173, 173, 173);
+  border-radius: 7px;
+}
+.textAreaApproval {
+  background-color: white;
+  border: 0;
+  width: 100%;
+  line-height: 4;
+  color: black;
+  border-radius: 10px;
+  margin-top: 10px;
+  padding: 0px 20px 0px 20px;
+}
+.textAreaApproval:focus {
+  outline: 0;
+  color: black;
+}
+.sendBtnApprovePg {
+  margin-top: 10px;
+}
+.pullDsPgRightDiv {
+  border-left: 0.5px solid gray;
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  .patientDetails {
+    height: 250px;
+    max-height: calc(100% - 190px);
+  }
+  .leftPaneHeaderFix {
+    position: relative !important;
+    width: 100% !important;
+  }
+  .leftHeaders {
+    justify-content: center;
+  }
+  .leftPaneSearchCreatePage {
+    width: 100%;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .mainContainer {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .leftPaneContent {
+    padding: 15px;
+  }
+  .leftPaneHeaderFix {
+    width: 100%;
+  }
+  .rightPane {
+    padding: 15px 0;
+    flex-direction: column;
+  }
+  .tempCard1 {
+    margin: 10px 15px 10px 5px;
+  }
+  .collapse {
+    padding-top: 10px;
+  }
+  .react-datepicker-popper {
+    right: 0;
+    left: auto;
+  }
+  #draggable {
+    width: 100%;
+    overflow: hidden;
+  }
+  textarea {
+    width: 100%;
+  }
+  .doctorCardApprovalPage {
+    width: 100%;
+    height: auto;
+    margin: 0px;
+  }
+  .datepicker {
+    width: 100%;
+  }
+  .react-datepicker-popper {
+    right: 0;
+    left: auto;
+  }
+}
+.leftPaneHeaderFix {
+  /* position: relative; */
+  width: 100%;
+  /* z-index: 10; */
+  background-color: black;
+  border-bottom: 1px solid grey;
+}
+.leftPaneHeaderFix1 {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+  background-color: black;
+  border-bottom: 1px solid grey;
+}
+
+.leftContentScroll {
+  /* top: 300px; */
+  width: 100%;
+  /* position: relative; */
+  /* overflow: scroll; */
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+  background-color: rgb(56, 56, 56);
+}

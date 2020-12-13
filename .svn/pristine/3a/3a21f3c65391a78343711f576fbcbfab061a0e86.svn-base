@@ -1,0 +1,24 @@
+import React,{useState} from 'react';
+import {Modal, Button, Form, Col} from 'react-bootstrap';
+import classes from './Styles.module.css';
+import AddModal from './AddModalPatientDS';
+
+
+  const AddNewPatientModal=(props)=> {
+    const [modalShow, setModalShow] = React.useState(false);
+  
+    return (
+      <>
+        <Button className={classes.addNewBtn} onClick={() => setModalShow(true)}>
+          <span>+</span> Add New Patients
+        </Button>
+        <AddModal
+            addPatient={props.addPatient}
+          show={modalShow}
+          onHide={() => setModalShow(false)}
+        />
+      </>
+    );
+  }
+
+  export default AddNewPatientModal;

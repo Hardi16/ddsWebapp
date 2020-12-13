@@ -1,0 +1,74 @@
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  Row,
+  Modal,
+  Button,
+  Form,
+  Col,
+  Dropdown,
+  DropdownButton,
+} from "react-bootstrap";
+import classes from "./Styles.module.css";
+import { Redirect } from "react-router";
+import Login from "../pages/Login/Login";
+import axios from "axios";
+import { hostAddress } from "../assets/config";
+import { currentServer } from "../assets/config";
+import { useHistory } from "react-router";
+
+const ResetPassword = () => {
+
+  return (
+    <div>
+      <div className={classes.mainResetContainer}>
+        <Card className={classes.resetCard}>
+          <Card.Body>
+            <Card.Title className={classes.title}>
+            <h2 className="mb-4">Reset Your Password</h2>
+            </Card.Title>
+          
+            <Row className="mb-4">
+              <Col sm="12">            
+              <Form.Control
+                  required
+                  keyboardType="email"
+                  placeholder="Enter your email"
+                />
+              </Col>
+            </Row>
+            <Row className="mb-4">
+              <Col sm="12">
+              <Form.Control
+                  required
+                  keyboardType="text"
+                  placeholder="New Password"
+                />
+              </Col>
+            </Row>
+            <Row className="mb-4">
+              <Col sm="12">
+              <Form.Control
+                  required
+                  keyboardType="text"
+                  placeholder="Confirm Password"
+                />
+              </Col>
+            </Row>
+            <div>
+              <Button
+                className={classes.btnVerify}
+                variant="primary"
+                type="submit"
+               
+              >Submit
+              </Button>
+            </div>
+          </Card.Body>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default ResetPassword;

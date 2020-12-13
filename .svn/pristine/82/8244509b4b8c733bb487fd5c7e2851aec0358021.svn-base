@@ -1,0 +1,57 @@
+import React, { useState } from "react";
+import { Modal, Button, Form } from "react-bootstrap";
+import classes from "./Styles.module.css";
+
+const AddDraggableSectionModal = (props) => {
+  const [smShow, setSmShow] = useState(false);
+  const [secName, setSecName] = useState("");
+  const handleAdd = () => {
+    let cardsArr = JSON.parse(localStorage.getItem("cardsLabel"));
+    cardsArr.push(secName);
+    localStorage.setItem("cardsLabel", JSON.stringify(cardsArr));
+    props.setCardsLabel(cardsArr);
+
+    let secHeadingsObj = JSON.parse(localStorage.getItem("secHeadings"));
+    secHeadingsObj[secName] = secName;
+    localStorage.setItem("secHeadings", JSON.stringify(secHeadingsObj));
+    props.setSecHeadings(secHeadingsObj);
+
+    setSmShow(false);
+  };
+  return (
+    <>
+      <Button
+        className={classes.dsrightbottombtn}
+        onClick={() => setSmShow(true)}
+      >
+        ADD SECTION
+      </Button>
+      <Modal
+        size="sm"
+        show={smShow}
+        onHide={() => setSmShow(false)}
+        aria-labelledby="example-modal-sizes-title-sm"
+        centered
+      >
+        <Modal.Body>
+          <div className={classes.grpNameDiv}>
+            <input
+              type="text"
+              placeholder={"Enter Section Name"}
+              className={classes.mediGrpNameTextbox}
+              onChange={(e) => {
+                setSecName(e.target.value);
+              }}
+              autoFocus
+            ></input>
+            <Button variant="warning" onClick={() => handleAdd()}>
+              Add
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+    </>
+  );
+};
+
+export default AddDraggableSectionModal;

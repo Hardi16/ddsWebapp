@@ -1,0 +1,279 @@
+import React, { useState } from "react";
+import classes from "./DischargeSummary.module.css";
+import styles from "../../components/Styles.module.css";
+import {
+  Form,
+  Container,
+  Row,
+  Col,
+  Button,
+  Card,
+  Collapse,
+  Dropdown,
+} from "react-bootstrap";
+import AddNewPatientModal from "../../components/AddNewPatientModal";
+import AddNewPatientModalSmall from "../../components/AddNewPatientModalSmall";
+import PatientCard from "../../components/PatientCard";
+import PullPatientDischargeInfo from "../../components/PullPatientDischargeInfo";
+import DischargeSummaryForNew from "../../components/DischargeSummaryForNew";
+import DischargeSummarySet from "../../components/DischargeSummarySet";
+import axios from "axios";
+import { hostAddress } from "../../assets/config";
+import convert from "xml-js";
+import { Redirect } from "react-router";
+
+const DischargeSummaryPatientDetails = (props) => {
+  const [redirect, setRedirect] = useState(null);
+  const [open, setOpen] = useState(false);
+  const handleLogout = () => {
+    localStorage.clear();
+    setRedirect(<Redirect to="/dischargeSummary" />);
+  };
+  const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+    <button
+      className={classes.hamburgerBtn}
+      ref={ref}
+      onClick={(e) => {
+        e.preventDefault();
+        onClick(e);
+      }}
+    >
+      <img
+        className={classes.hamburger}
+        src="https://i.ya-webdesign.com/images/hamburger-menu-icon-png-white-12.png"
+      ></img>
+    </button>
+  ));
+
+  return (
+    <div className={classes.mainContainer}>
+      <div className={classes.leftPane}>
+        <div className={classes.leftPaneHeader}>
+          <div className={classes.leftHeaderImageContainer}>
+            <img
+              className={classes.leftHeaderImage}
+              src="https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png"
+            ></img>
+          </div>
+          <div className={classes.leftHeaderHeading}>
+            <div className={classes.leftHeaderHeadingTitle}>
+              Jain Nursing Home
+            </div>
+            <div className={classes.leftHeaderSubHeading}>Dr. Vinay Kumar</div>
+          </div>
+          <div className={classes.hamburgerDiv}>
+            <Dropdown>
+              <Dropdown.Toggle
+                as={CustomToggle}
+                id="dropdown-custom-components"
+              >
+                Custom toggle
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item eventKey="1">Reset Password</Dropdown.Item>
+                <Dropdown.Item
+                  eventKey="2"
+                  onClick={() => {
+                    handleLogout();
+                  }}
+                >
+                  Logout
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+        </div>
+        <div className={classes.leftPaneSearch}>
+          <Form>
+            <Form.Control className={classes.searchbar} placeholder="Search" />
+          </Form>
+        </div>
+        <div className={classes.leftPaneContent}>
+          <div className={classes.patientDetails}>
+            <div className={classes.patientCardContainer}>
+              <div className={classes.patientCardProfile}>
+                <img
+                  className={classes.leftHeaderImage}
+                  src="https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png"
+                ></img>
+              </div>
+              <div className={classes.patientCardNameStuff}>
+                <div className={classes.patientName}>Ayush Singh</div>
+                <div className={classes.patientAgeStuff}>24Y/M</div>
+              </div>
+              <div className={classes.patientDate}>12/05/2020</div>
+            </div>
+            <div className={classes.addNewBtnSmallDiv}>
+              <Button className={classes.addNewBtnSmall}>+</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className={classes.rightPane}>
+        <div className={classes.mainDischargeSummary}>
+          <div className={styles.rightTop}>
+            <div className={classes.rightTopLeft}>
+              <div className={classes.patientCardProfile}>
+                <img
+                  className={classes.rightHeaderImage}
+                  src={require("../../assets/img-profile.png")}
+                ></img>
+              </div>
+              <div className={classes.nameDischargeSummary}>
+                Ayush Singh
+                <span className={classes.perAge}>24Y/M</span>
+              </div>
+
+              <div className={classes.contactActions}>
+                <img
+                  className={classes.imgActions}
+                  src={require("../../assets/phone.png")}
+                />
+                <img
+                  className={classes.imgActions}
+                  src={require("../../assets/video-camera.png")}
+                />
+              </div>
+            </div>
+          </div>
+          <div className={styles.rightMid}>
+            <Container>
+              <Row>
+                <Col lg={11}>
+                  <div className={classes.RightPaneSearch}>
+                    <Form>
+                      <Form.Control
+                        className={classes.searchbar}
+                        placeholder="Search"
+                      />
+                    </Form>
+                  </div>
+
+                  <div className={classes.rightDetailContainer}>
+                    <Card className={classes.tempCard1}>
+                      <Card.Body>
+                        <Row>
+                          <Col md={9} xs={12}>
+                            <h5 className={classes.txtBlue}>12/02/2020 </h5>
+                            <h4>
+                              <strong>Rx</strong>
+                            </h4>
+                            Tab Licinopril 20mg OID x 30d <br /> Tab Amlodipine
+                            5mg OID x 30d
+                            <br />
+                            <br />
+                            <h4>Instructions</h4>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit, sed do eiusmod tempor incididunt ut labore et
+                            dolore magna aliqua. Ut enim ad minim veniam, quis
+                            nostrud exercitation ullamco laboris nisi ut aliquip
+                            ex ea commodo consequat. Duis aute irure dolor in
+                            reprehenderit in voluptate velit esse cillum dolore
+                            eu fugiat nulla pariatur. Excepteur sint occaecat
+                            cupidatat non proident, sunt in culpa qui officia
+                            deserunt mollit anim id est laborum.
+                            <br />
+                            <br />
+                            <h4>Investigations</h4>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit, sed do eiusmod tempor incididunt ut labore et
+                            dolore magna aliqua. Ut enim ad minim veniam, quis
+                            nostrud exercitation ullamco laboris nisi ut aliquip
+                            ex ea commodo consequat. Duis aute irure dolor in
+                            reprehenderit in voluptate velit esse cillum dolore
+                            eu fugiat nulla pariatur. Excepteur sint occaecat
+                            cupidatat non proident, sunt in culpa qui officia
+                            deserunt mollit anim id est laborum.
+                            <br />
+                            <br />
+                            <h4>Follow up</h4>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit, sed do eiusmod tempor incididunt ut labore et
+                            dolore magna aliqua. Ut enim ad minim veniam, quis
+                            nostrud exercitation ullamco laboris nisi ut aliquip
+                            ex ea commodo consequat. Duis aute irure dolor in
+                            reprehenderit in voluptate velit esse cillum dolore
+                            eu fugiat nulla pariatur. Excepteur sint occaecat
+                            cupidatat non proident, sunt in culpa qui officia
+                            deserunt mollit anim id est laborum.
+                          </Col>
+                          <Col md={3} xs={12}>
+                            <div>
+                              <Button className={classes.btnApproval}>
+                                Send for Approval
+                              </Button>
+                              <Button className={classes.btnApproval}>
+                                Self Approval
+                              </Button>
+                              <Button className={classes.btnApproval}>
+                                Verbal/Phone Approval{" "}
+                              </Button>
+                              <Button className={classes.btnApproval}>
+                                Print
+                              </Button>
+                              <Button className={classes.btnApproval}>
+                                Delete
+                              </Button>
+                            </div>
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                    </Card>
+                  </div>
+                </Col>
+                <Col>
+                  <div className={classes.collapse}>
+                    <Button
+                      onClick={() => setOpen(!open)}
+                      aria-controls="example-collapse-text"
+                      aria-expanded={open}
+                      className={classes.filterBtn}
+                    >
+                      <i class="fa fa-filter" aria-hidden="true"></i>
+                    </Button>
+                    <Collapse in={open}>
+                      <div className={classes.filterDropDiv}>
+                        <Button className={classes.filterDropRx}>Rx</Button>
+                        <Button className={classes.filterDropCal}>
+                          <i class="fa fa-calendar"></i>
+                        </Button>
+                        <Button className={classes.filterDropRupee}>
+                          <i class="fa fa-rupee"></i>
+                        </Button>
+                        <Button className={classes.filterDropMicroscope}>
+                          <i class="fa fa-plus-square"></i>
+                        </Button>
+                        <Button className={classes.filterDropImage}>
+                          <i class="fa fa-image"></i>
+                        </Button>
+                      </div>
+                    </Collapse>
+                  </div>
+                </Col>
+              </Row>
+            </Container>
+          </div>
+
+          <div className={styles.rightBottom}>
+            <div className={styles.temprxpad}>
+              {" "}
+              <img
+                className={styles.imgTemp}
+                src={require("../../assets/camera.png")}
+              />
+              RxPAD
+            </div>
+            <Form className={styles.tempinput}>
+              <Form.Control
+                type="text"
+                className={styles.tempTextBox}
+              ></Form.Control>
+            </Form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DischargeSummaryPatientDetails;

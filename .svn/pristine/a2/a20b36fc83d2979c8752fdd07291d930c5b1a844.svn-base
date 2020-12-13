@@ -1,0 +1,807 @@
+import React, { useState, useEffect } from "react";
+import classes from "./DischargeSummary.module.css";
+import {
+  Form,
+  Col,
+  Button,
+  Dropdown,
+  DropdownButton,
+  ButtonGroup,
+} from "react-bootstrap";
+import AddNewPatientModal from "../../components/AddNewPatientModal";
+import AddNewPatientModalSmall from "../../components/AddNewPatientModalSmall";
+import PatientCard from "../../components/PatientCard";
+import PullPatientDischargeInfo from "../../components/PullPatientDischargeInfo";
+import DischargeSummaryForNew from "../../components/DischargeSummaryForNew";
+import DischargeSummarySet from "../../components/DischargeSummarySet";
+import axios from "axios";
+import { hostAddress } from "../../assets/config";
+import { currentServer } from "../../assets/config";
+import convert from "xml-js";
+import { Redirect } from "react-router";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import HamburgerDropdown from "../../components/HamburgerDropdown";
+
+const DischargeSummary = (props) => {
+  const [redirect, setRedirect] = useState(null);
+  const [patients, setPatients] = useState([]);
+  const [emailSet, setEmailSet] = useState([]);
+  const [patientDetails, setPatientsDisplay] = useState([]);
+  const [patientDischargeDetails, setPatientDischargeDetails] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
+  const [allClinics, setAllClinics] = useState([]);
+  const [clinicsDropdown, setClinicsDropdown] = useState(null);
+  const [selectedClinicName, setSelectedClinicName] = useState(
+    localStorage.getItem("clinicName")
+  );
+  const [selectedClinicId, setSelectedClinicId] = useState(
+    localStorage.getItem("clinicId")
+  );
+  const [doctorsDropdown, setDoctorsDropdown] = useState(null);
+  const [selectedDoctorName, setSelectedDoctorName] = useState(
+    localStorage.getItem("doctorName")
+  );
+  const [selectedDoctorId, setSelectedDoctorId] = useState(
+    localStorage.getItem("doctorId")
+  );
+  const [selectedRootClinicId, setSelectedRootClinicId] = useState(null);
+  const [patientListState, setPatientListState] = useState(null);
+  const [prompt, setPrompt] = useState();
+  const [leftHeaderHeading, setLeftHeaderHeading] = useState(
+    <div className={classes.leftHeaderHeading}>
+      <div className={classes.leftHeaderHeadingTitle}>
+        <Dropdown>
+          <Dropdown.Toggle className={classes.clinicName}></Dropdown.Toggle>
+          <Dropdown.Menu>
+            {" "}
+            <Dropdown.Header></Dropdown.Header>
+          </Dropdown.Menu>
+        </Dropdown>
+      </div>
+      <div className={classes.leftHeaderSubHeading}></div>
+    </div>
+  );
+  let patientList = null;
+  const addPatient = (patientDetails) => {
+    console.log("added patientDetails", patientDetails);
+    console.log("patients", patients);
+    // if (emailSet.includes(patientDetails["email"]))
+    //   alert("This patient already exists!");
+    // else {
+    // let tempArr = emailSet == null ? [] : emailSet;
+    // console.log("emailset", emailSet);
+    // tempArr = tempArr.push(patientDetails["email"]);
+    // setEmailSet(tempArr);
+
+    let patientObj = patientDetails;
+    patientObj["clinicID"] = localStorage.getItem("clinicId");
+    patientObj["rootClinicId"] = localStorage.getItem("rootClinicId");
+    patientObj["doctorID"] = localStorage.getItem("doctorId");
+    patientObj["created_on"] = 0;
+    patientObj["dateofBirth"] =
+      patientObj["dateofBirth"] == ""
+        ? "01/01/1990"
+        : patientObj["dateofBirth"];
+    patientObj["primaryLogin"] = 0;
+    patientObj["primaryReason"] = "";
+    patientObj["ptVerificationCode"] = "";
+    patientObj["registrationSource"] = "PatientApp";
+    patientObj["removeFlag"] = 0;
+    patientObj["selected"] = 0;
+    patientObj["passcodeVerified"] = false;
+    patientObj["sqlLiteID"] = 0;
+    let patientArr = [];
+    patientArr.push(patientObj);
+    let data = { patientList: patientArr };
+    console.log("registerPatient data", data);
+    axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+    axios
+      .put(
+        hostAddress +
+          currentServer +
+          "/RestEasy/DischargeSummaryWebService/registerPatient",
+        data
+      )
+      .then((response) => {
+        console.log("registerPatient response", response.data);
+        setPrompt(Math.random());
+      })
+      .catch((err) => {
+        console.log("registerPatient err", err);
+      });
+  };
+
+  const pullDischargeData = (patient) => {
+    console.log("patient in pullDischargeData", patient);
+    let patientStatus = localStorage.getItem("patientStatus");
+    if (patientStatus == "Just Saved") {
+      setPatientDischargeDetails(
+        <>
+          <PullPatientDischargeInfo
+            summaryDataArr={[]}
+            patient={patient}
+            prompt={Math.random()}
+          ></PullPatientDischargeInfo>
+        </>
+      );
+    } else {
+      let data = {
+        doctorId: localStorage.getItem("doctorId"),
+        patientId: patient["id"],
+        clinicId: localStorage.getItem("clinicId"),
+      };
+      console.log("getPatientDischargeSummary req data", data);
+      axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+      axios
+        .put(
+          hostAddress +
+            currentServer +
+            "/RestEasy/DischargeSummaryWebService/getPatientDischargeSummary",
+          data
+        )
+        .then((response) => {
+          console.log("getPatientDischargeSummary resp", response.data);
+
+          if (response.data["dischargeSummary"].length === 0)
+            setPatientDischargeDetails(
+              <DischargeSummaryForNew
+                patient={patient}
+              ></DischargeSummaryForNew>
+            );
+          else {
+            localStorage.setItem(
+              "savedObject",
+
+              response.data["dischargeSummary"][
+                response.data["dischargeSummary"].length - 1
+              ]["displayJson"]
+            );
+            localStorage.setItem(
+              "visitId",
+              response.data["dischargeSummary"][
+                response.data["dischargeSummary"].length - 1
+              ]["visit_id"]
+            );
+
+            localStorage.setItem(
+              "patientId",
+              response.data["dischargeSummary"][
+                response.data["dischargeSummary"].length - 1
+              ]["patient_id"]
+            );
+
+            localStorage.setItem(
+              "evolkoId",
+              response.data["dischargeSummary"][
+                response.data["dischargeSummary"].length - 1
+              ]["evolko_id"]
+            );
+            setPatientDischargeDetails(
+              <>
+                <PullPatientDischargeInfo
+                  summaryDataArr={[]}
+                  patient={patient}
+                  prompt={Math.random()}
+                  displayJson={JSON.parse(
+                    response.data["dischargeSummary"][
+                      response.data["dischargeSummary"].length - 1
+                    ]["displayJson"]
+                  )}
+                  visit_id={
+                    response.data["dischargeSummary"][
+                      response.data["dischargeSummary"].length - 1
+                    ]["visit_id"]
+                  }
+                  approved_status={
+                    response.data["dischargeSummary"][
+                      response.data["dischargeSummary"].length - 1
+                    ]["approved_status"]
+                  }
+                ></PullPatientDischargeInfo>
+              </>
+            );
+          }
+        })
+        .catch((err) => {
+          console.log("getPatientDischargeSummary err", err);
+          setPatientDischargeDetails(
+            <DischargeSummaryForNew patient={patient}></DischargeSummaryForNew>
+          );
+        });
+    }
+    //     console.log("pullDischargeData response", response.data);
+    //     let stateFlag =
+    //       response.data["ptAppointmentOrgList"][0]["ptSummarySaveFlag"];
+    //     if (
+    //       response.data == null ||
+    //       response.data["ptAppointmentOrgList"].length == 0
+    //     ) {
+    //       setPatientDischargeDetails(
+    //         <DischargeSummaryForNew
+    //           patient={patient}
+    //           name={patient["name"]}
+    //           age={patient["age"]}
+    //           sex={patient["sex"]}
+    //         ></DischargeSummaryForNew>
+    //       );
+    //     } else {
+    //       let getPtProfileReq = {
+    //         pId: patient["id"],
+    //         docId: localStorage.getItem("doctorId"),
+    //         currentDateStr: new Date().toString(),
+    //         clinicId: localStorage.getItem("doctorId"),
+    //       };
+    //       console.log("getPtProfileReq", getPtProfileReq);
+    //       axios.defaults.headers.common["X-Requested-With"] =
+    //         "XMLHttpRequest";
+    //       axios
+    //         .put(
+    //           hostAddress + currentServer +
+    //             "/RestEasy/DischargeSummaryWebService/getPatientProfile",
+    //           getPtProfileReq
+    //         )
+    //         .then((response) => {
+    //           console.log("getPatientProfile response", response.data);
+    //         })
+    //         .catch((err) => {
+    //           console.log("err", err);
+    //         });
+    //       let dischargeSummaryXml =
+    //         response.data["ptAppointmentOrgList"][0]["dischargeSummary"];
+    //       let dischargeSummaryJson = JSON.parse(
+    //         convert.xml2json(dischargeSummaryXml, {
+    //           compact: true,
+    //           spaces: 4,
+    //         })
+    //       )["DischargeSummary"];
+    //       console.log("dischargeSummaryJson", dischargeSummaryJson);
+    //       let date = dischargeSummaryJson["Header"]["date"]["Value"]["_text"];
+    //       let time = dischargeSummaryJson["Header"]["date"]["time"]["_text"];
+
+    //       let drName =
+    //         dischargeSummaryJson["DoctorDetails"]["DoctorName"]["_text"];
+    //       let clinicName =
+    //         dischargeSummaryJson["Header"]["ClinicName"]["_cdata"];
+    //       let orgName =
+    //         dischargeSummaryJson["Header"]["OrganizationName"]["_cdata"];
+    //       let patientName =
+    //         dischargeSummaryJson["Header"]["PatientPortion"]["_attributes"][
+    //           "name"
+    //         ];
+    //       let patientCardNo =
+    //         dischargeSummaryJson["Header"]["PatientPortion"]["_attributes"][
+    //           "cardNo"
+    //         ];
+    //       let patientVisit =
+    //         dischargeSummaryJson["Header"]["PatientPortion"]["_attributes"][
+    //           "visit"
+    //         ];
+    //       let status =
+    //         dischargeSummaryJson["Status"]["SectionLists"]["SectionList"][
+    //           "Section"
+    //         ]["Val"]["_cdata"];
+    //       let complaint = "";
+    //       // dischargeSummaryJson["Complaint"][
+    //       //   "SectionLists"
+    //       // ]["SectionList"]["Section"];
+    //       let diagnosis = "";
+    //       // dischargeSummaryJson["Diagnosis"][
+    //       //   "SectionLists"
+    //       // ]["SectionList"]["Section"];
+    //       let comorbidDetails = "";
+    //       // dischargeSummaryJson["CoMorbidDetails"][
+    //       //   "SectionLists"
+    //       // ]["SectionList"]["Section"];
+    //       let investigation =
+    //         dischargeSummaryJson["Investigation"]["SectionLists"] == null ||
+    //         dischargeSummaryJson["Investigation"]["SectionLists"] ==
+    //           undefined ||
+    //         !(
+    //           "SectionList" in
+    //           dischargeSummaryJson["Investigation"]["SectionLists"]
+    //         )
+    //           ? ""
+    //           : dischargeSummaryJson["Investigation"]["SectionLists"][
+    //               "SectionList"
+    //             ]["Section"]["details"]["_cdata"];
+    //       let investigationFindings = "";
+    //       // dischargeSummaryJson["InvestigationFindings"][
+    //       //   "SectionLists"
+    //       // ]["SectionList"]["Section"];
+    //       let surgery =
+    //         dischargeSummaryJson["Surgery"]["SectionLists"] == null ||
+    //         dischargeSummaryJson["Surgery"]["SectionLists"] == undefined ||
+    //         !(
+    //           "SectionList" in dischargeSummaryJson["Surgery"]["SectionLists"]
+    //         )
+    //           ? ""
+    //           : dischargeSummaryJson["Surgery"]["SectionLists"][
+    //               "SectionList"
+    //             ]["Section"]["details"]["_cdata"];
+    //       let radiotherapy =
+    //         dischargeSummaryJson["Radiotherapy"]["SectionLists"] == null ||
+    //         dischargeSummaryJson["Radiotherapy"]["SectionLists"] ==
+    //           undefined ||
+    //         !(
+    //           "SectionList" in
+    //           dischargeSummaryJson["Radiotherapy"]["SectionLists"]
+    //         )
+    //           ? ""
+    //           : dischargeSummaryJson["Radiotherapy"]["SectionLists"][
+    //               "SectionList"
+    //             ]["Section"]["details"]["_cdata"];
+    //       let procedure = "";
+    //       let chemotherapy =
+    //         dischargeSummaryJson["Chemotherapy"]["SuperSectionLists"] ==
+    //           null ||
+    //         dischargeSummaryJson["Chemotherapy"]["SuperSectionLists"][
+    //           "SectionLists"
+    //         ] == null ||
+    //         dischargeSummaryJson["Chemotherapy"]["SuperSectionLists"][
+    //           "SectionLists"
+    //         ] == undefined ||
+    //         !(
+    //           "SectionList" in
+    //           dischargeSummaryJson["Chemotherapy"]["SuperSectionLists"][
+    //             "SectionLists"
+    //           ]
+    //         )
+    //           ? ""
+    //           : dischargeSummaryJson["Chemotherapy"]["SuperSectionLists"][
+    //               "SectionLists"
+    //             ]["SectionList"]["Section"]["details"]["_cdata"];
+
+    //       let adviseRx =
+    //         dischargeSummaryJson["AdviseRx"]["SectionLists"] == null ||
+    //         dischargeSummaryJson["AdviseRx"]["SectionLists"] == undefined ||
+    //         !(
+    //           "SectionList" in
+    //           dischargeSummaryJson["AdviseRx"]["SectionLists"]
+    //         )
+    //           ? []
+    //           : dischargeSummaryJson["AdviseRx"]["SectionLists"][
+    //               "SectionList"
+    //             ]["Section"];
+    //       let instruction =
+    //         dischargeSummaryJson["Instruction"]["SectionLists"] == null ||
+    //         dischargeSummaryJson["Instruction"]["SectionLists"] ==
+    //           undefined ||
+    //         !(
+    //           "SectionList" in
+    //           dischargeSummaryJson["Instruction"]["SectionLists"]
+    //         )
+    //           ? []
+    //           : dischargeSummaryJson["Instruction"]["SectionLists"][
+    //               "SectionList"
+    //             ]["Section"]["details"]["_cdata"];
+    //       let remark = "";
+    //       // dischargeSummaryJson["Remark"]["SectionLists"][
+    //       //   "SectionList"
+    //       // ]["Section"];
+
+    //       console.log("date", date);
+    //       console.log("time", time);
+    //       console.log("drName", drName);
+    //       console.log("clinicName", clinicName);
+    //       console.log("orgName", orgName);
+    //       console.log("patientName", patientName);
+    //       console.log("patientCardNo", patientCardNo);
+    //       console.log("patientVisit", patientVisit);
+    //       console.log("status", status);
+    //       console.log("complaint", complaint);
+    //       console.log("diagnosis", diagnosis);
+    //       console.log("comorbidDetails", comorbidDetails);
+    //       console.log("investigation", investigation);
+    //       console.log("investigationFindings", investigationFindings);
+    //       console.log("surgery", surgery);
+    //       console.log("procedure", procedure);
+    //       console.log("adviseRx", adviseRx);
+    //       console.log("instruction", instruction);
+    //       console.log("remark", remark);
+    //       console.log("chemotherapy", chemotherapy);
+    //       console.log("radiotherapy", radiotherapy);
+
+    //       let summaryDataArr = {
+    //         date,
+    //         time,
+    //         drName,
+    //         clinicName,
+    //         orgName,
+    //         patientName,
+    //         patientCardNo,
+    //         patientVisit,
+    //         status,
+    //         complaint,
+    //         diagnosis,
+    //         comorbidDetails,
+    //         investigation,
+    //         investigationFindings,
+    //         surgery,
+    //         procedure,
+    //         adviseRx,
+    //         instruction,
+    //         remark,
+    //         chemotherapy,
+    //         radiotherapy,
+    //         name: patient["name"],
+    //         stateFlag,
+    //       };
+    //       setPatientDischargeDetails(
+    //         <>
+    //           <PullPatientDischargeInfo
+    //             summaryDataArr={summaryDataArr}
+    //             patient={patient}
+    //           ></PullPatientDischargeInfo>
+    //         </>
+    //       );
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     // alert("Invalid DS");
+    //     setPatientDischargeDetails(
+    //       <DischargeSummaryForNew
+    //         patient={patient}
+    //         name={patient["name"]}
+    //         age={patient["age"]}
+    //         sex={patient["sex"]}
+    //       ></DischargeSummaryForNew>
+    //     );
+    //     console.log("err", err);
+    //   });
+  };
+
+  useEffect(() => {
+    console.log("first useffect", localStorage.getItem("allClinics"));
+    let clinics =
+      JSON.parse(localStorage.getItem("allClinics")) == null
+        ? []
+        : JSON.parse(localStorage.getItem("allClinics"));
+    setAllClinics(clinics);
+    if (localStorage.getItem("startDate")) {
+      console.log("ls startDate", new Date(localStorage.getItem("startDate")));
+      console.log("startDate", startDate);
+
+      setStartDate(new Date(localStorage.getItem("startDate")));
+    }
+    if (props != null && props.location != null && props.location.state != null)
+      pullDischargeData(props.location.state.patient);
+    if (clinics != null && clinics.length > 0 && clinics[0] != null) {
+      // if (selectedClinicName == null)
+      //   setSelectedClinicName(clinics[0]["clinicName"]);
+      // if (selectedClinicId == null) setSelectedClinicId(clinics[0]["clinicId"]);
+      setSelectedClinicName(
+        localStorage.getItem("clinicName") == null
+          ? clinics[0]["clinicName"]
+          : localStorage.getItem("clinicName")
+      );
+      setSelectedClinicId(
+        localStorage.getItem("clinicId") == null
+          ? clinics[0]["clinicId"]
+          : localStorage.getItem("clinicId")
+      );
+      localStorage.setItem(
+        "clinicName",
+        localStorage.getItem("clinicName") == null
+          ? clinics[0]["clinicName"]
+          : localStorage.getItem("clinicName")
+      );
+      localStorage.setItem(
+        "clinicId",
+        localStorage.getItem("clinicId") == null
+          ? clinics[0]["clinicId"]
+          : localStorage.getItem("clinicId")
+      );
+      localStorage.setItem(
+        "rootClinicId",
+        localStorage.getItem("rootClinicId") == null
+          ? clinics[0]["rootClinicId"]
+          : localStorage.getItem("rootClinicId")
+      );
+      setClinicsDropdown(
+        clinics.map((item) => {
+          console.log("allClinics item", item);
+          return (
+            <Dropdown.Item
+              href="#/action-1"
+              onClick={() => {
+                console.log("clId", item["clinicId"]);
+                setSelectedClinicName(item["clinicName"]);
+                setSelectedClinicId(item["clinicId"]);
+                setSelectedRootClinicId(item["rootClinicId"]);
+                localStorage.setItem("clinicName", item["clinicName"]);
+                localStorage.setItem("clinicId", item["clinicId"]);
+                localStorage.setItem("rootClinicId", item["rootClinicId"]);
+              }}
+            >
+              {item["clinicName"]}
+            </Dropdown.Item>
+          );
+        })
+      );
+    }
+
+    if (localStorage.getItem("roleId") == "31") {
+      let data = {
+        clinicId: localStorage.getItem("clinicId"), //selectedClinicId + "",
+      };
+      axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+
+      axios
+        .put(
+          hostAddress +
+            currentServer +
+            "/RestEasy/DischargeSummaryWebService/findDoctorByClinic",
+          data
+        )
+        .then((response) => {
+          console.log("findDoctorByClinic response", response.data);
+
+          let doctors =
+            response.data == null ||
+            response.data["ptAppointmentOrgList"] == null
+              ? []
+              : response.data["ptAppointmentOrgList"];
+          let doctorsDrodownVar = null;
+          console.log("doctors=", doctors);
+          localStorage.setItem("allDoctors", JSON.stringify(doctors));
+          if (doctors != null && doctors.length > 0 && doctors[0] != null) {
+            setSelectedDoctorName(
+              localStorage.getItem("doctorName") == null
+                ? doctors[0]["doctorName"]
+                : localStorage.getItem("doctorName")
+            );
+            setSelectedDoctorId(
+              localStorage.getItem("doctorId") == null
+                ? doctors[0]["doctorId"]
+                : localStorage.getItem("doctorId")
+            );
+            localStorage.setItem(
+              "doctorName",
+              localStorage.getItem("doctorName") == null
+                ? doctors[0]["doctorName"]
+                : localStorage.getItem("doctorName")
+            );
+            localStorage.setItem(
+              "doctorId",
+              localStorage.getItem("doctorId") == null
+                ? doctors[0]["doctorId"]
+                : localStorage.getItem("doctorId")
+            );
+            doctorsDrodownVar = doctors.map((item) => {
+              console.log("allDoctors item", item);
+              return (
+                <Dropdown.Item
+                  href="#/action-1"
+                  onClick={() => {
+                    console.log("doctorId", item["doctorId"]);
+                    setSelectedDoctorName(item["doctorName"]);
+                    setSelectedDoctorId(item["doctorId"]);
+                    localStorage.setItem("doctorName", item["doctorName"]);
+                    localStorage.setItem("doctorId", item["doctorId"]);
+                  }}
+                >
+                  {item["doctorName"]}
+                </Dropdown.Item>
+              );
+            });
+            setDoctorsDropdown(doctorsDrodownVar);
+          }
+        })
+        .catch((err) => {});
+    }
+  }, []);
+
+  function pad2(n) {
+    return n < 10 ? "0" + n : n;
+  }
+  useEffect(() => {
+    let dateDiffFormat =
+      startDate.getFullYear().toString() +
+      "-" +
+      pad2(startDate.getMonth() + 1) +
+      "-" +
+      pad2(startDate.getDate()) +
+      " " +
+      pad2(startDate.getHours()) +
+      ":" +
+      pad2(startDate.getMinutes()) +
+      ":" +
+      pad2(startDate.getSeconds());
+    let data = {
+      clinicId: selectedClinicId + "",
+      doctorId: selectedDoctorId + "",
+    };
+
+    console.log("getPatientSearchList request data", data);
+    axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+    axios
+      .put(
+        hostAddress +
+          currentServer +
+          "/RestEasy/DischargeSummaryWebService/getPatientSearchList",
+        data
+      )
+      .then((response) => {
+        console.log("getpatientlist response", response.data);
+        let tempArr = [];
+        if (response.data["ptAppointmentOrgList"].length > 0)
+          tempArr = response.data["ptAppointmentOrgList"];
+        setPatients(tempArr);
+        localStorage.setItem("patientArr", JSON.stringify(tempArr));
+
+        patientList = response.data["ptAppointmentOrgList"]
+          .slice(0)
+          .reverse()
+          .map((item) => {
+            return (
+              <button
+                className={classes.patientCardBtn}
+                onClick={() => {
+                  localStorage.setItem("patientStatus", "Existing");
+                  pullDischargeData(item);
+                }}
+              >
+                <PatientCard patient={item} />
+              </button>
+            );
+          });
+        localStorage.setItem("patientList", JSON.stringify(patientList));
+        // setPatientListState(patientList);
+        setPatientsDisplay(
+          <div>
+            {patientList}
+            <AddNewPatientModalSmall addPatient={addPatient} />
+          </div>
+        );
+      })
+      .catch((err) => {
+        console.log("getpatientlist err", err);
+      });
+  }, [selectedClinicId, selectedDoctorId, prompt]);
+
+  const handleSearch = (e) => {
+    let etargetval = e.target.value;
+    // if (false) {
+    //   setPatientsDisplay(
+    //     <div>
+    //       {patientListState}
+    //       <AddNewPatientModalSmall addPatient={addPatient} />
+    //     </div>
+    //   );
+    // }
+    console.log("ans", e.target.value);
+    if (etargetval != "") {
+      let patientArr = JSON.parse(localStorage.getItem("patientArr"));
+      if (patientArr != null) {
+        let TrieSearch = require("trie-search");
+        let arr = patientArr;
+        let ts = new TrieSearch("name");
+
+        ts.addAll(arr);
+
+        let brr = ts.get(etargetval);
+        console.log("ts", ts);
+        let patientList = brr.map((item) => {
+          return (
+            <button
+              className={classes.patientCardBtn}
+              onClick={() => {
+                localStorage.setItem("patientStatus", "Existing");
+                pullDischargeData(item);
+              }}
+            >
+              <PatientCard patient={item} />
+            </button>
+          );
+        });
+        localStorage.setItem("patientList", JSON.stringify(patientList));
+        setPatientsDisplay(
+          <div>
+            {patientList}
+            <AddNewPatientModalSmall addPatient={addPatient} />
+          </div>
+        );
+      }
+    } else setPrompt(Math.random());
+  };
+  return (
+    <div className={classes.mainContainer}>
+      {!localStorage.getItem("email") ? (
+        <Redirect to="/dischargeSummary" />
+      ) : null}
+      {redirect}
+      <div className={classes.leftPane}>
+        <div className={classes.leftPaneHeader}>
+          <div className={classes.leftHeaderImageContainer}>
+            {/* <img
+              className={classes.leftHeaderImage}
+              src="https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png"
+            ></img> */}
+          </div>
+          {/* {leftHeaderHeading} */}
+          <div className={classes.leftHeaderHeading}>
+            <div className={classes.leftHeaderHeadingTitle}>
+              {localStorage.getItem("allClinics") == null ? null : JSON.parse(
+                  localStorage.getItem("allClinics")
+                ).length == 1 ? (
+                JSON.parse(localStorage.getItem("allClinics"))[0]["clinicName"]
+              ) : (
+                <Dropdown>
+                  <Dropdown.Toggle className={classes.clinicName}>
+                    {localStorage.getItem("clinicName") == null
+                      ? selectedClinicName
+                      : localStorage.getItem("clinicName")}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {" "}
+                    <Dropdown.Header>Select Clinic</Dropdown.Header>
+                    {clinicsDropdown}
+                  </Dropdown.Menu>
+                </Dropdown>
+              )}
+            </div>
+            <div className={classes.leftHeaderSubHeading}>
+              {localStorage.getItem("roleId") != "31" ? (
+                localStorage.getItem("userName")
+              ) : (
+                <Dropdown>
+                  <Dropdown.Toggle className={classes.docName}>
+                    {localStorage.getItem("doctorName") == null
+                      ? selectedDoctorName
+                      : localStorage.getItem("doctorName")}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {" "}
+                    <Dropdown.Header>Select Doctor</Dropdown.Header>
+                    {doctorsDropdown}
+                  </Dropdown.Menu>
+                </Dropdown>
+              )}
+            </div>
+          </div>
+          <HamburgerDropdown></HamburgerDropdown>
+        </div>
+        <div className={classes.leftPaneSearch}>
+          <div className={classes.searchDiv}>
+            <Form>
+              <Form.Control
+                className={classes.searchbar}
+                placeholder="Search"
+                onChange={(e) => {
+                  handleSearch(e);
+                }}
+                onKeyPress={(e) => {
+                  if (e.charCode === 13) {
+                    e.preventDefault();
+                  }
+                }}
+              />
+            </Form>
+          </div>
+          {/* <div className={classes.dateDiv}>
+            <DatePicker
+              className={classes.datepicker}
+              selected={startDate}
+              onChange={(date) => {
+                console.log("date", date);
+                setStartDate(date);
+                localStorage.setItem("startDate", date);
+              }}
+            />
+          </div> */}
+        </div>
+        <div className={classes.leftPaneContent}>
+          {patients.length < 1 ? (
+            <AddNewPatientModal addPatient={addPatient} />
+          ) : (
+            <div className={classes.patientDetails}>{patientDetails}</div>
+          )}
+        </div>
+      </div>
+      <div className={classes.rightPane}>{patientDischargeDetails}</div>
+    </div>
+  );
+};
+
+export default DischargeSummary;

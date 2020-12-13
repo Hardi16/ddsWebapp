@@ -1,0 +1,1980 @@
+body {
+  font-size: 16px;
+  background-color: black;
+  overflow: hidden;
+}
+.datepickernew .react-datepicker-wrapper {
+  width: 100% !important ;
+}
+.evolkoLogoDiv {
+  background-color: #cceeff;
+  width: 10%;
+  padding: 1.3%;
+}
+.navbarContainer {
+  width: 100%;
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+}
+.searchBar {
+  width: 90%;
+  background-color: #3f6ad8;
+}
+.imgLogo {
+  width: 85%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.profileDiv {
+  background-color: #3f6ad8;
+  padding-top: 0.5%;
+  padding-right: 0.5%;
+}
+.imgProfile {
+  border-radius: 50%;
+  width: 60%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.profileBtn {
+  background-color: #3f6ad8;
+  border: 0px;
+  padding-right: 0px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.profileBtn:focus {
+  background-color: #3f6ad8;
+  border: 0px;
+  padding-right: 0px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  outline: none;
+}
+.addNewBtn {
+  width: 100%;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: blue;
+  border: none;
+  font-size: 20px;
+  margin: 0 10px;
+}
+.addNewBtn span {
+  font-size: 24px;
+  font-weight: bold;
+}
+.patientCardContainer {
+  display: flex;
+  flex-direction: row;
+  border-top: 1px solid rgb(58, 58, 58);
+  /* border-bottom: 1px solid rgb(58, 58, 58); */
+  width: 100%;
+  padding: 10px 5px;
+  overflow: auto;
+}
+.patientCardProfile {
+  flex: 1 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* padding: 10px 5px; */
+}
+.patientCardProfile img {
+  height: 65px;
+  width: 65px;
+  border-radius: 65px;
+  background-color: #343131;
+}
+.patientCardNameStuff {
+  /* flex: 3 1; */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 5px 10px;
+}
+
+.patientDate {
+  flex: 1;
+  align-items: flex-end;
+  padding: 5px;
+  margin-right: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+.patientDateSmall {
+  font-size: small;
+  flex: 3;
+  text-align: right;
+  margin-right: 6px;
+  /* align-items: flex-end; */
+  padding: 5px 0 5px 5px;
+  /* margin-right: auto; */
+  /* display: flex; */
+  /* flex-direction: row; */
+  /* align-items: center;
+  vertical-align: center; */
+}
+.patientName {
+  flex: 1;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: left;
+}
+.patientAgeStuff {
+  flex: 1;
+  font-size: 15px;
+}
+
+.patientDocName {
+  flex: 1;
+  font-size: 15px;
+  color: turquoise;
+}
+.addNewBtnSmall {
+  /* position: absolute;
+    bottom:20px;
+    right:-15px; */
+  width: 60px;
+  height: 60px;
+  border-radius: 60px;
+  background-color: blue;
+  border: none;
+  margin: 10px;
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 0;
+  z-index: 100;
+  position: fixed;
+  bottom: 40px;
+  left: 40px;
+  border-radius: 50%;
+  padding: 18px 15px 18px 15px;
+  font-size: 20px;
+  font-weight: bold;
+  border: 0;
+}
+.addNewBtnSmallDiv {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+.tempcard {
+  margin: 30px;
+  font-size: 18px;
+  font-weight: 400;
+  background-color: #cac7c7;
+  padding: 0 10px;
+  margin: 20px;
+  border-radius: 0.8rem;
+  color: #6b6666;
+  /* width: 270%; */
+}
+.temptitleBlue {
+  color: #0283f8;
+  font-weight: bold;
+}
+.temptitle {
+  font-weight: bold;
+}
+.mainDischargeSummaryForNewEmpty {
+  display: flex;
+  flex-direction: column;
+  width: 77%;
+  height: 100%;
+  position: fixed;
+  /* justify-content: space-evenly */
+}
+.mainDischargeSummaryForNew {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0px 0px 20px 0px;
+  /* justify-content: space-evenly */
+}
+.rightTop {
+  flex: 1;
+  padding: 27px;
+  border-bottom: 1px solid grey;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+.rightTopFixed {
+  position: fixed;
+  width: 75%;
+  z-index: 10;
+  opacity: 1;
+  background-color: black;
+  border-left: 0px;
+}
+.rightTopNew {
+  /* flex: 1; */
+  padding: 20px;
+  border-bottom: 1px solid grey;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  overflow: hidden;
+  padding-bottom: 0;
+}
+.rightTopDivDSPage {
+  position: fixed;
+  z-index: 99;
+  background: #111;
+  width: 75%;
+  flex: 1;
+  padding: 20px;
+  border-bottom: 1px solid grey;
+  /* border-left: 1px solid gray; */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.tempcontainer {
+  flex: 4;
+}
+.rightMid {
+  flex: 6;
+  padding: 15px;
+  /* border: 1px solid grey; */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.rightBottom {
+  /* flex: 1; */
+  padding: 45px;
+  border-top: 1px solid grey;
+  display: flex;
+  flex-direction: row;
+}
+.nameDischargeSummaryForNew {
+  flex: 10 1;
+  color: turquoise;
+  font-size: 25px;
+}
+.perAge {
+  font-size: 15px;
+  color: #fff;
+  padding-left: 10px;
+}
+.imgActions {
+  width: 45px;
+  margin-right: 20px;
+}
+.imgActionsDsShow {
+  width: 40px;
+  padding: 5px;
+}
+.tempTextBox {
+  width: 400px;
+  padding: 5px;
+  margin: 15px;
+  border-radius: 50px;
+  background-color: #747474;
+}
+.tempinput {
+  flex: 3 1;
+}
+.temprxpad {
+  display: flex;
+  flex: 1 1;
+  font-size: 28px;
+  font-weight: 600;
+  margin: 15px;
+  text-align: right;
+  color: #cac7c7;
+}
+.imgTemp {
+  width: 20%;
+  max-width: 45px;
+  margin-right: 20px;
+}
+.title {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+.title span {
+  color: rgb(0, 0, 0);
+}
+.desc {
+  color: #666;
+  font-size: 14px;
+  padding: 10px 0;
+  text-align: center;
+}
+.cardTemp {
+  font-size: 20px;
+  color: rgb(185, 0, 0);
+  top: 0px;
+  font-weight: bold;
+  background-color: #cac7c7;
+}
+.cardBodyTemp {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1.25rem;
+}
+.btnTem {
+  width: max-content;
+  margin: 0 auto;
+}
+.cardTemp1 {
+  color: rgba(11, 108, 191, 0.9);
+  top: 0px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #343131;
+  padding: 10px;
+  margin: 20px;
+  border-radius: 0.8rem;
+}
+.cardTemp1 .card-body {
+  padding: 10px !important;
+}
+.btnCreatePage {
+  color: rgba(11, 108, 191, 0.9);
+  background-color: #343131;
+  border-radius: 0.8rem;
+  padding: 15px;
+  margin: 20px 20px 0px 20px;
+  top: 0px;
+  font-size: 18px;
+  font-weight: bold;
+  border: 0px;
+  width: 96.5%;
+  height: 95px;
+  max-height: 100%;
+  text-align: left;
+  outline: 0;
+  padding: 40px 15px 40px 15px;
+  height: auto;
+}
+.createPageBarActive {
+  color: rgba(11, 108, 191, 0.9);
+  background-color: #cceeff;
+  border-radius: 0.8rem;
+  margin: 10px 0px 0px 0px;
+  top: 0px;
+  font-size: 18px;
+  font-weight: bold;
+  border: 0px;
+  height: 95px;
+  max-height: 100%;
+  text-align: left;
+  outline: 0;
+  height: auto;
+  background-color: rgb(241, 241, 241);
+  outline: 0;
+  padding: 15px 15px 0px 15px;
+  width: 100%;
+  margin-left: -21px;
+}
+.createPageBarActive:focus {
+  outline: 0;
+}
+.createPageBarPassive {
+  color: rgba(11, 108, 191, 0.9);
+  background-color: #343131;
+  border-radius: 0.8rem;
+  padding: 15px;
+  margin: 20px 20px 0px 20px;
+  top: 0px;
+  font-size: 18px;
+  font-weight: bold;
+  border: 0px;
+  width: 96.5%;
+  height: 95px;
+  max-height: 100%;
+  text-align: left;
+  outline: 0;
+  height: auto;
+  padding: 40px 15px 15px 15px;
+  width: 100%;
+  margin-left: -21px;
+}
+.createPageBarPassive:focus {
+  background-color: rgb(241, 241, 241);
+  outline: 0;
+}
+.rightHeaderImage {
+  margin-bottom: 20px;
+  margin-top: -5px;
+}
+.btnCreatePage:hover {
+  background-color: rgb(241, 241, 241);
+  outline: 0;
+}
+.btnCreatePage:focus {
+  background-color: rgb(241, 241, 241);
+  outline: 0;
+}
+.tempLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  /* margin-top: 25px;
+  padding-left: 15px; */
+}
+.tempHref {
+  padding: 7px 0;
+  font-size: 20px;
+  padding-top: 15px;
+  color: rgb(153, 153, 153);
+}
+.tempHrefColoured {
+  color: turquoise;
+  padding: 7px 0;
+  font-size: 20px;
+  padding-top: 15px;
+}
+.tempHref:hover {
+  color: turquoise;
+  text-decoration: none;
+}
+.medicineLabel {
+  padding: 0 5px;
+  font-size: 20px;
+  padding-top: 15px;
+  color: rgb(153, 153, 153);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0px;
+}
+
+.medicineLabelCheckbox {
+  /* margin-left: 20px;
+  margin-top: -5px; */
+}
+.radiobtnsdiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.radiobtn {
+  margin-left: 10px;
+}
+.rightTopRight {
+  display: flex;
+  flex-direction: row;
+}
+.saveBtn {
+  margin-left: 20px;
+  background-color: blue;
+  border: 0px;
+}
+.medicineBtn {
+  margin: 20px 0px 20px 0;
+  width: 300px;
+  background-color: black;
+  color: rgb(153, 153, 153);
+  border: 0px;
+  font-size: 20px;
+  border-radius: 0.8rem;
+  text-align: left;
+  outline: 0;
+}
+.medicineBtnActive {
+  width: 300px;
+  background-color: #ffffff;
+  color: rgb(24, 23, 23);
+  border: 0px;
+  font-size: 20px;
+  outline: 0;
+  text-align: left;
+  border-radius: 0.8rem;
+  margin: 20px 0px 20px 0;
+}
+.medicineBtnActive:focus {
+  width: 300px;
+  background-color: #ffffff;
+  color: rgb(24, 23, 23);
+  border: 0px;
+  font-size: 20px;
+  outline: 0;
+  text-align: left;
+  border-radius: 0.8rem;
+  margin: 20px 0px 20px 0;
+}
+.medicineBtn:hover {
+  width: 300px;
+  background-color: rgb(75, 75, 75);
+  color: rgb(0, 0, 0);
+  border: 0px;
+  font-size: 20px;
+  text-align: left;
+  border-radius: 0.8rem;
+  margin: 20px 0px 20px 0;
+  outline: 0;
+}
+.medicineBtn:focus {
+  outline: 0;
+}
+.pencilImg {
+  width: 20px;
+  margin-bottom: 5px;
+}
+.pencilBtn {
+  background-color: inherit;
+  border: 0;
+}
+.pencilBtn:focus {
+  background-color: inherit;
+  border: 0;
+  outline: 0;
+}
+.medicineName {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  margin: 10px;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.medicineDiv {
+  display: flex;
+  flex-direction: row;
+}
+.searchList {
+  overflow: hidden;
+  z-index: 2;
+  position: relative;
+  width: 324px;
+}
+.searchbar {
+  color: white;
+  background-color: rgb(58, 58, 58);
+  border: none;
+  border-radius: 0;
+  outline: none;
+}
+.searchbar:focus {
+  color: white;
+  background-color: rgb(58, 58, 58);
+  border: none;
+  outline: none;
+}
+.searchbar:active {
+  color: white;
+  background-color: rgb(58, 58, 58);
+  border: none;
+  outline: none;
+}
+.searchItem {
+  background: gray;
+  width: auto;
+  padding: 7px;
+}
+.searchItemBtn {
+  width: 100%;
+  margin: 0px;
+  background-color: inherit;
+  border: 0;
+  text-align: left;
+}
+.searchItemBtn:hover {
+  width: 100%;
+  margin: 0px;
+  background-color: inherit;
+  border: 0;
+  text-align: left;
+}
+.searchItemBtn:focus {
+  width: 100%;
+  margin: 0px;
+  background-color: inherit;
+  border: 0;
+  outline: 0;
+  text-align: left;
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  .rightTopFixed {
+    width: 100%;
+    position: relative;
+  }
+  .searchForm {
+    width: 95%;
+    margin: 20px;
+  }
+  .rightPaneDiv {
+    margin-top: 20px !important;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .evolkoLogoDiv {
+    padding: 10px 0;
+    width: 80%;
+  }
+  .imgProfile {
+    margin: 5px auto;
+    width: 100%;
+  }
+  .modal-body .form-row {
+    flex-direction: column !important;
+  }
+  .nameDischargeSummaryForNew {
+    font-size: 18px;
+    padding: 0 10px;
+  }
+  .perAge {
+    display: block;
+  }
+  .rightMid {
+    flex: 5;
+    padding: 30px 20px;
+  }
+  .rightMidForNew {
+    /* padding: 100px; */
+  }
+  .rightPane {
+    flex-direction: column;
+  }
+  .nameDischargeSummaryForNew {
+    padding: 0;
+  }
+  .btnCreatePage {
+    width: 90%;
+  }
+}
+.searchbarDiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 0px;
+}
+.searchForm {
+  width: 93%;
+  /* border-top-left-radius: 28px; */
+  background-color: inherit;
+}
+.searchForm:active {
+  width: 93%;
+  outline: none !important;
+}
+
+.medicineDeetsModal {
+}
+.routesAndStuffCard {
+  width: 100%;
+  margin: 20px 0 20px 0;
+}
+.mediDeetsModalBtnsPassive {
+  margin: 7px;
+  background-color: white;
+  color: black;
+  outline: none;
+}
+.mediDeetsModalBtnsPassive:focus {
+  outline: none !important;
+  background-color: white;
+  color: black;
+  box-shadow: none;
+}
+.mediDeetsModalBtnsActive {
+  margin: 7px;
+  color: white;
+  outline: none !important;
+  box-shadow: none;
+}
+
+.mediDeetsModalTextboxBtn {
+  margin: 10px;
+  background-color: white;
+  color: black;
+  outline: none;
+}
+.mediDeetsModalTextboxBtn:focus {
+  margin: 10px;
+  background-color: white;
+  color: black;
+  outline: none;
+  outline: none !important;
+  box-shadow: none;
+}
+.mediDeetsModalTextboxBtn:hover {
+  margin: 10px;
+  background-color: white;
+  color: black;
+  outline: none;
+  outline: none !important;
+  box-shadow: none;
+}
+.mediDeetsModalTextbox {
+  border: 0px;
+  border-bottom: 1px solid black;
+}
+.mediDeetsModalTextbox:focus {
+  border: 0px;
+  border-bottom: 1px solid black;
+  outline: none !important;
+  box-shadow: none;
+}
+.creatableSelect {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.creatableSelectLabel {
+  display: flex;
+  flex: 1;
+  margin: 10px 5px 10px 5px;
+  flex-direction: row;
+  justify-content: center;
+  font-size: 18px;
+}
+.creatableSelectSelf {
+  flex: 3;
+  margin: 10px;
+}
+.creatableSelectDiv {
+  display: flex;
+  flex-direction: row;
+}
+.QtDiv {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+}
+.mediDeetsModalTextboxBtnQt {
+  margin: 10px;
+  background-color: white;
+  color: black;
+  outline: none;
+}
+.mediDeetsModalTextboxBtnQt:focus {
+  margin: 10px;
+  background-color: white;
+  color: black;
+  outline: none;
+  outline: none !important;
+  box-shadow: none;
+}
+.mediDeetsModalTextboxBtnQt:hover {
+  margin: 10px;
+  background-color: white;
+  color: black;
+  outline: none;
+  outline: none !important;
+  box-shadow: none;
+}
+.mediDeetsModalTextboxQt {
+  border: 0px;
+  max-width: 100px;
+  border-bottom: 1px solid black;
+}
+.mediDeetsModalTextboxQt:focus {
+  border: 0px;
+  border-bottom: 1px solid black;
+  outline: none !important;
+  box-shadow: none;
+}
+.QtDivParent {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+.weightTextboxQt {
+  border: 0px;
+  max-width: 110px;
+  border-bottom: 1px solid black;
+}
+.weightTextboxQt:focus {
+  border: 0px;
+  border-bottom: 1px solid black;
+  outline: none !important;
+  box-shadow: none;
+}
+.weightRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+.weightRowLeft {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin: 20px;
+}
+.weightRowLeftName {
+  margin-right: 10px;
+}
+.weightRowRightName {
+  margin-left: 10px;
+}
+.weightRowRight {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin: 20px;
+}
+.instructionsAndCoTextbox {
+  background-color: rgb(241, 241, 241);
+  margin: 10px;
+  color: black;
+  outline: none;
+  width: 700px;
+  border: 0;
+}
+.mediGrpNameTextbox {
+  color: black;
+  outline: none;
+  border: 0;
+}
+.secNameEditTextbox {
+  color: black;
+  outline: none;
+  border: 0;
+  width: 100%;
+}
+.instructionsAndCoTextDiv {
+  margin: 10px;
+  /* background-color: rgb(241, 241, 241); */
+  background-color: inherit;
+  outline: none;
+}
+.addBtnGrp {
+  z-index: 100;
+  position: fixed;
+  bottom: 40px;
+  left: 40px;
+  border-radius: 5%;
+  padding: 18px 15px 18px 15px;
+  font-size: 20px;
+  font-weight: bold;
+  border: 0;
+  background-color: rgb(0, 180, 0);
+}
+.addBtn {
+  z-index: 100;
+  position: fixed;
+  bottom: 40px;
+  left: 20px;
+  border-radius: 50%;
+  padding: 18px 15px 18px 15px;
+  font-size: 20px;
+  font-weight: bold;
+  border: 0;
+  background-color: rgb(0, 180, 0);
+}
+.grpCheckbox {
+  z-index: 100;
+  position: fixed;
+  bottom: 45px;
+  left: 110px;
+  /* padding: 18px 15px 18px 15px; */
+  /* font-size: 20px; */
+  border: 0;
+}
+.grpNameDiv {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.brandText {
+  font-size: 17px;
+}
+.contactActions {
+  padding-left: 10px;
+}
+.dsNameAndImgHeaderDiv {
+  display: flex;
+  justify-content: flex-start;
+}
+.pullDsPageDropdown {
+  display: flex;
+  align-items: center;
+}
+.pullDsPageDropdownCard {
+  display: flex;
+  align-items: center;
+}
+.pullDsPageCardHeader {
+  display: flex;
+  padding: 20px;
+  width: 100%;
+  align-items: center;
+}
+.dropdownPullDsPg {
+  width: 100%;
+  font-size: 18px;
+}
+.pullDsPageCardHeaderTitle {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-left: 65px;
+  align-items: center;
+}
+.pullDsPageBottom {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  background-color: #000;
+  min-height: 1000px;
+  margin-top: 80px;
+}
+.pullDsSidePane {
+  width: 100%;
+  text-align: center;
+  flex: 1;
+  /* min-height: 92.5vh; */
+}
+.visitBtn {
+  margin: 7px 0px 7px 0px;
+  background-color: inherit;
+}
+.disabledLink {
+  pointer-events: none;
+  color: #ccc;
+}
+.dragListItem {
+  list-style: none;
+  cursor: grab;
+}
+.dragListItem:active {
+  list-style: none;
+  cursor: grab;
+}
+.rightPaneDiv {
+  /* padding-top: 13px; */
+  margin-top: 109px;
+}
+.selectGender {
+  display: flex;
+  flex-direction: row;
+}
+.rowbottommargin {
+  margin-bottom: 12px;
+}
+.uploadBtn {
+  margin-left: 20px;
+  /* background-color: blue; */
+  border: 0px;
+}
+.diagnosisRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px;
+  margin: 14px 0px 14px 0px;
+  border: 1px solid grey;
+  border-radius: 10px;
+  align-items: center;
+}
+.diagnosisRowName {
+  flex: 1;
+  padding-right: 1px;
+}
+
+.diagnosisOnAdmission {
+  padding-top: 40px;
+}
+.advisedInvestigations {
+  padding-top: 130px;
+}
+.diagnosisBadge {
+  margin: 4px;
+  padding: 6px 10px 6px 10px;
+  font-size: 15px;
+  /* background-color: orangered; */
+}
+.diagnosisDivParent {
+  display: flex;
+  flex-direction: column;
+}
+.diagnosisDiv {
+  margin-bottom: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  display: inline-block;
+  width: auto;
+  margin-left: 13px;
+  vertical-align: middle;
+}
+.dspdfDiv {
+  widows: 100vh;
+  height: 100%;
+  /* background-color: red; */
+}
+.dsrightbottomdiv {
+  display: flex;
+  flex-direction: row;
+  padding: 20px;
+  justify-content: center;
+}
+.dsrightbottombtn {
+  background-color: blue;
+  font-weight: bold;
+  border-radius: 10px;
+  border-color: blue;
+}
+.createPageBarActiveGrey {
+  color: brown;
+  border-radius: 0.8rem;
+  margin: 10px 0px 0px 0px;
+  top: 0px;
+  font-size: 18px;
+  font-weight: bold;
+  border: 0px;
+  width: 96.5%;
+  height: 95px;
+  max-height: 100%;
+  text-align: left;
+  outline: 0;
+  height: auto;
+  background-color: rgb(
+    197,
+    197,
+    197
+  ); /*#F8EAC5;  #ADD8E6;  #FFFFE0;  rgb(197, 197, 197);*/
+  outline: 0;
+  padding: 15px 15px 0px 15px;
+  width: 100%;
+  margin-left: -21px;
+}
+.createPageBarActivePatient {
+  color: brown;
+  border-radius: 0.8rem;
+  margin: 10px 0px 0px 0px;
+  top: 0px;
+  font-size: 18px;
+  font-weight: bold;
+  border: 0px;
+  width: 96.5%;
+  height: 95px;
+  max-height: 100%;
+  text-align: left;
+  outline: 0;
+  height: auto;
+  background-color: #94b6d2; /*#F8D7BC;  #F8EAC6; #ADD8E6;*/
+  outline: 0;
+  padding: 15px 15px 0px 15px;
+  width: 100%;
+  margin-left: -21px;
+}
+.createPageBarActiveGrey:focus {
+  outline: 0;
+}
+.greyBackground {
+  /* background-color: rgb(197, 197, 197); */
+  background-color: inherit;
+}
+.instuctionsAndAtStuffHeading {
+  display: flex;
+  justify-content: center;
+  font-size: 29px;
+  font-weight: bold;
+  /* padding-top: 10px; */
+}
+.dischargeStuffHeading {
+  display: flex;
+  justify-content: center;
+  font-size: 29px;
+  font-weight: bold;
+  /* padding-top: 10px; */
+}
+.readmoretext {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #000;
+  font-weight: 100;
+  background-color: inherit;
+}
+.morelesshyperlink {
+  padding: 0 0 4px 0;
+}
+.textAreaContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  background-color: inherit;
+}
+.checkboxLabel {
+  color: black;
+  margin: 2px 6px 2px 30px;
+  font-weight: 400;
+  font-size: 18px;
+}
+.checkboxForm {
+  margin-top: 6px;
+}
+.examBtn {
+  background-color: black;
+  color: rgb(153, 153, 153);
+  outline: 0;
+}
+.examBtn:focus {
+  background-color: #ffffff;
+  color: rgb(24, 23, 23);
+  outline: 0;
+}
+.examBtnActive {
+  background-color: #ffffff;
+  color: rgb(24, 23, 23);
+  outline: 0;
+}
+.examBtnActive:focus {
+  background-color: #ffffff;
+  color: rgb(24, 23, 23);
+  outline: 0;
+}
+.examBtn:hover {
+  background-color: rgb(75, 75, 75);
+  color: rgb(0, 0, 0);
+  outline: 0;
+}
+.examBtn:focus {
+  outline: 0;
+}
+.examDiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 5px 10px;
+  margin: 6px 0px 6px 0;
+  width: 285px;
+  border: 0px;
+  font-size: 20px;
+  border-radius: 0.5rem;
+  text-align: left;
+  outline: 0;
+}
+.prevNextBtn {
+  z-index: 100;
+  position: fixed;
+  bottom: 40px;
+  left: 40px;
+  /* padding: 18px 15px 18px 15px; */
+  font-size: 20px;
+  font-weight: bold;
+  border: 0;
+}
+.prevNextBtnTop {
+  z-index: 100;
+  top: 220px;
+  /* left: 40px; */
+  display: flex;
+  /* width: 21%; */
+  flex-direction: row;
+  justify-content: space-between;
+  /* padding: 18px 15px 18px 15px; */
+  font-size: 20px;
+  font-weight: bold;
+  border: 0;
+}
+.prevBtn {
+  margin: 10px;
+  border-radius: 3px;
+  background-color: #94b6d2;
+  border: 0;
+}
+.prevBtn:hover {
+  margin: 10px;
+  border-radius: 3px;
+  background-color: #94b6d2;
+  border: 0;
+}
+.prevBtn:focus {
+  margin: 10px;
+  border-radius: 3px;
+  background-color: #94b6d2;
+  border: 0;
+}
+.prevBtn:active {
+  margin: 10px;
+  border-radius: 3px;
+  background-color: #94b6d2;
+  border: 0;
+}
+.nextBtn {
+  margin: 10px;
+  border-radius: 3px;
+  background-color: #d18800;
+  border: 0;
+}
+.nextBtn:hover {
+  margin: 10px;
+  border-radius: 3px;
+  background-color: #d18800;
+  border: 0;
+}
+.vitalsDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.vitalsBody1,
+.vitalsBody2 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.vitalsHead {
+  padding: 10px;
+  color: lightgrey;
+}
+.vitalsSystolicAndStuff {
+  padding: 5px;
+  font-size: 18px;
+  color: lightgrey;
+}
+.vitalsTextArea {
+  margin: 5px;
+  background-color: inherit;
+  border: 0;
+  outline: none;
+  width: 100px;
+  line-height: 1;
+  font-size: 18px;
+  color: grey;
+  border-bottom: 1px solid grey;
+}
+.phyExamMainHead {
+  color: white;
+  border-bottom: 1px solid grey;
+  text-align: center;
+  margin-bottom: 30px;
+}
+.generalsBody {
+  display: flex;
+  flex-direction: column;
+  margin: 3px;
+  width: 100%;
+}
+.generalsSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.genSecBtn {
+  border-radius: 10px;
+  background-color: inherit;
+  margin: 2px;
+}
+.genSecBtn:focus,
+.genSecBtn:active {
+  background-color: inherit;
+}
+.genSecBtnActive {
+  border-radius: 10px;
+  background-color: #0275d8;
+  margin: 2px;
+}
+.genSecBtnActive:active,
+.genSecBtnActive:focus {
+  border-radius: 10px;
+  /* background-color: grey; */
+  margin: 2px;
+}
+.generalSecionLabel {
+  margin: 2px;
+  color: whitesmoke;
+  font-size: 19px;
+}
+.tableTextBox {
+  background-color: inherit;
+  margin: 5px;
+  border: 0;
+  outline: none;
+  width: 100px;
+  line-height: 1;
+  font-size: 14px;
+  color: grey;
+}
+.patientInfoTable {
+  width: 70%;
+  text-align: left;
+  /* margin: 20px; */
+}
+.patientTableDiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
+  font-size: 14px;
+  align-self: center;
+  text-align: left;
+}
+.createPageBarActivePatientInfo {
+  color: rgba(11, 108, 191, 0.9);
+  background-color: #343131;
+  border-radius: 0.8rem;
+  /* margin: 10px 0px 10px 40px; */
+  top: 0px;
+  font-size: 18px;
+  font-weight: bold;
+  border: 0px;
+  width: 93%;
+  height: 95px;
+  max-height: 100%;
+  text-align: left;
+  outline: 0;
+  height: auto;
+  background-color: white;
+  outline: 0;
+  padding: 15px 15px 15px 15px;
+  width: 100%;
+  margin-left: -21px;
+}
+.insideTableTextAutoSize {
+  /* background-color: rgb(241, 241, 241); */
+  background-color: inherit;
+  /* margin: 10px; */
+  color: black;
+  outline: none;
+  /* width: 400px; */
+  border: 0;
+}
+.insideTableTextAutoSizeGrey {
+  /* margin: 10px; */
+  color: black;
+  outline: none;
+  width: 400px;
+  border: 0;
+}
+.hrline {
+  color: lightgrey;
+  border-bottom: 1px solid gray;
+}
+
+@media only screen and (max-width: 600px) {
+  .modal-body .form-row {
+    flex-direction: column !important;
+  }
+  .nameDischargeSummaryForNew {
+    font-size: 18px;
+    padding: 0 10px;
+  }
+  .perAge {
+    display: block;
+  }
+  .rightMid {
+    flex: 5;
+    padding: 30px 20px;
+  }
+  .rightPane {
+    flex-direction: column;
+  }
+  .nameDischargeSummaryForNew {
+    padding: 0;
+  }
+  .btnCreatePage {
+    width: 90%;
+  }
+  .pullDsSidePane {
+    border-left: none;
+  }
+  .pullDsPageCardHeaderTitle {
+    padding-left: 0 !important;
+    font-size: 1.3rem;
+    color: #000;
+    text-align: center;
+  }
+  .pullDsPageCardHeader {
+    flex-direction: column;
+  }
+  .tempcard {
+    width: 100%;
+    padding: 0;
+    margin: 20px 0;
+    min-height: 1000px;
+  }
+  .instructionsAndCoTextbox {
+    width: 100% !important;
+    background-color: inherit;
+  }
+  .rightPaneDiv ul {
+    /* padding-left: 15px; */
+  }
+  .pullDsPageBottom {
+    flex-direction: column-reverse;
+  }
+  .creatableSelect {
+    flex-direction: column;
+  }
+  .createPageBarActivePatientInfo {
+    margin: 10px 0px 0px 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+.tableCell {
+  text-align: left;
+}
+.cardAutoScrollStyle {
+  /* overflow-y: scroll; */
+}
+.dsrightdraggablecards {
+  /* overflow-y: scroll; */
+}
+.sectionHeader {
+  color: rgb(16, 48, 93); /*black;*/
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.patientdropicon {
+  /* margin: 10px; */
+}
+.saveBtnDiv {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.saveLoader {
+  margin-left: 14px;
+}
+.btnDiscardPatient {
+  font-size: 14px;
+  padding: 5px;
+  margin-right: 10px;
+}
+.addDiscardDiv {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+.dsdispcenterdiv {
+  border-left: 0.3px solid grey;
+  border-right: 1px solid grey;
+  flex: 3;
+
+  height: 100vh;
+  overflow-y: auto;
+  padding-bottom: 120px;
+}
+.datepickerCreatePgGrey {
+  border-radius: 5px;
+  width: 100px;
+  padding: 2px;
+  margin-left: 10px;
+  margin-top: 2px;
+  border-width: 0px;
+  background-color: inherit;
+  outline: 0;
+  z-index: 10000;
+}
+.datepickerCreatePgGreyWhiteText {
+  border-radius: 5px;
+  width: 100px;
+  padding: 2px;
+  margin-left: 10px;
+  margin-top: 2px;
+  border-width: 0px;
+  background-color: inherit;
+  outline: 0;
+  z-index: 10000;
+  color: white;
+}
+.dietaryInstRowBtn {
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+  padding: 6px;
+  margin: 6px;
+  width: 100%;
+}
+.dietaryInstRowBtn:hover {
+  background-color: rgb(48, 48, 48);
+  outline: 0 !important;
+}
+.dietaryInstRowBtn:focus {
+  outline: 0 !important;
+}
+.dietaryInstRowBtnActive:focus {
+  outline: 0 !important;
+}
+.dietaryInstRowBtnActive {
+  background-color: whitesmoke;
+  color: black;
+  border-radius: 5px;
+  padding: 6px;
+  margin: 6px;
+  width: 100%;
+}
+.dietContent {
+  padding-top: 50px;
+  height: calc(100vh - 230px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.ptSignText {
+  color: rgb(39, 39, 39);
+  font-size: 17px;
+}
+.instructionsAndCoTextDivDiag {
+  min-height: 98px;
+  padding-bottom: 5px;
+}
+.examNadTable {
+  background-color: inherit;
+  color: black;
+}
+.examNadTable:focus {
+  background-color: inherit;
+  color: inherit;
+}
+.examNadTableActive {
+  background-color: #0693e3;
+  color: white;
+}
+.phyExamTable {
+  width: 100%;
+  text-align: left;
+}
+.phyExamTableDiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 60%;
+  font-size: 14px;
+  align-self: center;
+  text-align: left;
+}
+.phyExamTableRowVal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.generalsSectionBtnGrp {
+}
+.generalsSectionRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 10px;
+}
+@keyframes blink {
+  50% {
+    color: transparent;
+  }
+}
+.loader__dot {
+  animation: 1s blink infinite;
+}
+.loader__dot:nth-child(2) {
+  animation-delay: 250ms;
+}
+.loader__dot:nth-child(3) {
+  animation-delay: 500ms;
+}
+.leftPaneContentCreateLanding {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  font-size: 50px;
+  color: white;
+}
+.patientNameHeadingBox {
+  background-color: gray;
+  color: black;
+  padding: 3px 10px 3px 10px;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-weight: 500;
+  margin: 0px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+.patientNameHeadingName {
+  font-size: 25px;
+  font-weight: 500;
+}
+.patientNameHeadingAge {
+  font-size: 16px;
+  padding-left: 5px;
+  padding-top: 8px;
+}
+.patientHeaderImage {
+  padding-right: 9px;
+  /* padding-bottom: 2px; */
+}
+.examHeadingDiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+.phyExamRightCard {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  color: black;
+  background-color: whitesmoke;
+  width: 50%;
+  margin: 10px;
+  flex: 1;
+}
+.phyExamCardsParent {
+  display: flex;
+  flex-direction: row;
+}
+.vitalsTextAreaEDD {
+  margin: 5px;
+  background-color: inherit;
+  border: 0;
+  outline: none;
+  width: 136px;
+  line-height: 1;
+  font-size: 18px;
+  color: white;
+  border-bottom: 1px solid grey;
+}
+.thumbnailDiv {
+  padding: 8px;
+}
+.thumbnailImg {
+  margin: 8px;
+  height: 70px;
+}
+.leftPaneContentCreateLanding {
+  background-color: black;
+  width: 90%;
+  margin: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  border-radius: 5px;
+}
+.dotsParentDiv {
+  background-color: grey;
+  height: 85vh;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 8px;
+}
+.dotsH {
+  /* margin-bottom: 18px; */
+}
+.prevNextBtnDiv {
+  width: 100%;
+}
+.scrollleft {
+  width: 100%;
+  height: calc(100vh - 215px);
+  overflow-y: auto;
+}
+.endBtn,
+.endBtn:hover,
+.endBtn:focus,
+.endBtn:active {
+  background-color: #0000cd;
+  border: 0;
+  margin: 10px;
+}
+.uploadImgBtn,
+.uploadImgBtn:hover,
+.uploadImgBtn:focus,
+.uploadImgBtn:active {
+  background-color: #164893;
+}
+.historyObsCard {
+  color: black;
+  margin: 10px;
+}
+.hisObsDiv {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-weight: 300;
+}
+.toxicityInactive {
+  margin: 10px;
+  background-color: inherit;
+  outline: 0;
+}
+.toxicityActive {
+  margin: 10px;
+  background-color: #0275d8;
+  outline: 0;
+}
+.toxicityActive:active {
+  margin: 10px;
+  background-color: inherit;
+  outline: 0;
+}
+.toxicityInactive:focus {
+  margin: 10px;
+  background-color: inherit;
+  outline: 0;
+}
+.btnPad {
+  margin-left: 15px;
+}
+.red {
+  color: red;
+}
+
+.dobDatepicker {
+  position: relative;
+}
+.dobDatepicker img {
+  position: absolute;
+  top: 1px;
+  width: 35px;
+  opacity: 0.5;
+}
+.dobDatepicker .react-datepicker-wrapper {
+  width: 100% !important ;
+}
+.datepickerCreatePg {
+  width: 100% !important ;
+  background: transparent;
+  border: 1px solid #ced4da !important;
+  border-radius: 3px !important;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.25rem;
+  padding-left: 33px;
+}
+.datepickerCreatePg:focus,
+.datepickerCreatePg:hover {
+  border: 1px solid #ced4da !important;
+}
+.drpCreateCode button,
+.drpCreateCountry button {
+  text-align: left;
+  width: 100%;
+  background-color: transparent !important;
+  color: #495057;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+}
+.drpCreateCode button:hover,
+.drpCreateCode button:focus,
+.drpCreateCode .btn-primary:not(:disabled):not(.disabled):active,
+.drpCreateCountry button:hover,
+.drpCreateCountry button:focus,
+.drpCreateCountry .btn-primary:not(:disabled):not(.disabled):active {
+  background-color: transparent !important;
+  border: 1px solid #ced4da;
+  color: #495057 !important;
+}
+.sameLineRadar {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.radarTitle {
+  width: 100%;
+}
+.dsrightbottombtn {
+  margin-right: 10px;
+}
+.checkboxRowManageSections {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 19px;
+}
+.checkboxRowManageSections {
+  padding: 14px;
+  border-bottom: 1px solid rgb(235, 235, 235);
+}
+.leftPaneTreatmentProtocolHeading {
+  font-size: 23px;
+  text-align: center;
+  width: 100%;
+  padding: 3px;
+}
+.leftPaneTreatmentProtocolStyle {
+  /* margin-top: 30px; */
+  width: 100%;
+}
+.textBox {
+  width: 100%;
+  background-color: inherit;
+  border: 1px solid grey;
+  border-radius: 4px;
+  margin-top: 10px;
+  padding: 5px;
+  color: white;
+}
+.treatProts {
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+}
+.treatProtRow {
+  margin-bottom: 10px;
+}
+.treatProtRowSelected {
+  margin-bottom: 10px;
+  background-color: white;
+  color: black;
+}
+.treatmentProtocolCard {
+  padding-bottom: 60px;
+}
+.drpbox select {
+  width: 100%;
+  border-radius: 0.25rem;
+  margin-top: 10px;
+  padding: 3px;
+}
+.saveModalRadioParent {
+  padding: 12px 25px;
+}
+.saveModalRadioLabel {
+  padding-left: 10px;
+}
+
+.drpDoctor button {
+  text-align: left;
+  width: 100%;
+  background-color: transparent !important;
+  color: #495057;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+}
+.drpDoctor button:hover,
+.drpDoctor button:focus,
+.drpDoctor .btn-primary:not(:disabled):not(.disabled):active,
+.drpSpeciality button:hover,
+.drpSpeciality button:focus,
+.drpSpeciality .btn-primary:not(:disabled):not(.disabled):active{
+  background-color: #fff !important;
+  border: 1px solid #ced4da;
+  color: #495057 !important;
+}
+.drpDoctor button:after {
+  position: absolute;
+  right: 10px;
+  top: 18px;
+}
+.tpApplyChgBtn {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0px -20px 0px;
+}
+#createPageDocNameDrp .dropdown-menu.show{
+  color: #fff;
+}
+.dropdown-toggle::after{
+  border-right:.3em solid #fff
+}
+.mainContainer{
+  background-color: #0f0f0f;
+  height: 100vh;
+}
+.registerCard, .verificationCard{
+  background-color: #0f0f0f;
+  width: 500px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 99;
+  padding:30px 20px;
+  border:1px solid rgba(33,48,247,0.5)
+}
+.registerCard h2{
+  color:#fff;
+  text-align: center;
+  font-weight: 400;
+}
+.registerCard label{
+  color:#fff;
+}
+.registerCard .drpSelectCountry, .registerCard .drpCountryCode{
+  background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;    
+    border-radius: .25rem;
+    color:#000;
+}
+.registerCard h2{
+  margin-bottom: 30px;
+}
+.drpSelectCountry button, .drpCountryCode button{
+  width: 100%;
+  text-align:left;  
+  background-color: #fff;  
+  border-radius: .25rem;
+  color:#000;
+  height: 38px;
+}
+
+.drpSelectCountry button:after{
+  position: absolute;
+ top: 18px;
+ right:13px;
+}
+.drpSelectCountry button:hover,
+.drpSelectCountry button:focus,
+.drpSelectCountry .btn-primary:not(:disabled):not(.disabled):active,
+.drpCountryCode button:hover,
+.drpCountryCode button:focus,
+.drpCountryCode .btn-primary:not(:disabled):not(.disabled):active {
+  background-color: transparent !important;
+  border: 1px solid #ced4da;
+  color: #495057 !important;
+}
+.btnVerify{
+  width: 100%;
+}
+.registerCard .title span, .registerCard h6, .registerCard{
+  color: #fff;
+  font-weight: 400;
+}
+.mainRegistationContainer{
+  background-color: #0f0f0f;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+  height: 100vh;
+}
+.registerInner{
+  color:#fff;
+  padding: 40px 80px;
+}
+.registerInner img{
+ width:150px;
+}
+.registerInner h2{
+  border-bottom: 1px solid #5a5555;
+  padding-bottom: 10px;
+  margin-bottom: 25px;
+}
+.rowbottommargin{
+  margin-bottom: 1.2rem;
+}
+.drpSpeciality button{
+background-color: #fff;
+width: 100%;
+height: 38px;
+}
+.drpSpeciality button:after{
+ position: absolute;
+ top:15px;
+ right:10px;
+}

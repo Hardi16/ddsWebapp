@@ -1,0 +1,149 @@
+import React, { useState, useEffect } from "react";
+import { Button, Badge } from "react-bootstrap";
+import styles from "./Styles.module.css";
+import classes from "../pages/DischargeSummary/DischargeSummary.module.css";
+import { hostAddress } from "../assets/config";
+import { currentServer } from "../assets/config";
+import { Redirect } from "react-router";
+import HamburgerDropdown from "./HamburgerDropdown";
+import SearchDiagnosis from "./SearchDiagnosis";
+import axios from "axios";
+import _ from "lodash";
+import convert from "xml-js";
+
+const DSCreateLeftPaneDietAndOthers = (props) => {
+  let camelCaseName = _.camelCase(props.label);
+  let camelCaseNameWContentKeyword = camelCaseName + "Content";
+  let reqName = props.reqName;
+
+  console.log("PROPS COMPLAINT NAME... ",props.reqName);
+
+  const [objContent, setObjContent] = useState(null);
+  const [objStr, setObjStr] = useState("");
+  let contentArr =
+    localStorage.getItem(camelCaseNameWContentKeyword) == null
+      ? []
+      : JSON.parse(localStorage.getItem(camelCaseNameWContentKeyword));
+  useEffect(() => {
+    let data = { Complaint: reqName, complaint_id: 0, inputType: reqName };
+
+    if (contentArr.length == 0) {
+      axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+      axios
+        .put(
+          hostAddress + currentServer +
+            "/RestEasy/PatientWebService/fetchComplaintQuestionnaire",
+          data
+        )
+        .then((response) => {
+          console.log("fetchComplaintQuestionnaire diet resp", response.data);
+          if (response.data["Complaint"].length === 0) contentArr = [];
+          else {
+            let questionOptionsJson = JSON.parse(
+              response.data["Complaint"][0]["questionOptionsXml"]
+            );
+            contentArr = questionOptionsJson["subitems"];
+          }
+          localStorage.setItem(
+            camelCaseNameWContentKeyword,
+            JSON.stringify(contentArr)
+          );
+          renderDietAndOthersList(contentArr);
+        })
+        .catch((err) => console.log("err", err));
+    } else renderDietAndOthersList(contentArr);
+  }, [props.leftPrompt, objStr, props.label, props.createDsStateChange]);
+
+  // useEffect(() => {
+  //   renderDietAndOthersList(contentArr);
+  // }, [props.createDsStateChange, props.label]);
+  const renderDietAndOthersList = (contentArr) => {
+    let contentObj =
+      localStorage.getItem(camelCaseName) == null
+        ? {}
+        : JSON.parse(localStorage.getItem(camelCaseName));
+    setObjContent(
+      contentArr.map((item) => {
+        return (
+          <button
+            className={
+              contentObj == {} ||
+              contentObj[item["itemName"]] == null ||
+              contentObj[item["itemName"]] == false
+                ? styles.dietaryInstRowBtn
+                : styles.dietaryInstRowBtnActive
+            }
+            onClick={() => {
+              if (
+                props.label == "Discharged To" ||
+                props.label == "Condition at Discharge"
+              )
+                contentObj = {};
+              contentObj[item["itemName"]] =
+                contentObj[item["itemName"]] == null
+                  ? true
+                  : !contentObj[item["itemName"]];
+              localStorage.setItem(camelCaseName, JSON.stringify(contentObj));
+              props.setCreateDsStateChange(JSON.stringify(contentObj));
+              setObjStr(JSON.stringify(contentObj));
+            }}
+          >
+            {item["itemName"]}
+          </button>
+        );
+      })
+    );
+  };
+
+  return (
+    <>
+      <>
+        <div className={classes.leftPaneHeaderDSCreate}>
+          {/* <div className={classes.leftHeaderImageContainer}>
+            <img
+              alt=""
+              className={classes.leftHeaderImage}
+              src="https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png"
+            ></img>
+          </div> */}
+          <div className={classes.leftHeaderHeading}>
+            <div className={classes.leftHeaderHeadingTitle}>
+              <Button
+                className={classes.createPageClinicNameBtn}
+                onClick={() =>
+                  props.setRedirect(<Redirect to="/dischargeSummaryPage" />)
+                }
+              >
+                {localStorage.getItem("clinicName")}
+              </Button>
+            </div>
+            <div className={classes.leftHeaderSubHeading}>
+              {localStorage.getItem("doctorName")}
+            </div>
+            <div className={classes.leftHeaderSubHeadingRight}>
+              {localStorage.getItem("docSpecialityName")}
+            </div>
+          </div>
+          {/* <HamburgerDropdown></HamburgerDropdown> */}
+        </div>
+        <div className={classes.leftPaneSearchCreatePage}>
+          {/* <SearchDiagnosis
+          setdietaryInstructionsContent={setdietaryInstructionsContent}
+          showSelectedPhysicalExam={showSelectedPhysicalExam}
+        /> */}
+        </div>
+        <div className={classes.leftPaneContentCreate}>
+          <div className={classes.leftHeaders}>
+            <div className={styles.phyExamMainHead}>
+              <h4>{props.label}</h4>
+              <hr />
+            </div>
+          </div>
+          <div className={styles.dietContent}>{objContent}</div>
+        </div>
+      </>
+    </>
+  );
+};
+
+export default DSCreateLeftPaneDietAndOthers;

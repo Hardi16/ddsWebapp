@@ -1,0 +1,155 @@
+import React, { useState, useEffect } from "react";
+import { Row, Modal, Button, Form, Col, DropdownButton } from "react-bootstrap";
+// import {Dropdown} from "react-bootstrap";
+// import {Dropdown} from "react-bootstrap";
+import classes from "./Styles.module.css";
+import DatePicker from "react-datepicker";
+import styles from "./Styles.module.css";
+import "react-datepicker/dist/react-datepicker.css";
+import { addDays, subDays } from "date-fns";
+
+
+import { CloseOutlined } from "@material-ui/icons";
+import axios from "axios";
+import { hostAddress } from "../assets/config";
+import { currentServer } from "../assets/config";
+import { Dropdown } from "semantic-ui-react";
+// import {ReactSearchAutocomplete}  from "react-search-autocomplete";
+const RegisterClinic = (props) => {
+const [clinic,setClinic] = useState("");
+const [organisation,setOrganisation] = useState("");
+const [organisationName,setOrganisationName] = useState("");
+const [clinicName,setClinicName] = useState("");
+const [clinicNameOrg,setClinicNameForOrg] = useState("");
+  useEffect(() => {
+    document.getElementById("organisationDiv").style.display = "none";
+    
+  }, []);
+
+  const callRegisterClinic = () =>{
+
+  }
+  if(clinic){
+    document.getElementById("organisationInput").style.display = "none";
+   }
+   
+if(organisation){
+ document.getElementById("organisationDiv").style.display = "block";
+ document.getElementById("clinicInput").style.display = "none";
+ console.log('aa')
+}
+  return (
+      
+  <div>
+        <Form noValidate>
+          <Form.Group
+            as={Row}
+            controlId="formGridSex"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Register Clinic or Organisation<span className={classes.red}> *</span>
+            </Form.Label>
+            <Col sm="9">
+              <div id="" name="" className={classes.selectGender}>
+                <div class="floatBlock">
+                  <label for="male">
+                    {" "}
+                    <input
+                      type="radio"
+                      value="Clinic"
+                      name="clinic"
+                      defaultChecked
+                      id="#radio1"
+                      onChange={(e) => {
+                        console.log(e.target.value);
+                        setClinic(e.target.value);
+                      }}
+                    />{" "}
+                    Clinic &nbsp;
+                  </label>
+                </div>
+                <div class="floatBlock">
+                  <label for="female">
+                    {" "}
+                    <input
+                      type="radio"
+                      value="Organisation"
+                      name="clinic"
+                      id="#radio2"
+                      onChange={(e) => {
+                        console.log(e.target.value);
+                        setOrganisation(e.target.value);
+                      }}
+                    />{" "}
+                    Organisation{" "}
+                  </label>
+                </div>
+              </div>
+            </Col>
+          </Form.Group>
+          <div id="clinicDiv">
+          <Form.Group
+            as={Row}
+           
+            className={classes.rowbottommargin}
+          > 
+            <Col sm="9">
+              <Form.Control
+                type="text"
+                id = "clinicInput"
+                placeholder="Enter clinic name"
+                onChange={(e) => setClinicName(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+          </div>
+          <div id="organisationDiv">
+          <Form.Group
+            as={Row}
+           
+            className={classes.rowbottommargin}
+          > 
+            <Col sm="9">
+              <Form.Control
+                type="text"
+                id = "clinicInputOrg"
+                placeholder="Enter clinic name"
+                onChange={(e) => setClinicNameForOrg(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            
+            className={classes.rowbottommargin}
+          > 
+            <Col sm="9">
+              <Form.Control
+                type="text"
+                id = "organisationInput"
+                placeholder="Enter organisation name"
+                onChange={(e) => setOrganisationName(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+          </div>
+        </Form>
+    
+    
+        <div className={classes.addDiscardDiv}>
+          <Button
+            className={classes.btnaddPatient}
+            variant="primary"
+            type="submit"
+            onClick={() => callRegisterClinic()}
+          >
+            Create
+          </Button>
+        </div>
+      </div>
+    
+  );
+};
+
+export default RegisterClinic;

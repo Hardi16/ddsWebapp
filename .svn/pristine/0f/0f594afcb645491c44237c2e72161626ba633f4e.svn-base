@@ -1,0 +1,81 @@
+import React, { useState, useEffect } from "react";
+import classes from "./Dashboard.module.css";
+import { Table, Button, Spinner } from "react-bootstrap";
+import axios from "axios";
+import DoctorDetailsTable from "../../components/DoctorDetailsTable";
+import { hostAddress } from "../../assets/config";
+import { currentServer } from "../../assets/config";
+
+const DashboardNewTmoList = () => {
+
+  const [newTmoDetailsListTable, setNewTmoDetailsListTable] = useState(null);
+  const [tmoName, setTmoName] = useState([]);
+  const [cityName, setCityName] = useState([]);
+ // const [areaName, setAreaName] = useState([]);
+  const [specialityName, setSpecialityName] = useState([]);
+  const [dateCreated, setDateCreated] = useState([]);
+  const [createdBeforeHowManydays, setCreatedBeforeHowManydays] = useState([]);
+  const [appInstalled, setAppInstalled] = useState([]);
+
+  useEffect(() => {
+    let data = { currentDateStr:'2020-06-28 00:00:00'};
+    console.log("data", data);
+    axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+    axios
+      .put(
+        hostAddress +
+        currentServer +
+          "/RestEasy/DashboardWebService/getNewTmoDetails",data
+      )
+      .then((response) => {
+        console.log("getnewTmoDetailsListResponse: ", response.data);
+        let getnewTmoDetailsListResponse =
+          response.data["ptAppointmentOrgList"];
+        let getnewTmoDetailsListTableBody = getnewTmoDetailsListResponse.map(
+          (item) => {
+            return (
+              <tr>
+                <td className={classes.doctorName}>{item["tmoName"]} </td>
+                <td>{item["cityName"]}</td>
+                <td>{item["specialityName"]}</td>
+                <td>{item["dateCreated"]}</td>
+                <td>{item["createdBeforeHowManydays"]}</td>
+                <td>{item["appInstalled"]}</td>
+              </tr>
+            );
+          }
+        );
+        let getnewTmoDetailsListTable = (
+          <Table striped hover>
+            <thead>
+              <tr>
+                <th>Tmo Name</th>
+                <th>City</th>
+                <th>Speciality Name</th>
+                <th>Date Created</th>
+                <th>Created Before How Many days</th>
+                <th>App Installed</th>
+              </tr>
+            </thead>
+            <tbody>{getnewTmoDetailsListTableBody}</tbody>
+          </Table>
+        );
+        setNewTmoDetailsListTable(getnewTmoDetailsListTable);
+      })
+      .catch((err) => {
+        console.log("err.status");
+        console.log("New Tmo accounts error", err);
+      });
+    return () => {};
+  }, []);
+  //use effect ends here
+  return (
+    <div className={classes.mainContainer}>
+      <div className={classes.tableContainer}>
+      <div className={classes.tableHeader}> New Tmo List </div>
+      <div className={classes.newTmoDetailsTable}>{newTmoDetailsListTable}</div>
+      </div>
+    </div>
+  );
+};
+export default DashboardNewTmoList;

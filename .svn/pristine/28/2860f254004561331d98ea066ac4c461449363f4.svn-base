@@ -1,0 +1,148 @@
+import React, { useState, useEffect } from "react";
+import { Button, Badge } from "react-bootstrap";
+import styles from "./Styles.module.css";
+import classes from "../pages/DischargeSummary/DischargeSummary.module.css";
+import { hostAddress } from "../assets/config";
+import { Redirect } from "react-router";
+import HamburgerDropdown from "./HamburgerDropdown";
+import SearchDiagnosis from "./SearchDiagnosis";
+import axios from "axios";
+
+const DSCreateLeftPaneDiagnosis = (props) => {
+  const [diagnosisContent, setDiagnosisContent] = useState(null);
+  useEffect(() => {
+    let contentArr =
+      localStorage.getItem("diagnosisContent") == null
+        ? []
+        : JSON.parse(localStorage.getItem("diagnosisContent"));
+    renderDiagnosisList(contentArr);
+  }, [props.leftPrompt]);
+
+  const showSelectedDiagnosis = (diagnosis) => {
+    let contentArr =
+      localStorage.getItem("diagnosisContent") == null
+        ? []
+        : JSON.parse(localStorage.getItem("diagnosisContent"));
+    if (!contentArr.includes(diagnosis)) contentArr.push(diagnosis);
+    localStorage.setItem("diagnosisContent", JSON.stringify(contentArr));
+    renderDiagnosisList(contentArr);
+  };
+  const renderDiagnosisList = (contentArr) => {
+    setDiagnosisContent(
+      contentArr.map((item) => {
+        return (
+          <div className={styles.diagnosisRow}>
+            <div
+              className={styles.diagnosisRowName}
+              onClick={() =>
+                props.setCreateDsStateChange(JSON.stringify(diagnosisContent))
+              }
+            >
+              {item}
+            </div>
+            <i class="fa fa-close" onClick={() => removeElement(item)}></i>
+          </div>
+        );
+      })
+    );
+  };
+  const removeElement = (diagnosisToRemove) => {
+    let contentArr =
+      localStorage.getItem("diagnosisContent") == null
+        ? []
+        : JSON.parse(localStorage.getItem("diagnosisContent"));
+    contentArr = contentArr.filter((item) => item != diagnosisToRemove);
+    localStorage.setItem("diagnosisContent", JSON.stringify(contentArr));
+    renderDiagnosisList(contentArr);
+  };
+
+  return (
+    <>
+      <div className={classes.leftPaneHeaderDSCreate}>
+        {/* <div className={classes.leftHeaderImageContainer}>
+          <img
+            alt=""
+            className={classes.leftHeaderImage}
+            src="https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png"
+          ></img>
+        </div> */}
+        <div className={classes.leftHeaderHeading}>
+          <div className={classes.leftHeaderHeadingTitle}>
+            <Button
+              className={classes.createPageClinicNameBtn}
+              onClick={() =>
+                props.setRedirect(<Redirect to="/dischargeSummaryPage" />)
+              }
+            >
+              {localStorage.getItem("clinicName")}
+            </Button>
+          </div>
+          <div className={classes.leftHeaderSubHeading}>
+            {localStorage.getItem("doctorName")}
+          </div>
+          <div className={classes.leftHeaderSubHeadingRight}>
+            {localStorage.getItem("docSpecialityName")}
+          </div>
+        </div>
+      </div>
+      <div className={classes.leftPaneSearchCreatePage}>
+        <SearchDiagnosis
+          setDiagnosisContent={setDiagnosisContent}
+          showSelectedDiagnosis={showSelectedDiagnosis}
+        />
+      </div>
+      <div className={classes.leftPaneContentCreate}>
+        {/* <div className={classes.leftHeaders}>
+          <Button
+            className={
+              props.btnHeaderStyleObj["home"]
+                ? classes.leftHeaderBtnActive
+                : classes.leftHeaderBtnPassive
+            }
+            variant="success"
+            onClick={() => {
+              let tempBtnHeaderStyleObj = {};
+              tempBtnHeaderStyleObj["home"] = true;
+              props.setBtnHeaderStyleObj(tempBtnHeaderStyleObj);
+              props.setOnPage("home");
+              props.setPrompt(Math.random());
+            }}
+          >
+            All Diagnosis
+          </Button>
+          <Button
+            className={
+              props.btnHeaderStyleObj["favs"]
+                ? classes.leftHeaderBtnActive
+                : classes.leftHeaderBtnPassive
+            }
+            variant="success"
+            onClick={() => {
+              let tempBtnHeaderStyleObj = {};
+              tempBtnHeaderStyleObj["favs"] = true;
+              props.setBtnHeaderStyleObj(tempBtnHeaderStyleObj);
+              props.handleFavourites();
+            }}
+          >
+            Favourites
+          </Button>
+        </div> */}
+        <div className={styles.diagnosisContent}>
+          {diagnosisContent}
+          {/* <Button
+            variant="success"
+            className={classes.addBtn}
+            onClick={() => {
+              // props.setDiagnosisContent(diagnosisContent);
+              props.setCreateDsStateChange(JSON.stringify(diagnosisContent));
+            }}
+          >
+            Add
+          </Button> */}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default DSCreateLeftPaneDiagnosis;

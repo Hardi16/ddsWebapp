@@ -1,0 +1,79 @@
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import "./index.css";
+import App from "./App";
+import * as serviceWorker from "./serviceWorker";
+import "bootstrap/dist/css/bootstrap.min.css";
+import DischargeSummary from "./pages/DischargeSummary/DischargeSummary";
+import DischargeSummaryDisplay from "./pages/DischargeSummary/DischargeSummaryDisplay";
+import Dashboard from "./pages/Dashboard/Dashboard";
+import OrgInfo from "./pages/Dashboard/OrgInfo";
+import DoctorInfo from "./pages/Dashboard/DoctorInfo";
+import Login from "./pages/Login/Login";
+import DischargeSummaryCreate from "./pages/DischargeSummary/DischargeSummaryCreate";
+import LoginDashboard from "./pages/Login/LoginDashboard";
+import DischargeSummaryDoctorList from "./pages/DischargeSummary/DischargeSummaryAddDoctorList";
+import DischargeSummaryDetails from "./pages/DischargeSummary/DischargeSummaryDetails";
+import DischargeSummarySendForApproval from "./pages/DischargeSummary/DischargeSummarySendForApproval";
+import DoctorRegistration from "./components/DoctorRegistration";
+import SelfRegistrationDoctor from "./components/SelfRegistrationDoctor";
+import VerifyOtpNumber from "./components/VerifyOtpNumber";
+import ResetPassword from "./components/ResetPassword";
+import ClinicRegistration from "./components/ClinicRegistration";
+import "semantic-ui-css/semantic.min.css";
+
+const Routes = () => {
+  return (
+    <Router>
+      <Route
+        exact
+        path="/doctorSelfRegistration"
+        component={SelfRegistrationDoctor}
+      />
+      <Route exact path="/doctorRegistration" component={DoctorRegistration} />
+      <Route exact path="/VerifyOtpNumber" component={VerifyOtpNumber} />
+      <Route exact path="/ResetPassword" component={ResetPassword} />
+      <Route exact path="/login" component={LoginDashboard} />
+      <Route exact path="/" component={LoginDashboard} />
+      <Route exact path="/dashboard" component={Dashboard} />
+      <Route exact path="/clinicRegistration" component={ClinicRegistration} />
+      <Route
+        exact
+        path="/dsSendForApproval"
+        component={DischargeSummarySendForApproval}
+      />
+      <Route
+        exact
+        path="/dischargeSummaryDoctorList"
+        component={DischargeSummaryDoctorList}
+      />
+      <Route
+        exact
+        path="/dischargeSummaryDetails"
+        component={DischargeSummaryDetails}
+      />
+
+      {/* <Route exact path='/login' component={Login} /> */}
+      <Route
+        exact
+        path="/dischargeSummaryDisplay"
+        component={DischargeSummaryDisplay}
+      />
+      <Route exact path="/dischargeSummary" component={Login} />
+      <Route
+        exact
+        path="/dischargeSummaryCreate"
+        component={DischargeSummaryCreate}
+      />
+      <Route exact path="/dischargeSummaryPage" component={DischargeSummary} />
+      <Route exact path="/orgInfo" component={OrgInfo} />
+      <Route exact path="/DoctorInfo" component={DoctorInfo} />
+
+      {/* <Route exact path="/dashboard" component={App} /> */}
+    </Router>
+  );
+};
+ReactDOM.render(<Routes />, document.getElementById("root"));
+
+serviceWorker.unregister();

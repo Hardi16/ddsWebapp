@@ -1,0 +1,318 @@
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  Row,
+  Modal,
+  Button,
+  Form,
+  Col,
+  Dropdown,
+  DropdownButton,
+} from "react-bootstrap";
+import classes from "./Styles.module.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { addDays, subDays } from "date-fns";
+import getMonth from "date-fns/getYear";
+import getYear from "date-fns/getYear";
+import { parseISO, format } from "date-fns";
+import data from "./countrycode";
+import { CloseOutlined } from "@material-ui/icons";
+import { Redirect } from "react-router";
+import Login from "../pages/Login/Login";
+// import DoctorRegistration from "../pages/Login/DoctorRegistration";
+import DoctorRegistration from "./DoctorRegistration";
+import axios from "axios";
+import { hostAddress } from "../assets/config";
+import { currentServer } from "../assets/config";
+import { useHistory } from "react-router";
+
+const VerifyOtpNumber = () => {
+  const [redirect, setRedirect] = useState(null);
+  const [verificationCodeOne, setVerificationCodeOne] = useState(null);
+  const [verificationCodeTwo, setVerificationCodeTwo] = useState(null);
+  const [verificationCodeThree, setVerificationCodeThree] = useState(null);
+  const [verificationCodeFour, setVerificationCodeFour] = useState(null);
+  const [verificationCodeFive, setVerificationCodeFive] = useState(null);
+  const [userName, setuserName] = useState();
+  const [passWord, setpassWord] = useState();
+  const [userPhoneNumber, setuserPhoneNumber] = useState();
+let newUser = userName;
+let newPassword = passWord;
+let globalUserName = localStorage.getItem("userPhoneNumber");
+  let history = useHistory();
+  // ********code for focus next input feild
+  if(verificationCodeOne) {
+    document.getElementById("codeTwo").focus();
+   }
+   if(verificationCodeTwo) {
+     document.getElementById("codeThree").focus();
+   }
+  if(verificationCodeThree) {
+    document.getElementById("codeFour").focus();
+   }
+   if(verificationCodeFour) {
+     document.getElementById("codeFive").focus();
+   }
+
+
+  const handleSubmitVerifyOtp = (event) => {
+   
+     let sendName=localStorage.getItem("newUser");
+    let sendPassword= localStorage.getItem("newPassword");
+
+      let data = {
+        username: sendName,
+        password: sendPassword,
+      };
+      let roleId;
+      axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+      axios
+        .put(
+          hostAddress +
+            currentServer +
+            "/RestEasy/DischargeSummaryWebService/login",
+          data
+        )
+
+        .then((response) => {
+          console.log("login api response", response.data);
+          let resp = response.data["ptAppointmentOrgList"];
+          roleId = resp[0]["roleId"];
+          console.log(resp[0]["userId"]);
+          console.log("ROLE ID OF USER ", resp[0]["roleId"]);
+          if (resp[0]["userId"] != 0) {
+            if (resp[0]["roleId"] == "31" || resp[0]["roleId"] == "1") {
+              if (resp[0]["roleId"] == "31") {
+                localStorage.setItem("userId", resp[0]["userId"]);
+              } else if (resp[0]["roleId"] == "1") {
+                localStorage.setItem("doctorId", resp[0]["userId"]);
+                localStorage.setItem("originalDoctorId", resp[0]["userId"]);
+                localStorage.setItem("userId", resp[0]["userId"]);
+                localStorage.setItem("userName", resp[0]["userName"]);
+                localStorage.setItem(
+                  "docSpecialityName",
+                  resp[0]["docSpecialityName"]
+                );
+                localStorage.setItem("email", resp[0]["email"]);
+              }
+              localStorage.setItem("email", sendName);
+              localStorage.setItem("roleId", roleId);
+              localStorage.setItem("userName", resp[0]["userName"]);
+            } else {
+              alert("Invalid Credentials");
+            }
+          } else {
+            alert("Invalid Credentials");
+          }
+          if (localStorage.getItem("email")) {
+            let clinicdata = {
+              userId: localStorage.getItem("userId"),
+              roleId: roleId,
+            };
+            axios.defaults.headers.common["X-Requested-With"] =
+              "XMLHttpRequest";
+            axios
+              .put(
+                hostAddress +
+                  currentServer +
+                  "/RestEasy/DischargeSummaryWebService/findClinicByUser",
+                clinicdata
+              )
+              .then((response) => {
+                console.log("findClinicByUser resp", response);
+                if (Object.keys(response.data).length === 0)
+                {
+                  console.log('if block')
+                  localStorage.setItem("allClinics", JSON.stringify([]));
+                }
+                  
+                else{
+                  console.log('else')
+                  localStorage.setItem(
+                    "allClinics",
+                    JSON.stringify(response.data["ptAppointmentOrgList"])
+                  );
+                }
+                  
+                // setRedirect(<Redirect to="/dischargeSummaryPage" />);
+                history.push("/dischargeSummaryPage")
+              })
+              .catch((err) => {
+                console.log("err", err);
+              });
+          }
+        })
+
+        .catch((err) => {
+          alert("Invalid");
+          console.log("error", err);
+        });
+    // }
+    // setValidated(true);
+  };
+  
+  const ValidateOtpNumber = () => {
+
+  let verificationCode = {
+    verificationCodeOne,
+    verificationCodeTwo,
+    verificationCodeThree,
+    verificationCodeFour,
+    verificationCodeFive,
+  };
+ 
+  if (verificationCodeOne === null || verificationCodeTwo === null || verificationCodeThree === null || verificationCodeFour === null || verificationCodeFive === null || isNaN(verificationCodeOne) || isNaN(verificationCodeTwo) || isNaN(verificationCodeThree) || isNaN(verificationCodeFour) || isNaN(verificationCodeFive)) {
+    alert("Please enter valid otp number");
+  }
+  else{
+  let otp =
+    verificationCodeOne +
+    verificationCodeTwo +
+    "-" +
+    verificationCodeThree +
+    verificationCodeFour +
+    verificationCodeFive;
+
+    let current_date = new Date();
+    let cms = Math.floor(new Date().getTime()) ;
+    let data = {
+      verificationCode: otp,
+      userPhoneNumber: localStorage.getItem("userPhoneNumber"),
+      os: "iOS-PatientApp",
+      clientTimeZone: cms,
+    };
+    axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+    axios
+      .put(
+        hostAddress +
+          "https://dev2.evolko.com/RestEasy/PatientRadarWebService/doVerificationOfCodeForDrApp",
+        data
+      )
+      .then((response) => {
+        let userName = response.data["userName"];
+        localStorage.setItem("newUser",userName);
+        
+        let passWord = response.data["passWord"];
+        localStorage.setItem("newPassword",passWord);
+        if (userName !== "" && passWord !== "") {
+          handleSubmitVerifyOtp();
+          // redirectToDoctorRegistration();
+         
+        }
+        else{
+          history.push("/doctorRegistration");
+        }
+        let errorMsg = response.data.errorString;
+        if(errorMsg !== ""){
+          alert(errorMsg);
+          history.push("/VerifyOtpNumber");
+        }
+        // let errorMsg = response.data.errorString;
+        // if(errorMsg == ""){
+          
+        //   history.push("/doctorRegistration");
+        // }
+        
+        
+      })
+      .catch((err) => {});
+      
+  };
+  }
+  const redirectToDoctorRegistration = (event) => {
+    // history.push("/dischargeSummaryPage");
+    // setRedirect(
+    //   <Redirect
+    //     to={{
+    //       pathname: "/doctorRegistration",
+    //     }}
+    //   />
+    // );
+  };
+  
+  return (
+    <div>
+      <div className={classes.mainContainer}>
+        <Card className={classes.registerCard}>
+          <Card.Body>
+            <Card.Title className={classes.title}>
+              <img
+                className={classes.img}
+                src={require("../assets/favicon.png")}
+              />{" "}
+              &nbsp; &nbsp; <span>Mobile Verifcation Code</span>
+            </Card.Title>
+            <h6 className="mt-4 mb-3">
+              You will shortly receive the
+              <span>
+                Verificaiton code on the mobile number {globalUserName}
+              </span>{" "}
+            </h6>
+            <Row className="mb-3">
+              <Col sm={12}>Enter the 5-digit code</Col>
+            </Row>
+            <Row className="my-3">
+              <Col sm="2">
+                <Form.Control
+                  required
+                  type="text"
+                  id="codeOne"
+                  autoFocus
+                  onChange={(e) => setVerificationCodeOne(e.target.value)}
+                />
+              </Col>
+              <Col sm="2">
+                <Form.Control
+                  required
+                  type="text"
+                  onChange={(e) => 
+                    setVerificationCodeTwo(e.target.value)
+                  }
+                  id="codeTwo"
+                />
+              </Col>
+              <Col sm="1">-</Col>
+              <Col sm="2">
+                <Form.Control
+                  required
+                  type="text"
+                  onChange={(e) => setVerificationCodeThree(e.target.value)}
+                  id="codeThree"
+                />
+              </Col>
+              <Col sm="2">
+                <Form.Control
+                  required
+                  type="text"
+                  onChange={(e) => setVerificationCodeFour(e.target.value)}
+                  id="codeFour"
+                />
+              </Col>
+              <Col sm="2">
+                <Form.Control
+                  required
+                  type="text"
+                  onChange={(e) => setVerificationCodeFive(e.target.value)}
+                  id="codeFive"
+                />
+              </Col>
+            </Row>
+            <div className="mt-5">
+              <Button
+                className=""
+                variant="primary"
+                type="submit"
+                onClick={ValidateOtpNumber}
+              >
+                Continue
+              </Button>
+            </div>
+          </Card.Body>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default VerifyOtpNumber;

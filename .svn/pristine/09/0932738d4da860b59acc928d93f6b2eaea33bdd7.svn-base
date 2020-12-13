@@ -1,0 +1,105 @@
+import React, { useState, useEffect } from "react";
+import { Button, Badge } from "react-bootstrap";
+import styles from "./Styles.module.css";
+import classes from "../pages/DischargeSummary/DischargeSummary.module.css";
+import { hostAddress } from "../assets/config";
+import { Redirect } from "react-router";
+import HamburgerDropdown from "./HamburgerDropdown";
+import SearchTreatmentProtocol from "./SearchTreatmentProtocol";
+import axios from "axios";
+import { currentServer } from "../assets/config";
+
+const DSCreateLeftPaneTreatmentProtocol = (props) => {
+  const [treatmentProtocolContent, setTreatmentProtocolContent] = useState(
+    null
+  );
+  useEffect(() => {
+    let data = {
+      doctorID: localStorage.getItem("doctorId"),
+      specialityId: localStorage.getItem("specialityId"),
+      checkInType: "Discharge Summary",
+      lastSynchronizedTimeFromServer: 1,
+    };
+
+    axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+    axios
+      .put(
+        hostAddress +
+          currentServer +
+          "/RestEasy/PatientWebService/fetchProtocol",
+        data
+      )
+      .then((response) => {
+        console.log(
+          "fetchProtocol response",
+          JSON.parse(response.data["protocolDetail"])
+        );
+        let arr =
+          JSON.parse(response.data["protocolDetail"]) == null
+            ? []
+            : JSON.parse(response.data["protocolDetail"]);
+        setTreatmentProtocolContent(
+          arr.map((item) => {
+            return (
+              <div className={styles.diagnosisRow}>
+                <div
+                  className={styles.diagnosisRowName}
+                  onClick={() =>
+                    props.setCreateDsStateChange(JSON.stringify(arr))
+                  }
+                >
+                  {item["protocolName"]}
+                </div>
+              </div>
+            );
+          })
+        );
+      })
+      .catch((err) => {
+        console.log("searchInitialMedicine err", err);
+      });
+  }, [props.leftPrompt]);
+
+  return (
+    <>
+      <div className={classes.leftPaneHeaderDSCreate}>
+        {/* <div className={classes.leftHeaderImageContainer}>
+          <img
+            alt=""
+            className={classes.leftHeaderImage}
+            src="https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png"
+          ></img>
+        </div> */}
+        <div className={classes.leftHeaderHeading}>
+          <div className={classes.leftHeaderHeadingTitle}>
+            <Button
+              className={classes.createPageClinicNameBtn}
+              onClick={() =>
+                props.setRedirect(<Redirect to="/dischargeSummaryPage" />)
+              }
+            >
+              {localStorage.getItem("clinicName")}
+            </Button>
+          </div>
+          <div className={classes.leftHeaderSubHeading}>
+            {localStorage.getItem("doctorName")}
+          </div>
+          <div className={classes.leftHeaderSubHeadingRight}>
+            {localStorage.getItem("docSpecialityName")}
+          </div>
+        </div>
+      </div>
+
+      <div className={classes.leftPaneContentCreate}>
+        <div className={styles.leftPaneTreatmentProtocolHeading}>
+          Treatment Protocol
+        </div>
+        <div className={styles.diagnosisOnAdmission}>
+          {treatmentProtocolContent}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default DSCreateLeftPaneTreatmentProtocol;

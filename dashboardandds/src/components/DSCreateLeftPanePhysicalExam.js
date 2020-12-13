@@ -1,0 +1,537 @@
+import React, { useState, useEffect } from "react";
+import { Button, Badge } from "react-bootstrap";
+import styles from "./Styles.module.css";
+import classes from "../pages/DischargeSummary/DischargeSummary.module.css";
+import { hostAddress } from "../assets/config";
+import { currentServer } from "../assets/config";
+import { Redirect } from "react-router";
+import HamburgerDropdown from "./HamburgerDropdown";
+import SearchDiagnosis from "./SearchDiagnosis";
+import axios from "axios";
+import convert from "xml-js";
+
+const DSCreateLeftPanePhysicalExam = (props) => {
+  const [physicalExamContent, setPhysicalExamContent] = useState(null);
+  const [prompt, setPrompt] = useState(null);
+
+  let pageNumber =
+    localStorage.getItem("phyExamPageNumber") == null
+      ? 0
+      : localStorage.getItem("phyExamPageNumber");
+
+  useEffect(() => {
+    let data = { checkInType: "exam" };
+    let contentArr =
+      localStorage.getItem("physicalExamContent") == null
+        ? []
+        : JSON.parse(localStorage.getItem("physicalExamContent"));
+    if (contentArr.length == 0) {
+      axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+      axios
+        .put(
+          hostAddress +
+            currentServer +
+            "/RestEasy/PatientWebService/getComplaintForDoctorTriaging",
+          data
+        )
+        .then((response) => {
+          // console.log("getComplaintForDoctorTriaging resp", response.data);
+          contentArr = response.data;
+          localStorage.setItem(
+            "physicalExamContent",
+            JSON.stringify(contentArr)
+          );
+          renderPhysicalExamListOne(contentArr);
+        })
+        .catch((err) => console.log("err", err));
+    } else renderPhysicalExamListOne(contentArr);
+  }, [props.leftPrompt, prompt]);
+
+  const renderPhysicalExamListOne = (contentArr) => {
+    let phyExamSelectedOne = localStorage.getItem("phyExamSelectedOne");
+    let contentDisp = contentArr.map((item) => {
+      return (
+        <>
+          <button
+            className={[
+              phyExamSelectedOne != item["complaintText"]
+                ? styles.examBtn
+                : styles.examBtnActive,
+              styles.examDiv,
+            ].join(" ")}
+            onClick={() => {
+              localStorage.setItem("phyExamSelectedOne", item["complaintText"]);
+              localStorage.setItem("phyExamSelectedOneId", item["Id"]);
+              setPrompt(Math.random());
+            }}
+          >
+            {item["complaintText"]}
+          </button>
+        </>
+      );
+    });
+    setPhysicalExamContent(
+      <div className={styles.scrollleft}>
+        {contentDisp}
+        <div className={styles.prevNextBtnDiv}>
+          <Button
+            variant="success"
+            className={styles.prevNextBtn}
+            onClick={() => {
+              renderPhysicalExamListTwo();
+            }}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
+  const renderPhysicalExamListTwoOld = () => {
+    let phyExamSelectedOne = localStorage.getItem("phyExamSelectedOne");
+    let phyExamSelectedOneId = localStorage.getItem("phyExamSelectedOneId");
+    let contentDisp = null;
+    if (phyExamSelectedOne == "Vitals") {
+      contentDisp = (
+        <div className={styles.vitalsDiv}>
+          <div className={styles.vitalsHead}>
+            <h3>Blood Pressure</h3>
+          </div>
+          <div className={styles.vitalsBody1}>
+            <div className={styles.vitalsSystolicAndStuff}>Systolic</div>
+            <div>
+              <form>
+                <input
+                  type="text"
+                  placeholder="Type Here"
+                  className={styles.vitalsTextArea}
+                ></input>
+              </form>
+            </div>
+          </div>
+          <div className={styles.vitalsBody2}>
+            <div className={styles.vitalsSystolicAndStuff}>Diastolic</div>
+            <div>
+              <form>
+                <input
+                  placeholder="Type Here"
+                  className={styles.vitalsTextArea}
+                ></input>
+              </form>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    if (phyExamSelectedOne == "Gen Physical Exam") {
+      contentDisp = (
+        <div className={styles.vitalsDiv}>
+          <div className={styles.vitalsHead}>
+            <h3>General</h3>
+          </div>
+          <div className={styles.generalsBody}>
+            <div className={styles.generalsSection}>
+              <div className={styles.generalSecionLabel}>Clinically</div>
+              <div className={styles.generalsSectionBtnGrp}>
+                <Button className={styles.genSecBtn}>NAD</Button>
+              </div>
+            </div>
+            <div className={styles.generalsSection}>
+              <div className={styles.generalSecionLabel}>Build</div>
+              <div className={styles.generalsSectionBtnGrp}>
+                <Button className={styles.genSecBtn}>Normal</Button>
+                <Button className={styles.genSecBtn}>Short</Button>
+                <Button className={styles.genSecBtn}>Tall</Button>
+              </div>
+            </div>
+            <div className={styles.generalsSection}>
+              <div className={styles.generalSecionLabel}>Nourishment</div>
+              <div className={styles.generalsSectionBtnGrp}>
+                <Button className={styles.genSecBtn}>Normal</Button>
+                <Button className={styles.genSecBtn}>Undernourished</Button>
+              </div>
+            </div>
+            <div className={styles.generalsSection}>
+              <div className={styles.generalSecionLabel}>Unkempt</div>
+              <div className={styles.generalsSectionBtnGrp}>
+                <Button className={styles.genSecBtn}>Yes</Button>
+                <Button className={styles.genSecBtn}>No</Button>
+              </div>
+            </div>
+            <div className={styles.generalsSection}>
+              <div className={styles.generalSecionLabel}>Alert</div>
+              <div className={styles.generalsSectionBtnGrp}>
+                <Button className={styles.genSecBtn}>Yes</Button>
+                <Button className={styles.genSecBtn}>No</Button>
+              </div>
+            </div>
+            <div className={styles.generalsSection}>
+              <div className={styles.generalSecionLabel}>Conscious</div>
+              <div className={styles.generalsSectionBtnGrp}>
+                <Button className={styles.genSecBtn}>Yes</Button>
+                <Button className={styles.genSecBtn}>No</Button>
+              </div>
+            </div>
+            <div className={styles.generalsSection}>
+              <div className={styles.generalSecionLabel}>Well Oriented</div>
+              <div className={styles.generalsSectionBtnGrp}>
+                <Button className={styles.genSecBtn}>Yes</Button>
+                <Button className={styles.genSecBtn}>No</Button>
+              </div>
+            </div>
+            <div className={styles.generalsSection}>
+              <div className={styles.generalSecionLabel}>In Pain</div>
+              <div className={styles.generalsSectionBtnGrp}>
+                <Button className={styles.genSecBtn}>Yes</Button>
+                <Button className={styles.genSecBtn}>No</Button>
+              </div>
+            </div>
+            <div className={styles.generalsSection}>
+              <div className={styles.generalSecionLabel}>Dyspnoea</div>
+              <div className={styles.generalsSectionBtnGrp}>
+                <Button className={styles.genSecBtn}>No</Button>
+                <Button className={styles.genSecBtn}>Present</Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    setPhysicalExamContent(
+      <>
+        <div className={styles.prevNextBtnDiv}>
+          <div className={styles.prevNextBtnTop}>
+            <Button
+              variant="secondary"
+              className={styles.prevBtn}
+              onClick={() => {
+                renderPhysicalExamListOne(
+                  JSON.parse(localStorage.getItem("physicalExamContent"))
+                );
+              }}
+            >
+              <i class="fa fa-arrow-left"></i>
+            </Button>
+            <Button
+              variant="secondary"
+              className={styles.endBtn}
+              onClick={() => handleDone()}
+            >
+              End
+            </Button>
+            <Button
+              variant="secondary"
+              className={styles.nextBtn}
+              onClick={() => {}}
+            >
+              <i class="fa fa-arrow-right"></i>
+            </Button>
+          </div>
+        </div>
+        {contentDisp}
+      </>
+    );
+  };
+
+  const renderPhysicalExamListTwo = () => {
+    let phyExamSelectedOne = localStorage.getItem("phyExamSelectedOne");
+    let phyExamSelectedOneId = localStorage.getItem("phyExamSelectedOneId");
+    let data = {
+      Complaint: phyExamSelectedOne,
+      complaint_id: phyExamSelectedOneId,
+    };
+
+    let allPagesOfSelectedOne = [];
+    if (
+      localStorage.getItem("phyExamAllPagesOfSelectedOne") != null &&
+      JSON.parse(localStorage.getItem("phyExamAllPagesOfSelectedOne"))[
+        phyExamSelectedOne
+      ] != null
+    ) {
+      allPagesOfSelectedOne = JSON.parse(
+        localStorage.getItem("phyExamAllPagesOfSelectedOne")
+      )[phyExamSelectedOne];
+      renderSubsequentScreenPanes(allPagesOfSelectedOne);
+    } else {
+      axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+      axios
+        .put(
+          hostAddress +
+            currentServer +
+            "/RestEasy/PatientWebService/fetchComplaintQuestionnaire",
+          data
+        )
+        .then((response) => {
+          console.log("fetchComplaintQuestionnaire resp", response.data);
+          allPagesOfSelectedOne = response.data["Complaint"];
+          let obj =
+            localStorage.getItem("phyExamAllPagesOfSelectedOne") != null
+              ? JSON.parse(localStorage.getItem("phyExamAllPagesOfSelectedOne"))
+              : {};
+          obj[phyExamSelectedOne] = allPagesOfSelectedOne;
+          localStorage.setItem(
+            "phyExamAllPagesOfSelectedOne",
+            JSON.stringify(obj)
+          );
+          renderSubsequentScreenPanes(allPagesOfSelectedOne);
+        })
+
+        .catch((err) => console.log("err", err));
+    }
+  };
+
+  const renderSubsequentScreenPanes = (allPagesOfSelectedOne) => {
+    let phyExamSelectedOne = localStorage.getItem("phyExamSelectedOne");
+
+    let sectionContent = [];
+    let mainHeading = [];
+    console.log("allPagesOfSelectedOne", allPagesOfSelectedOne);
+    let phyExamObj = JSON.parse(
+      localStorage.getItem("physicalExamOnAdmissionObj")
+    );
+    for (let i in allPagesOfSelectedOne) {
+      mainHeading[i] = allPagesOfSelectedOne[i]["question"].trim();
+      let sectionsOfThePage = JSON.parse(
+        allPagesOfSelectedOne[i]["questionOptionsXml"]
+      )["subitems"];
+      sectionContent[i] =
+        sectionsOfThePage == null
+          ? allPagesOfSelectedOne[i]["questionOptionsXml"] == null
+            ? null
+            : JSON.parse(allPagesOfSelectedOne[i]["questionOptionsXml"])[
+                "optionValue"
+              ].map((val) => {
+                return (
+                  <Button className={styles.genSecBtn} onClick={() => {}}>
+                    {val["displayLabel"]}
+                  </Button>
+                );
+              })
+          : sectionsOfThePage.map((ele) => {
+              return (
+                <div
+                  className={
+                    ele["optionValue"] == null
+                      ? styles.generalsSectionRow
+                      : styles.generalsSection
+                  }
+                >
+                  <div className={styles.generalSecionLabel}>
+                    {ele["itemName"]}
+                  </div>
+                  <div className={styles.generalsSectionBtnGrp}>
+                    {ele["optionValue"] == null ? (
+                      <form>
+                        <input
+                          type="text"
+                          placeholder="Type Here"
+                          className={styles.vitalsTextArea}
+                        ></input>
+                      </form> //text field option
+                    ) : (
+                      ele["optionValue"].map((val) => {
+                        return (
+                          <Button
+                            className={
+                              phyExamObj == null ||
+                              phyExamObj[phyExamSelectedOne] == null ||
+                              phyExamObj[phyExamSelectedOne][mainHeading[i]] ==
+                                null ||
+                              phyExamObj[phyExamSelectedOne][mainHeading[i]][
+                                ele["itemName"]
+                              ] == null ||
+                              phyExamObj[phyExamSelectedOne][mainHeading[i]][
+                                ele["itemName"]
+                              ][val["displayLabel"]] == null ||
+                              phyExamObj[phyExamSelectedOne][mainHeading[i]][
+                                ele["itemName"]
+                              ][val["displayLabel"]] === false
+                                ? styles.genSecBtn
+                                : styles.genSecBtnActive
+                            }
+                            onClick={() => {
+                              handleExamSelect(
+                                phyExamSelectedOne,
+                                mainHeading,
+                                i,
+                                ele,
+                                val
+                              );
+                            }}
+                          >
+                            {val["displayLabel"]}
+                          </Button>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              );
+            });
+    }
+    setPhysicalExamContent(
+      <>
+        <div className={styles.prevNextBtnDiv}>
+          <div className={styles.prevNextBtnTop}>
+            <Button
+              variant="secondary"
+              className={styles.prevBtn}
+              onClick={() => {
+                if (pageNumber > 0) {
+                  pageNumber = pageNumber - 1;
+                  localStorage.setItem("phyExamPageNumber", pageNumber);
+                  handleDone();
+                  renderSubsequentScreenPanes(allPagesOfSelectedOne);
+                } else {
+                  setPrompt(Math.random());
+                }
+              }}
+            >
+              <i class="fa fa-arrow-left"></i>
+            </Button>
+            <Button
+              variant="secondary"
+              className={styles.endBtn}
+              onClick={() => {
+                handleDone();
+                setPrompt(Math.random());
+              }}
+            >
+              End
+            </Button>
+            <Button
+              variant="secondary"
+              className={styles.nextBtn}
+              onClick={() => {
+                if (pageNumber < sectionContent.length - 1) {
+                  pageNumber++;
+                  localStorage.setItem("phyExamPageNumber", pageNumber);
+                  handleDone();
+                  renderSubsequentScreenPanes(allPagesOfSelectedOne);
+                }
+              }}
+            >
+              <i class="fa fa-arrow-right"></i>
+            </Button>
+          </div>
+        </div>
+
+        <div className={styles.vitalsDiv}>
+          <br />
+          <div className={styles.vitalsHead}>
+            <div className={styles.examHeadingDiv}>
+              <h2>{mainHeading[pageNumber]}</h2>
+              {/* <Button variant="light" onClick={() => handleDone()}>
+                Done
+              </Button> */}
+            </div>
+
+            <div className={styles.generalsBodyContent}>
+              {sectionContent[pageNumber]}
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
+  const handleExamSelect = (phyExamSelectedOne, mainHeading, i, ele, val) => {
+    let phyExamObj = JSON.parse(
+      localStorage.getItem("physicalExamOnAdmissionObj")
+    );
+    if (phyExamObj == null) {
+      phyExamObj = {};
+      phyExamObj[phyExamSelectedOne] = {};
+      phyExamObj[phyExamSelectedOne][mainHeading[i]] = {};
+      phyExamObj[phyExamSelectedOne][mainHeading[i]][ele["itemName"]] = {};
+    } else if (phyExamObj[phyExamSelectedOne] == null) {
+      phyExamObj[phyExamSelectedOne] = {};
+      phyExamObj[phyExamSelectedOne][mainHeading[i]] = {};
+      phyExamObj[phyExamSelectedOne][mainHeading[i]][ele["itemName"]] = {};
+    } else if (phyExamObj[phyExamSelectedOne][mainHeading[i]] == null) {
+      phyExamObj[phyExamSelectedOne][mainHeading[i]] = {};
+      phyExamObj[phyExamSelectedOne][mainHeading[i]][ele["itemName"]] = {};
+    } else if (
+      phyExamObj[phyExamSelectedOne][mainHeading[i]][ele["itemName"]] == null ||
+      !(
+        val["displayLabel"] in
+        phyExamObj[phyExamSelectedOne][mainHeading[i]][ele["itemName"]]
+      )
+    ) {
+      console.log(
+        "trial",
+        phyExamObj[phyExamSelectedOne][mainHeading[i]][ele["itemName"]]
+      );
+      phyExamObj[phyExamSelectedOne][mainHeading[i]][ele["itemName"]] = {};
+    }
+
+    //
+
+    phyExamObj[phyExamSelectedOne][mainHeading[i]][ele["itemName"]][
+      val["displayLabel"]
+    ] =
+      phyExamObj[phyExamSelectedOne] == null ||
+      phyExamObj[phyExamSelectedOne][mainHeading[i]] == null ||
+      phyExamObj[phyExamSelectedOne][mainHeading[i]][ele["itemName"]] == null ||
+      phyExamObj[phyExamSelectedOne][mainHeading[i]][ele["itemName"]][
+        val["displayLabel"]
+      ] == null ||
+      !phyExamObj[phyExamSelectedOne][mainHeading[i]][ele["itemName"]][
+        val["displayLabel"]
+      ]
+        ? true
+        : false;
+    localStorage.setItem(
+      "physicalExamOnAdmissionObj",
+      JSON.stringify(phyExamObj)
+    );
+    renderSubsequentScreenPanes(
+      JSON.parse(localStorage.getItem("phyExamAllPagesOfSelectedOne"))[
+        phyExamSelectedOne
+      ]
+    );
+  };
+  const handleDone = () => {
+    props.setCreateDsStateChange(
+      JSON.stringify(localStorage.getItem("physicalExamOnAdmissionObj"))
+    );
+  };
+  return (
+    <>
+      {/* <div className={classes.leftPaneHeaderDSCreate}>
+      
+        <div className={classes.leftHeaderHeading}>
+          <div className={classes.leftHeaderHeadingTitle}>
+            <Button
+              className={classes.createPageClinicNameBtn}
+              onClick={() =>
+                props.setRedirect(<Redirect to="/dischargeSummaryPage" />)
+              }
+            >
+              {localStorage.getItem("clinicName")}
+            </Button>
+          </div>
+          <div className={classes.leftHeaderSubHeading}>
+            {localStorage.getItem("doctorName")}
+          </div>
+          <div className={classes.leftHeaderSubHeadingRight}>
+            {localStorage.getItem("docSpecialityName")}
+          </div>
+        </div>
+      
+      </div> */}
+      <div className={classes.leftPaneSearchCreatePage}></div>
+      <div className={classes.leftPaneContentCreate}>
+        <div className={classes.leftHeaders}>
+          <div className={styles.phyExamMainHead}>
+            <h4>Physical Exam On Admission</h4>
+            <hr />
+          </div>
+        </div>
+        <div className={styles.physicalExamContent}>{physicalExamContent}</div>
+      </div>
+    </>
+  );
+};
+
+export default DSCreateLeftPanePhysicalExam;

@@ -1,0 +1,119 @@
+import React, { useState, useEffect } from "react";
+import { Button } from "react-bootstrap";
+import styles from "./Styles.module.css";
+import ReadMoreReact from "read-more-react";
+import TextareaAutosize from "react-textarea-autosize";
+
+const ReadMoreTextArea = (props) => {
+  const [textArea, setTextArea] = useState("");
+
+  const [cellActive, setCellActive] = useState(true);
+  let propsStyle = props.style;
+  useEffect(() => {
+    setTextArea(localStorage.getItem(props.localStorageId));
+    console.log(
+      "-",
+      "label",
+      props.label,
+      "textArea",
+      textArea,
+      "localStorageId",
+      props.localStorageId
+    );
+    setCellActive(false);
+  }, [props.localStorageId]);
+  return (
+    <div
+      className={
+        propsStyle == "greyBackground"
+          ? [styles.instructionsAndCoTextDiv, styles.greyBackground].join(",")
+          : styles.instructionsAndCoTextDiv
+      }
+    >
+      <div className={styles.readmoretext}>
+        {!cellActive &&
+        textArea != null &&
+        (textArea.length > 100 || textArea.split(/\r|\r\n|\n/).length > 2) ? (
+          <div className={styles.textAreaContainer}>
+            <TextareaAutosize
+              rows={2}
+              value={
+                textArea.split(/\r|\r\n|\n/).length > 2
+                  ? textArea.split(/\r|\r\n|\n/)[0] +
+                    "\n" +
+                    textArea.split(/\r|\r\n|\n/)[1]
+                  : textArea.substring(0, 100)
+              }
+              className={
+                propsStyle == "greyBackground"
+                  ? [
+                      styles.instructionsAndCoTextbox,
+                      styles.greyBackground,
+                    ].join(" ")
+                  : styles.instructionsAndCoTextbox
+              }
+            ></TextareaAutosize>
+            <div className={styles.morelesshyperlink}>
+              <a href="javascript:void(0)" onClick={() => setCellActive(true)}>
+                More
+              </a>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.textAreaContainer}>
+            <TextareaAutosize
+              minRows="1.5"
+              value={textArea}
+              placeholder={
+                localStorage.getItem(props.localStorageId) == null ||
+                localStorage.getItem(props.localStorageId) === ""
+                  ? props.localStorageId == "patientInformation"
+                    ? "Notes"
+                    : "Type Here"
+                  : ""
+              }
+              className={
+                propsStyle == "greyBackground"
+                  ? [
+                      styles.instructionsAndCoTextbox,
+                      styles.greyBackground,
+                    ].join(" ")
+                  : styles.instructionsAndCoTextbox
+              }
+              onChange={(e) => {
+                setTextArea(e.target.value);
+                if (props.localStorageId == "patientInformation") {
+                  let obj =
+                    localStorage.getItem("patientInformationObj") == null
+                      ? {}
+                      : JSON.parse(
+                          localStorage.getItem("patientInformationObj")
+                        );
+                  obj["Notes"] = e.target.value;
+                  localStorage.setItem(
+                    "patientInformationObj",
+                    JSON.stringify(obj)
+                  );
+                } else
+                  localStorage.setItem(props.localStorageId, e.target.value);
+              }}
+            ></TextareaAutosize>
+            {textArea != null &&
+            (textArea.length > 100 ||
+              textArea.split(/\r|\r\n|\n/).length > 2) ? (
+              <div className={styles.morelesshyperlink}>
+                <a
+                  href="javascript:void(0)"
+                  onClick={() => setCellActive(false)}
+                >
+                  Less
+                </a>
+              </div>
+            ) : null}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+export default ReadMoreTextArea;

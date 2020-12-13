@@ -1,0 +1,151 @@
+import React, { useState } from 'react';
+import {Card, Button, Form, Row, Col} from 'react-bootstrap';
+import classes from './Login.module.css'
+import { Redirect } from "react-router";
+import {BrowserRouter , Link} from 'react-router-dom';
+import App from "../../App";
+import Dashboard from "../Dashboard/Dashboard";
+import axios from "axios";
+import { hostAddress } from "../../assets/config";
+
+const LoginDashboard=(props)=>{
+    const [email, setEmail] = useState("");
+    const [pwd, setPwd] = useState("");
+    const [redirect, setRedirect] = useState(null);
+    const [validated, setValidated] = useState(false);
+  
+    const handleSubmit = (event) => {
+      const form = event.currentTarget;
+      if (form.checkValidity() === false) {
+        event.preventDefault();
+        event.stopPropagation();
+      } else {
+     
+        event.preventDefault();
+        event.stopPropagation();
+        console.log("user enters credentials", email, pwd);
+        let data = {
+          username: email,
+          password: pwd,
+        };
+
+        let roleId, clinicId;
+        axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+        axios
+          .put(
+            hostAddress +
+              "https://dev2.evolko.com/RestEasy/DashboardWebService/login",
+            data
+          )
+  
+          .then((response) => {
+            console.log("login api response", response.data);
+            let resp = response.data["ptAppointmentOrgList"];
+            roleId = resp[0]["roleId"];
+            clinicId = resp[0]["clinicId"];
+            console.log("RoleId is "+resp[0]["roleId"] + " clinicId is "+resp[0]["clinicId"] + " orgId is "+resp[0]["orgId"] );
+            if (resp[0]["userId"] != 0) {
+              if (resp[0]["userId"] == "702654258") {
+                localStorage.setItem("userId", resp[0]["userId"]);
+                localStorage.setItem("roleId",resp[0]["roleId"]);
+                localStorage.setItem("clinicId",resp[0]["clinicId"]);
+                localStorage.setItem("orgId",resp[0]["orgId"]);
+              } else {
+                localStorage.setItem("userId", resp[0]["userId"]);
+                localStorage.setItem("roleId",resp[0]["roleId"]);
+                localStorage.setItem("clinicId",resp[0]["clinicId"]);
+                localStorage.setItem("orgId",resp[0]["orgId"]);
+              }
+              localStorage.setItem("email", email);
+              localStorage.setItem("roleId", roleId);
+              localStorage.setItem("userId", resp[0]["userId"]);
+              localStorage.setItem("clinicId",resp[0]["clinicId"]);
+              localStorage.setItem("orgId",resp[0]["orgId"]);
+               setRedirect(<Redirect to="/dashboard" />);
+            } else {
+              alert("Invalid Credentials");
+            }
+          })
+  
+          .catch((err) => {
+            alert("Invalid");
+            console.log("error", err);
+          });
+      }
+      setValidated(true);
+    };
+  
+    return(
+        <div>
+        {redirect}
+        {localStorage.getItem("email") ? <Redirect to="/login" /> : null}
+        <div className={classes.mainContainer}>
+          <Card className={classes.loginCard}>
+            <Card.Body>
+              <Card.Title className={classes.title}>
+                <img
+                  className={classes.img}
+                  src={require("../../assets/logo-white.png")}
+                />
+              </Card.Title>
+              <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                <Form.Group
+                  as={Row}
+                  controlId="formGridEmail"
+                  controlId="validationCustom01"
+                >
+                  <Form.Label column sm={4}>
+                    {" "}
+                    Login
+                  </Form.Label>
+                  <Col sm={8}>
+                    <Form.Control
+                      required
+                      type="text"
+                      placeholder="Enter your email-id"
+                      className="mb-3"
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      Please enter a valid email.
+                    </Form.Control.Feedback>
+                  </Col>
+                </Form.Group>
+                <Form.Group
+                  as={Row}
+                  controlId="formGridPassword"
+                  className="mb-0"
+                >
+                  <Form.Label column sm={4}>
+                    Password
+                  </Form.Label>
+                  <Col sm={8}>
+                    <Form.Control
+                      required
+                      type="password"
+                      placeholder="Enter your password"
+                      className="mb-4"
+                      required
+                      onChange={(e) => setPwd(e.target.value)}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      Please enter a password.
+                    </Form.Control.Feedback>
+                  </Col>
+                </Form.Group>
+                <Row>
+                  <Col sm={{ span: 8, offset: 4 }}>
+                    <Button type="submit" variant="primary" style={{"cursor":"pointer"}}>
+                      Login
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+            </Card.Body>
+          </Card>
+        </div>
+      </div>
+    );
+  };
+
+export default LoginDashboard;

@@ -1,0 +1,6 @@
+{
+    "svn.ignoreMissingSvnWarning": true,
+    "svn.delete.ignoredRulesForDeletedFiles": [
+        "dashboardandds/package-lock.json"
+    ]
+}

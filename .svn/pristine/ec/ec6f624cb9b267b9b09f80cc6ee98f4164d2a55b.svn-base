@@ -1,0 +1,191 @@
+import React, { useState } from "react";
+import {
+  Card,
+  Button,
+  Form,
+  Row,
+  Col,
+  Alert,
+  InputGroup,
+} from "react-bootstrap";
+import classes from "./Login.module.css";
+import { Redirect } from "react-router";
+import { BrowserRouter, Link } from "react-router-dom";
+import DischargeSummary from "../DischargeSummary/DischargeSummary";
+import axios from "axios";
+import { hostAddress } from "../../assets/config";
+
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [pwd, setPwd] = useState("");
+  const [redirect, setRedirect] = useState(null);
+  const [validated, setValidated] = useState(false);
+
+  const handleSubmit = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    } else {
+      event.preventDefault();
+      event.stopPropagation();
+      console.log("user enters credentials", email, pwd);
+      let data = {
+        username: email,
+        password: pwd,
+      };
+      let roleId;
+      axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+      axios
+        .put(
+          hostAddress +
+            "https://dev2.evolko.com/RestEasy/DischargeSummaryWebService/login",
+          data
+        )
+
+        .then((response) => {
+          console.log("login api response", response.data);
+          let resp = response.data["ptAppointmentOrgList"];
+          roleId = resp[0]["roleId"];
+          console.log(resp[0]["userId"]);
+          if (resp[0]["userId"] != 0) {
+            if (resp[0]["roleId"] == "31") {
+              localStorage.setItem("userId", resp[0]["userId"]);
+            } else {
+              localStorage.setItem("userId", resp[0]["userId"]);
+              localStorage.setItem("doctorName", resp[0]["userName"]);
+              localStorage.setItem("doctorId", resp[0]["userId"]);
+              localStorage.setItem(
+                "docSpecialityName",
+                resp[0]["docSpecialityName"]
+              );
+            }
+            localStorage.setItem("email", email);
+            localStorage.setItem("roleId", roleId);
+            localStorage.setItem("userName", resp[0]["userName"]);
+          } else {
+            alert("Invalid Credentials");
+          }
+
+          if (localStorage.getItem("email")) {
+            let clinicdata = {
+              userId: localStorage.getItem("userId"),
+              roleId: roleId,
+            };
+            console.log("clinicdata", clinicdata);
+            axios.defaults.headers.common["X-Requested-With"] =
+              "XMLHttpRequest";
+            axios
+              .put(
+                hostAddress +
+                  "https://dev2.evolko.com/RestEasy/DischargeSummaryWebService/findClinicByUser",
+                clinicdata
+              )
+              .then((response) => {
+                console.log("findClinicByUser resp", response);
+                if (Object.keys(response.data).length === 0)
+                  localStorage.setItem("allClinics", JSON.stringify([]));
+                else
+                  localStorage.setItem(
+                    "allClinics",
+                    JSON.stringify(response.data["ptAppointmentOrgList"])
+                  );
+                setRedirect(<Redirect to="/dischargeSummaryPage" />);
+              })
+              .catch((err) => {
+                console.log("err", err);
+              });
+          }
+        })
+
+        .catch((err) => {
+          alert("Invalid");
+          console.log("error", err);
+        });
+    }
+    setValidated(true);
+  };
+
+  return (
+    <div>
+      {redirect}
+      {localStorage.getItem("email") ? (
+        <Redirect to="/dischargeSummaryPage" />
+      ) : null}
+      <div className={classes.mainContainer}>
+        <Card className={classes.loginCard}>
+          <Card.Body>
+            <Card.Title className={classes.title}>
+              <img
+                className={classes.img}
+                src={require("../../assets/logo-white.png")}
+              />
+            </Card.Title>
+            <Form noValidate validated={validated} onSubmit={handleSubmit}>
+              <Form.Group
+                as={Row}
+                controlId="formGridEmail"
+                controlId="validationCustom01"
+              >
+                <Form.Label column sm={4}>
+                  {" "}
+                  Login
+                </Form.Label>
+                <Col sm={8}>
+                  <Form.Control
+                    required
+                    type="text"
+                    placeholder="Enter your email-id"
+                    className="mb-3"
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    Please enter a valid email.
+                  </Form.Control.Feedback>
+                </Col>
+              </Form.Group>
+              <Form.Group
+                as={Row}
+                controlId="formGridPassword"
+                className="mb-0"
+              >
+                <Form.Label column sm={4}>
+                  Password
+                </Form.Label>
+                <Col sm={8}>
+                  <Form.Control
+                    required
+                    type="password"
+                    placeholder="Enter your password"
+                    className="mb-3"
+                    required
+                    onChange={(e) => setPwd(e.target.value)}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    Please enter a password.
+                  </Form.Control.Feedback>
+                </Col>
+              </Form.Group>
+              <Row className="mb-3">
+                <Col sm={{ span: 8, offset: 4 }}>
+                  <div className={classes.forgotPwd}>
+                    <a href="#">Forgot Password?</a>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col sm={{ span: 8, offset: 4 }}>
+                  <Button type="submit" variant="primary">
+                    Login
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          </Card.Body>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default Login;

@@ -1,0 +1,85 @@
+import React from "react";
+import { Table } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import classes from "../pages/DischargeSummary/DischargeSummary.module.css";
+import styles from "./Styles.module.css";
+
+const AllergiesCheckboxes = (props) => {
+  const handleCheckBox = (e, label) => {
+    let obj =
+      localStorage.getItem("allergiesObj") == null
+        ? {}
+        : JSON.parse(localStorage.getItem("allergiesObj"));
+    obj[label] = obj[label] == null || obj[label] == false ? true : false;
+    localStorage.setItem("allergiesObj", JSON.stringify(obj));
+  };
+  return (
+    <div>
+      <form className={styles.checkboxForm}>
+        <div>
+          <div>
+            <input
+              type="checkbox"
+              onChange={(e) => handleCheckBox(e, "Drug Allergy")}
+            />
+            <label className={styles.checkboxLabel}>Drug Allergy</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              onChange={(e) => handleCheckBox(e, "Food Allergy")}
+            />
+            <label className={styles.checkboxLabel}>Food Allergy</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              onChange={(e) => handleCheckBox(e, "Pollen Allergy")}
+            />
+            <label className={styles.checkboxLabel}>Pollen Allergy</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              onChange={(e) => handleCheckBox(e, "Dust mites Allergy")}
+            />
+            <label className={styles.checkboxLabel}>Dust mites Allergy</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              onChange={(e) =>
+                handleCheckBox(
+                  e,
+                  "Animal dander tiny flakes of skin or hair Allergy"
+                )
+              }
+            />
+            <label className={styles.checkboxLabel}>
+              Animal dander tiny flakes of skin or hair Allergy
+            </label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              onChange={(e) => handleCheckBox(e, "Household Chemicals Allergy")}
+            />
+            <label className={styles.checkboxLabel}>
+              Household Chemicals Allergy
+            </label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              onChange={(e) => handleCheckBox(e, "Mold Allergy")}
+            />
+            <label className={styles.checkboxLabel}>Mold Allergy</label>
+          </div>
+        </div>
+      </form>
+      <hr />
+    </div>
+  );
+};
+
+export default AllergiesCheckboxes;

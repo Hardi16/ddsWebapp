@@ -1,0 +1,83 @@
+import React, { useState } from "react";
+import { Table } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import classes from "../pages/DischargeSummary/DischargeSummary.module.css";
+import styles from "./Styles.module.css";
+import ReadMoreTextArea from "./ReadMoreTextArea";
+import TextareaAutosize from "react-textarea-autosize";
+
+const FollowupTable = (props) => {
+  const [scheduledDate, setScheduledDate] = useState(new Date());
+  const handeleDateChange = (date, label) => {
+    date = date.toString().split(" ");
+    let dateGood = date[2] + " " + date[1] + " " + date[3];
+    let obj =
+      localStorage.getItem("patientInformationObj") == null
+        ? {}
+        : JSON.parse(localStorage.getItem("patientInformationObj"));
+    obj[label] = dateGood;
+    localStorage.setItem("patientInformationObj", JSON.stringify(obj));
+  };
+  return (
+    <div className={styles.patientTableDiv}>
+      <Table responsive size="sm" className={styles.patientInfoTable}>
+        <tbody>
+          <tr>
+            <td className={styles.tableCell}>Doctor Name</td>
+            <td className={styles.tableCell}>
+              <TextareaAutosize
+                rows={1}
+                className={[
+                  styles.insideTableTextAutoSizeGrey,
+                  styles.greyBackground,
+                ].join(" ")}
+                placeholder="Type Here"
+              ></TextareaAutosize>
+            </td>
+          </tr>
+          <tr>
+            <td className={styles.tableCell}>Speciality</td>
+            <td className={styles.tableCell}>
+              <TextareaAutosize
+                rows={1}
+                className={[
+                  styles.insideTableTextAutoSizeGrey,
+                  styles.greyBackground,
+                ].join(" ")}
+                placeholder="Type Here"
+              ></TextareaAutosize>
+            </td>
+          </tr>
+          <tr>
+            <td className={styles.tableCell}>Schedule</td>
+            <td className={styles.tableCell}>
+              {" "}
+              <DatePicker
+                dateFormat="dd/MM/yyyy"
+                className={styles.datepickerCreatePgGrey}
+                selected={scheduledDate}
+                onChange={(date) => {
+                  localStorage.setItem("scheduleDate", date);
+                  props.setPrompt(Math.random());
+                  setScheduledDate(date);
+                }}
+              />
+            </td>
+            {/* <td>
+              <TextareaAutosize
+                rows={1}
+                className={[
+                  styles.insideTableTextAutoSizeGrey,
+                  styles.greyBackground,
+                ].join(" ")}
+                placeholder="Type Here"
+              ></TextareaAutosize>
+            </td> */}
+          </tr>
+        </tbody>
+      </Table>
+    </div>
+  );
+};
+
+export default FollowupTable;

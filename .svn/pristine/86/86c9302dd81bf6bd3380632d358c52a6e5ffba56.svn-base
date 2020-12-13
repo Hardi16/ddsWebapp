@@ -1,0 +1,71 @@
+import React, { useState } from "react";
+import { Modal, Button, Form } from "react-bootstrap";
+import classes from "./Styles.module.css";
+import _ from "lodash";
+
+const AddDraggableSectionModal = (props) => {
+  const [smShow, setSmShow] = useState(false);
+  const [secName, setSecName] = useState(
+    localStorage.getItem("deletedSection") == null
+      ? ""
+      : localStorage.getItem("deletedSection")
+  );
+  const handleAdd = () => {
+    let cardsArr = JSON.parse(localStorage.getItem("cardsLabel"));
+    // if (!cardsArr.includes(secName)) {
+    localStorage.setItem(_.camelCase(secName), "");
+    // }
+    cardsArr.push(secName);
+    localStorage.setItem("cardsLabel", JSON.stringify(cardsArr));
+    props.setCardsLabel(cardsArr);
+    localStorage.removeItem("deletedSection");
+    let secHeadingsObj = JSON.parse(localStorage.getItem("secHeadings"));
+    // if (!Object.keys(secHeadingsObj).includes(secName)) {
+    secHeadingsObj[secName] = secName;
+    localStorage.setItem("secHeadings", JSON.stringify(secHeadingsObj));
+    props.setSecHeadings(secHeadingsObj);
+    // }
+
+    setSmShow(false);
+  };
+  return (
+    <>
+      <Button
+        className={classes.dsrightbottombtn}
+        onClick={() => setSmShow(true)}
+      >
+        ADD SECTION
+      </Button>
+      <Modal
+        size="sm"
+        show={smShow}
+        onHide={() => setSmShow(false)}
+        aria-labelledby="example-modal-sizes-title-sm"
+        centered
+      >
+        <Modal.Body>
+          <div className={classes.grpNameDiv}>
+            <input
+              type="text"
+              placeholder={
+                localStorage.getItem("deletedSection") == null
+                  ? "Enter Section Name"
+                  : localStorage.getItem("deletedSection")
+              }
+              className={classes.mediGrpNameTextbox}
+              onChange={(e) => {
+                setSecName(e.target.value);
+              }}
+              autoFocus
+            ></input>
+            <Button variant="warning" onClick={() => handleAdd()}>
+              Add
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+    </>
+  );
+};
+
+export default AddDraggableSectionModal;

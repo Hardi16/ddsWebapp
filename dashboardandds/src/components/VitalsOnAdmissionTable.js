@@ -1,0 +1,126 @@
+import React from "react";
+import { Table } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import classes from "../pages/DischargeSummary/DischargeSummary.module.css";
+import styles from "./Styles.module.css";
+import ReadMoreTextArea from "./ReadMoreTextArea";
+import TextareaAutosize from "react-textarea-autosize";
+
+const VitalsOnAdmissionTable = (props) => {
+  const handleTextChange = (e, label) => {
+    let obj =
+      localStorage.getItem("vitalsOnAdmissionObj") == null
+        ? {}
+        : JSON.parse(localStorage.getItem("vitalsOnAdmissionObj"));
+    // obj[label] = e.target.value;
+
+    if (label == "Temperature") {
+      obj[label] = e.target.value; //+ "F"
+    }
+    if (label == "PR") {
+      obj[label] = e.target.value; //+ "bpm"
+    }
+    if (label == "RR") {
+      obj[label] = e.target.value; //+ "bpm"
+    }
+    if (label == "BP") {
+      obj[label] = e.target.value //+ "mmHg"
+    }
+    localStorage.setItem("vitalsOnAdmissionObj", JSON.stringify(obj));
+  };
+
+  return (
+    <div className={styles.patientTableDiv}>
+      <Table responsive size="sm" className={styles.patientInfoTable}>
+        <tbody>
+          <tr>
+            <td className={styles.tableCell}>Temperature</td>
+            <td className={styles.tableCell}>
+              <TextareaAutosize
+                rows={1}
+                className={styles.insideTableTextAutoSize}
+                placeholder={
+                  localStorage.getItem("vitalsOnAdmissionObj") == null ||
+                  JSON.parse(localStorage.getItem("vitalsOnAdmissionObj"))[
+                    "Temperature"
+                  ] == null
+                    ? "Type Here"
+                    : JSON.parse(localStorage.getItem("vitalsOnAdmissionObj"))[
+                        "Temperature"
+                      ]
+                }
+                onChange={(e) => handleTextChange(e, "Temperature")}
+              ></TextareaAutosize>
+              <span>F</span>
+            </td>
+          </tr>
+          <tr>
+            <td className={styles.tableCell}>PR</td>
+            <td className={styles.tableCell}>
+              <TextareaAutosize
+                rows={2}
+                className={styles.insideTableTextAutoSize}
+                placeholder={
+                  localStorage.getItem("vitalsOnAdmissionObj") == null ||
+                  JSON.parse(localStorage.getItem("vitalsOnAdmissionObj"))[
+                    "PR"
+                  ] == null
+                    ? "Type Here"
+                    : JSON.parse(localStorage.getItem("vitalsOnAdmissionObj"))[
+                        "PR"
+                      ]
+                }
+                onChange={(e) => handleTextChange(e, "PR")}
+              ></TextareaAutosize>
+              <span>bpm</span>
+            </td>
+          </tr>
+          <tr>
+            <td className={styles.tableCell}>RR</td>
+            <td className={styles.tableCell}>
+              <TextareaAutosize
+                rows={2}
+                className={styles.insideTableTextAutoSize}
+                placeholder={
+                  localStorage.getItem("vitalsOnAdmissionObj") == null ||
+                  JSON.parse(localStorage.getItem("vitalsOnAdmissionObj"))[
+                    "RR"
+                  ] == null
+                    ? "Type Here"
+                    : JSON.parse(localStorage.getItem("vitalsOnAdmissionObj"))[
+                        "RR"
+                      ]
+                }
+                onChange={(e) => handleTextChange(e, "RR")}
+              ></TextareaAutosize>
+              <span>bpm</span>
+            </td>
+          </tr>
+          <tr>
+            <td className={styles.tableCell}>BP</td>
+            <td className={styles.tableCell}>
+              <TextareaAutosize
+                rows={2}
+                className={styles.insideTableTextAutoSize}
+                placeholder={
+                  localStorage.getItem("vitalsOnAdmissionObj") == null ||
+                  JSON.parse(localStorage.getItem("vitalsOnAdmissionObj"))[
+                    "BP"
+                  ] == null
+                    ? "Type Here"
+                    : JSON.parse(localStorage.getItem("vitalsOnAdmissionObj"))[
+                        "BP"
+                      ]
+                }
+                onChange={(e) => handleTextChange(e, "BP")}
+              ></TextareaAutosize>
+              <span>mmHg</span>
+            </td>
+          </tr>
+        </tbody>
+      </Table>
+    </div>
+  );
+};
+
+export default VitalsOnAdmissionTable;

@@ -1,0 +1,151 @@
+import React, { useEffect, useState } from "react";
+import { Button, Dropdown } from "react-bootstrap";
+import styles from "./Styles.module.css";
+import classes from "../pages/DischargeSummary/DischargeSummary.module.css";
+import { Redirect } from "react-router";
+import HamburgerDropdown from "./HamburgerDropdown";
+import SearchMedicine from "./SearchMedicine";
+import "loading-dots/loading-dots.css";
+import { Dot } from "react-animated-dots";
+import axios from "axios";
+import { hostAddress } from "../assets/config";
+import { currentServer } from "../assets/config";
+
+const DSCreateLeftPaneCommon = (props) => {
+  const [doctorName, setDoctorName] = useState(
+    localStorage.getItem("doctorName")
+  );
+  const [doctorId, setDoctorId] = useState("doctorId");
+  const [doctorsDropdown, setDoctorsDropdown] = useState(null);
+  const [selectedDoctorName, setSelectedDoctorName] = useState("");
+  const [selectedDoctorId, setSelectedDoctorId] = useState("");
+
+  const handleTextChange = (e, label) => {
+    let docName = e;
+    setDoctorName(docName);
+    let obj =
+      localStorage.getItem("LandingLeftDSC") == null
+        ? {}
+        : JSON.parse(localStorage.getItem("LandingLeftDSC"));
+    obj[label] = label == "Doctor Name" ? e : e.target.value;
+    localStorage.setItem("LandingLeftDSC", JSON.stringify(obj));
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem("roleId") == "31") {
+      let data = {
+        clinicId: localStorage.getItem("clinicId"), //selectedClinicId + "",
+      };
+      axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+      axios
+        .put(
+          hostAddress +
+            currentServer +
+            "/RestEasy/DischargeSummaryWebService/findDoctorByClinic",
+          data
+        )
+        .then((response) => {
+          console.log("findDoctorByClinic response", response.data);
+
+          let doctors =
+            response.data == null ||
+            response.data["ptAppointmentOrgList"] == null
+              ? []
+              : response.data["ptAppointmentOrgList"];
+          let doctorsDrodownVar = null;
+          localStorage.setItem("allDoctors", JSON.stringify(doctors));
+          if (doctors != null && doctors.length > 0 && doctors[0] != null) {
+            setSelectedDoctorName(
+              localStorage.getItem("doctorName") == null
+                ? doctors[0]["doctorName"]
+                : localStorage.getItem("doctorName")
+            );
+            setSelectedDoctorId(
+              localStorage.getItem("doctorId") == null
+                ? doctors[0]["doctorId"]
+                : localStorage.getItem("doctorId")
+            );
+            localStorage.setItem(
+              "doctorName",
+              localStorage.getItem("doctorName") == null
+                ? doctors[0]["doctorName"]
+                : localStorage.getItem("doctorName")
+            );
+            localStorage.setItem(
+              "doctorId",
+              localStorage.getItem("doctorId") == null
+                ? doctors[0]["doctorId"]
+                : localStorage.getItem("doctorId")
+            );
+            doctorsDrodownVar = doctors.map((item) => {
+              console.log("allDoctors item", item);
+              return (
+                <Dropdown.Item
+                  href="#/action-1"
+                  onClick={() => {
+                    handleTextChange(item["doctorName"], "Doctor Name");
+                    setSelectedDoctorName(item["doctorName"]);
+                    setSelectedDoctorId(item["doctorId"]);
+                    props.setLeftPaneLabel("LandingLeftDSC");
+                    localStorage.setItem("doctorName", item["doctorName"]);
+                    localStorage.setItem("doctorId", item["doctorId"]);
+                  }}
+                >
+                  {item["doctorName"]}
+                </Dropdown.Item>
+              );
+            });
+            setDoctorsDropdown(doctorsDrodownVar);
+          }
+        })
+        .catch((err) => {});
+    }
+  }, []);
+  return (
+    <>
+      <div className={classes.leftPaneHeaderFix}>
+        <div className={classes.leftPaneHeaderDSCreate}>
+          <div className={classes.leftHeaderHeading}>
+            <div className={classes.leftHeaderHeadingTitle}>
+              <Button
+                className={classes.createPageClinicNameBtn}
+                // onClick={() =>
+                //   props.setRedirect(<Redirect to="/dischargeSummaryPage" />)
+                // }
+              >
+                {localStorage.getItem("clinicName")}
+              </Button>
+            </div>
+            <div className={classes.leftHeaderSubHeading}>
+              <Dropdown>
+                <Dropdown.Toggle
+                  className={classes.docName}
+                  variant="secondary-outline"
+                  id="dropdown-basic"
+                >
+                  {doctorName == "" ? "Select Doctor" : doctorName}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>{doctorsDropdown}</Dropdown.Menu>
+              </Dropdown>
+            </div>
+            <div className={classes.leftHeaderSubHeadingRight}>
+              {localStorage.getItem("docSpecialityName")}
+            </div>
+          </div>
+        </div>
+        {/* <div className={classes.leftPaneSearchCreatePage}></div>
+        <div className={styles.dotsParentDiv}>
+          <div className={styles.leftPaneContentCreateLanding}>
+            <div>
+              <h1 className={styles.dotsH}>.....</h1>
+            </div>
+          </div>
+        </div> */}
+      </div>
+
+      <div className={classes.leftContentScroll}> {props.leftContent}</div>
+    </>
+  );
+};
+
+export default DSCreateLeftPaneCommon;

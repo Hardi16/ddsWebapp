@@ -1,0 +1,735 @@
+import React, { useState, useEffect } from "react";
+import { Row, Modal, Button, Form, Col, DropdownButton } from "react-bootstrap";
+// import {Dropdown} from "react-bootstrap";
+// import {Dropdown} from "react-bootstrap";
+import classes from "./Styles.module.css";
+import DatePicker from "react-datepicker";
+import styles from "./Styles.module.css";
+import "react-datepicker/dist/react-datepicker.css";
+import { addDays, subDays } from "date-fns";
+import getMonth from "date-fns/getYear";
+import getYear from "date-fns/getYear";
+import { parseISO, format } from "date-fns";
+import data from "./countrycode";
+import { CloseOutlined } from "@material-ui/icons";
+import axios from "axios";
+import { hostAddress } from "../assets/config";
+import { currentServer } from "../assets/config";
+import { Dropdown } from "semantic-ui-react";
+// import {ReactSearchAutocomplete}  from "react-search-autocomplete";
+const AddModal = (props) => {
+  const [docName, setDocName] = useState("");
+  const [speciality, setSpeciality] = useState("");
+  const [docId, setDocId] = useState("");
+  const [doctorsDropdown, setDoctorsDropdown] = useState(null);
+  const [countryCodeDropdown, setCountryCodeDropdown] = useState(null);
+  const [selectedDoctorName, setSelectedDoctorName] = useState(
+    localStorage.getItem("doctorName")
+  );
+  const [showCodeDropdown, setShowCodeDropdown] = useState(false);
+  const [selectedDoctorId, setSelectedDoctorId] = useState(
+    localStorage.getItem("doctorId")
+  );
+  const [name, setName] = useState("");
+  const [doctorName, setDoctorName] = useState(
+    localStorage.getItem("doctorName")
+  );
+  const [doctorId, setDoctorId] = useState(localStorage.getItem("doctorId"));
+  const [date, setDate] = useState("");
+  const [sex, setSex] = useState("");
+  const [age, setAge] = useState("");
+  const [email, setEmail] = useState("");
+  const [DOB, setDOB] = useState(new Date());
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState(localStorage.getItem("city"));
+  const [state, setState] = useState(localStorage.getItem("state"));
+  const [country, setCountry] = useState(localStorage.getItem("country"));
+  const [selectedCountryName, setSelectedCountryName] = useState(
+    localStorage.getItem("country")
+  );
+  const [selectedCountrycode, setSelectedCountryCode] = useState(
+    localStorage.getItem("countrycode")
+  );
+  const [pin, setPin] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [countrycode, setCountrycode] = useState(
+    localStorage.getItem("countrycode")
+  );
+
+  const [specialityId, setSpecialityId] = useState("");
+  const [doctors, setDoctors] = useState("");
+  const [dispDate, setDispDate] = useState();
+  const [oldnewValue, setOldnewValue] = useState("Old");
+  const [validated, setValidated] = useState(false);
+  const range = (start, end) => {
+    return new Array(end - start).fill().map((d, i) => i + start);
+  };
+  const [options, setOptions] = useState(null);
+  const [codeOptions, setCodeOptions] = useState(null);
+  const [countryOptions, setCountryOptions] = useState(null);
+  const [docObj, setDocObj] = useState({});
+  const [docCodeObj, setDocCodeObj] = useState({});
+  const [docCountryObj, setDocCountryObj] = useState({});
+  const years = range(1978, getYear(new Date()) + 1);
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const handleDropdownChange = (e, data) => {
+    let docName = docObj[data.value]["docName"];
+    let docId = docObj[data.value]["docId"];
+
+    setDocName(docName);
+    setDoctorId(docId);
+  };
+  // const newData = JSON.parse(localStorage.getItem("allDoctors"))
+  const handleDropdownCodeChange = (e, data) => {
+    let countrycode = docCodeObj[data.value]["countrycode"];
+    let docId = docCodeObj[data.value]["countryId"];
+    setCountrycode(countrycode);
+  };
+  const handleDropdownCountryChange = (e, data) => {
+    let newcountry = docCountryObj[data.value]["country"];
+    let newcountryCode = docCountryObj[data.value]["countrycode"];
+
+    console.log("newcountry", newcountry, " - newcountryCode", newcountryCode);
+    let showCodeDropdown = true;
+    setCountry(newcountry);
+    setCountrycode(newcountryCode);
+  };
+  //doctor list
+  const handleTextChange = (e) => {
+    let doctorName = e;
+    setDoctorName(docName);
+  };
+  const handleTextChangeCountry = (e) => {
+    let countryCode = e;
+    setCountrycode(countryCode);
+    console.log("code ", countryCode);
+  };
+  useEffect(() => {
+    let doctors = JSON.parse(localStorage.getItem("allDoctors"));
+    let doctorsDrodownVar = null;
+    let codeDrodownVar = null;
+    let countryDrodownVar = null;
+    setDoctors(doctors);
+    if (doctors != null && doctors.length > 0 && doctors[0] != null) {
+      setSelectedDoctorName(
+        localStorage.getItem("doctorName") == null
+          ? doctors[0]["doctorName"]
+          : localStorage.getItem("doctorName")
+      );
+      setSelectedDoctorId(
+        localStorage.getItem("doctorId") == null
+          ? doctors[0]["doctorId"]
+          : localStorage.getItem("doctorId")
+      );
+      localStorage.setItem(
+        "doctorName",
+        localStorage.getItem("doctorName") == null
+          ? doctors[0]["doctorName"]
+          : localStorage.getItem("doctorName")
+      );
+      localStorage.setItem(
+        "doctorId",
+        localStorage.getItem("doctorId") == null
+          ? doctors[0]["doctorId"]
+          : localStorage.getItem("doctorId")
+      );
+      doctorsDrodownVar = doctors.map((item) => {
+        console.log("allDoctors item", item);
+        return (
+          <Dropdown.Item
+            href="#/action-1"
+            onClick={() => {
+              handleTextChange(
+                item["doctorName"],
+                item["doctorId"],
+                "Doctor Name"
+              );
+              setSelectedDoctorName(item["doctorName"]);
+              setSelectedDoctorId(item["doctorId"]);
+            }}
+          >
+            {item["doctorName"]}
+          </Dropdown.Item>
+        );
+      });
+      let docDetsObj = {};
+      setOptions(
+        doctors.map((item) => {
+          docDetsObj[item["doctorName"]] = {
+            docName: item["doctorName"],
+            docId: item["doctorId"],
+          };
+          return {
+            key: item["doctorName"],
+            text: item["doctorName"],
+            value: item["doctorName"],
+            docName: item["doctorName"],
+            docId: item["doctorName"],
+          };
+        })
+      );
+      setDocObj(docDetsObj);
+      setDoctorsDropdown(doctorsDrodownVar);
+      //code dropdown
+      codeDrodownVar = countryList.map((item) => {
+        console.log("countryList item", item);
+        return (
+          <Dropdown.Item
+            href="#/action-1"
+            onClick={() => {
+              handleTextChange(item["dial_code"], item["country"], "country");
+              setCountrycode(item["dial_code"]);
+              setCountry(item["country"]);
+            }}
+          >
+            {item["dial_code"]}
+          </Dropdown.Item>
+        );
+      });
+      let docCodeObj = {};
+      setCodeOptions(
+        countryList.map((item) => {
+          docCodeObj[item["dial_code"]] = {
+            countrycode: item["countrycode"],
+            countryId: item["countryId"],
+          };
+          return {
+            key: item["dial_code"],
+            text: item["dial_code"],
+            value: item["dial_code"],
+            countrycode: item["countrycode"],
+            countryId: item["dial_code"],
+          };
+        })
+      );
+      setDocCodeObj(docCodeObj);
+      setCountryCodeDropdown(codeDrodownVar);
+      //country dropdown
+      countryDrodownVar = countryList.map((item) => {
+        return (
+          <Dropdown.Item
+            href="#/action-1"
+            value={countrycode}
+            onClick={() => {
+              handleTextChangeCountry(
+                item["dial_code"],
+                item["name"],
+                "country"
+              );
+              setCountrycode(item["dial_code"]);
+              setCountry(item["name"]);
+            }}
+          >
+            {item["dial_code"]}
+          </Dropdown.Item>
+        );
+      });
+      let docCountryObj = {};
+      setCountryOptions(
+        countryList.map((item) => {
+          docCountryObj[item["name"]] = {
+            countrycode: item["dial_code"],
+            country: item["name"],
+          };
+          return {
+            key: item["name"],
+            text: item["name"],
+            value: item["name"],
+            countrycode: item["dial_code"],
+            country: item["name"],
+          };
+        })
+      );
+
+      setDocCountryObj(docCountryObj);
+      setCountryCodeDropdown(countryDrodownVar);
+    }
+  }, []);
+
+  // getjson country data
+  let countryList = data;
+
+  function pad2(n) {
+    return n < 10 ? "0" + n : n;
+  }
+
+  const handleAgeChange = (e) => {
+    let age = e.target.value;
+    console.log("age=", age);
+
+    let todaydate = new Date();
+    let newDateofbirth, year, dateDiffFormat;
+
+    var diff = todaydate.getTime() - age * 60 * 60 * 24 * 365.25;
+    newDateofbirth = new Date(diff);
+
+    let day = todaydate.getDate();
+    let month = todaydate.getMonth();
+    let yr = todaydate.getFullYear() - age;
+
+    let newDate = new Date(yr, month, day);
+    setDOB(newDate);
+    console.log("set dob", DOB);
+    //send DS DOB Format
+    let newDate1 = day + "/" + month + "/" + yr;
+    setDispDate(newDate1);
+    console.log("setDispDate", newDate1);
+  };
+
+  const handleDateChange = (date) => {
+    let dateofbirth = date;
+    console.log("DOBFORMAt=", dateofbirth);
+    let newdob, newdateofbirth, newDateFormat;
+
+    if (dateofbirth != "") {
+      newdateofbirth =
+        dateofbirth.getFullYear().toString() +
+        "-" +
+        pad2(dateofbirth.getMonth() + 1) +
+        "-" +
+        pad2(dateofbirth.getDate());
+    }
+
+    let dateArr = newdateofbirth.split("-");
+    let monthnum = dateArr[1];
+    let birthyear = dateArr[0];
+    let tdate = new Date();
+
+    let tyear = pad2(tdate.getFullYear().toString());
+    let countage = Math.floor(tyear) - Math.floor(birthyear);
+
+    setAge(countage);
+    console.log("Age", countage);
+  };
+
+  // populate country code
+  const handleSetCountryCode = (e) => {
+    let code = e.target.value;
+    setCountrycode(code);
+  };
+
+  const callAddPatient = (event) => {
+    let patientDetails = {
+      firstName: name,
+      dateAdmitted: date,
+      gender: sex,
+      age: age,
+      emailID: email,
+      oldnewValue: "New",
+      dateofBirth: dispDate,
+      addressLine1: address,
+      city: city,
+      state: state,
+      country: country,
+      pinCode: pin,
+      mobileNo1: countrycode + mobile,
+      doctorName: docName,
+    };
+    console.log("patientDetails", patientDetails);
+    if (localStorage.getItem("roleId") !== "1" && docName === "") {
+      alert("Please select your doctor");
+    } else if (name === "" || name === null) {
+      alert("Please select your name");
+    } else if (DOB === "" || DOB === null) {
+      alert("Please select your date of birth");
+    } else if (sex === "" || sex === null) {
+      alert("Please select your gender");
+    } else if (mobile.length != 10) {
+      alert("Please enter 10 digit mobile number");
+    } else if (city === "" || city === null) {
+      alert("Please enter your city");
+    } else if (state === "" || state === null) {
+      alert("Please enter your state");
+    } else if (country === "" || country === null) {
+      alert("Please select your country");
+    } else {
+      props.onHide();
+      props.addPatient(patientDetails);
+    }
+  };
+
+  return (
+    <Modal
+      {...props}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+      backdrop="static"
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Patient Registration
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form noValidate validated={validated}>
+          {localStorage.getItem("roleId") == 1 ? null : (
+            <Form.Group as={Row} controlId="formDoctorDrp">
+              <Form.Label column sm>
+                Select Doctor
+              </Form.Label>
+              <Col sm={9} className={classes.autocompleteSpec}>
+                <Dropdown
+                  placeholder="Select Doctor"
+                  search
+                  selection
+                  options={options}
+                  fluid
+                  onChange={handleDropdownChange}
+                  className={styles.doctorDropdown}
+                />
+              </Col>
+            </Form.Group>
+          )}
+          <Form.Group
+            as={Row}
+            controlId="formGridName"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm>
+              Name<span className={classes.red}> *</span>
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                type="text"
+                placeholder="Enter your name"
+                onChange={(e) => setName(e.target.value)}
+              />
+              <Form.Control.Feedback type="invalid">
+                Please enter a valid email.
+              </Form.Control.Feedback>
+            </Col>
+          </Form.Group>
+
+          <Form.Group
+            as={Row}
+            controlId="formGridName"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm>
+              Age
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                type="text"
+                placeholder="Enter your age"
+                name="age"
+                value={age}
+                onChange={(e) => {
+                  setAge(e.target.value);
+                  handleAgeChange(e);
+                  localStorage.setItem("startage", e);
+                }}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            controlId="formGridName"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm>
+              DOB
+            </Form.Label>
+            <Col sm="9" className={classes.dobDatepicker}>
+              <img
+                className={classes.imgActionsDsShow}
+                src={require("../assets/calendar.png")}
+              />
+              <DatePicker
+                className={classes.datepickerCreatePg}
+                dateFormat="dd/MMM/yyyy"
+                maxDate={addDays(new Date(), 0)}
+                renderCustomHeader={({
+                  date,
+                  changeYear,
+                  changeMonth,
+                  decreaseMonth,
+                  increaseMonth,
+                }) => (
+                  <div
+                    style={{
+                      margin: 10,
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <select
+                      id="drpyear"
+                      value={date.getFullYear()}
+                      onChange={({ target: { value } }) => changeYear(value)}
+                    >
+                      {years.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+
+                    <select
+                      id="drpmon"
+                      value={months[date.getMonth()]}
+                      onChange={({ target: { value } }) => {
+                        console.log("mon ", months.indexOf(value));
+                        changeMonth(months.indexOf(value));
+                      }}
+                    >
+                      {months.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                selected={DOB}
+                onChange={(date) => {
+                  handleDateChange(date);
+                  setDOB(date);
+                }}
+              />
+            </Col>
+          </Form.Group>
+
+          <Form.Group
+            as={Row}
+            controlId="formGridSex"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Sex<span className={classes.red}> *</span>
+            </Form.Label>
+            <Col sm="9">
+              <div id="" name="" className={classes.selectGender}>
+                <div class="floatBlock">
+                  <label for="male">
+                    {" "}
+                    <input
+                      type="radio"
+                      value="Male"
+                      name="sex"
+                      id="#radio1"
+                      onChange={(e) => {
+                        console.log(e.target.value);
+                        setSex(e.target.value);
+                      }}
+                    />{" "}
+                    Male &nbsp;
+                  </label>
+                </div>
+                <div class="floatBlock">
+                  <label for="female">
+                    {" "}
+                    <input
+                      type="radio"
+                      value="Female"
+                      name="sex"
+                      id="#radio2"
+                      onChange={(e) => {
+                        console.log(e.target.value);
+                        setSex(e.target.value);
+                      }}
+                    />{" "}
+                    Female{" "}
+                  </label>
+                </div>
+              </div>
+            </Col>
+          </Form.Group>
+
+          <Form.Group
+            as={Row}
+            controlId="formGridMobile"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Mobile No.<span className={classes.red}> *</span>
+            </Form.Label>
+            <Col sm="2">
+              <Dropdown
+                placeholder="Select Country Code"
+                search
+                selection
+                options={codeOptions}
+                // defaultValue={localStorage.getItem("countrycode")}
+                value={countrycode}
+                fluid
+                onChange={handleDropdownCodeChange}
+                className={styles.doctorDropdown}
+              />
+            </Col>
+            <Col sm="7">
+              <Form.Control
+                required
+                keyboardType="numeric"
+                placeholder="Mobile  No."
+                pattern="\d{3}[\-]\d{3}[\-]\d{4}"
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  setMobile(e.target.value);
+                  let mobile = e.target.value.replace(".", "");
+                  if (isNaN(mobile)) {
+                    alert("Please enter valid mobile number");
+                  }
+                }}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            controlId="formGridEmail"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm>
+              Email
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                type="email"
+                placeholder="Enter your email"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            controlId="formGridAddress1"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Address
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                placeholder="1234 Main St"
+                onChange={(e) => setAddress(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            controlId="formGridCity"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              City<span className={classes.red}> *</span>
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                placeholder="City"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            controlId="formGridState"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              State<span className={classes.red}> *</span>
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                placeholder="State"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+
+          <Form.Group
+            as={Row}
+            controlId="formGridCountry"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Country<span className={classes.red}> *</span>
+            </Form.Label>
+            <Col sm="9">
+              <Dropdown
+                placeholder="Select Country name"
+                search
+                selection
+                options={countryOptions}
+                defaultValue={localStorage.getItem("country")}
+                fluid
+                onChange={handleDropdownCountryChange}
+                className={styles.doctorDropdown}
+              />
+              {/* <Dropdown className={classes.drpCreateCountry}>
+                <Dropdown.Toggle className={classes.countryName}>
+                  {localStorage.getItem("country") == null
+                    ? { selectedCountryName }
+                    : localStorage.getItem("country")}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {" "}
+                  <Dropdown.Header>Select Country</Dropdown.Header>
+                  {countryList.map((s) => (
+                    <Dropdown.Item
+                      value={country}
+                      onClick={(e) => {
+                        handleSetCountryCode(e);
+                        setCountry(s.name);
+                        setCountrycode(s.dial_code);
+                        localStorage.setItem("country", s.name);
+                        localStorage.setItem("countrycode", s.dial_code);
+                      }}
+                    >
+                      {s.name}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown> */}
+            </Col>
+          </Form.Group>
+
+          <Form.Group
+            as={Row}
+            controlId="formGridPin"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Pincode
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                placeholder="Pincode"
+                onChange={(e) => setPin(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <div className={classes.addDiscardDiv}>
+          <Button
+            className={classes.btnaddPatient}
+            variant="primary"
+            type="submit"
+            onClick={() => callAddPatient()}
+          >
+            Save
+          </Button>
+        </div>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
+export default AddModal;

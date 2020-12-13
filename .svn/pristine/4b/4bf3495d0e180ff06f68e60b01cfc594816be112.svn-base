@@ -1,0 +1,521 @@
+import React, { useState } from "react";
+import { Row, Modal, Button, Form, Col } from "react-bootstrap";
+import classes from "./Styles.module.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+const AddModal = (props) => {
+  const [name, setName] = useState("");
+  const [date, setDate] = useState("");
+  const [sex, setSex] = useState("Male");
+  const [age, setAge] = useState("");
+  const [email, setEmail] = useState("");
+  const [DOB, setDOB] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [country, setCountry] = useState("");
+  const [zip, setZip] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [dispDate, setDispDate] = useState();
+  const [oldnewValue, setOldnewValue] = useState("Old");
+
+  const callAddPatient = () => {
+    let patientDetails = {
+      firstName: name,
+      dateAdmitted: date,
+      gender: sex,
+      age: age,
+      emailID: email,
+      oldnewValue: "New",
+      dateofBirth: DOB,
+      addressLine1: address,
+      city: city,
+      state: state,
+      country: country,
+      pinCode: zip,
+      mobileNo1: mobile,
+    };
+    props.onHide();
+    props.addPatient(patientDetails);
+  };
+  return (
+    <Modal
+      {...props}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+      backdrop="static"
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Patient Registration
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          {/* <Form.Row>
+             <Form.Group as={Row} controlId="formGridName">
+               <Form.Label column sm="3">Select New Patient/Old Patient</Form.Label>
+              <br />
+              <Row>
+                <Col sm={6}>
+                  <select
+                    value={oldnewValue}
+                    onChange={e => {
+                      setOldnewValue(e.target.value);
+                    }}
+                    className="form-control"
+                  >
+                    <option value="Old">Old</option>
+                    <option value="New">New</option>
+                  </select>
+                </Col>
+              </Row>
+              </Col>
+            </Form.Group>
+
+            
+          <Form.Group
+                as={Row}
+                controlId="formGridName"
+                className={classes.rowbottommargin}
+                >
+                <Form.Label column sm="3">
+                  Age
+                </Form.Label>
+                <Col sm="9">
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter your age"
+                    onChange={(e) => setAge(e.target.value)}
+                    autocomplete="off"
+                  />
+                </Col>
+              </Form.Group>
+         */}
+
+          <Form.Group
+            as={Row}
+            controlId="formGridName"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm>
+              Name
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                type="text"
+                placeholder="Enter your name"
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+          
+           <Form.Group
+            as={Row}
+            controlId="formGridName"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Date of Birth
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                type="date"
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  setDispDate(e.target.value);
+                  let date = e.target.value + "";
+                  let dateArr = date.split("-");
+                  let newDate =
+                    dateArr[2] + "/" + dateArr[1] + "/" + dateArr[0];
+                  console.log(newDate);
+                  setDOB(newDate);
+                }}
+                placeholder="Select Date of Birth"
+                value={dispDate}
+              />
+            </Col>
+          </Form.Group>
+
+
+          <Form.Group
+            as={Row}
+            controlId="formGridEmail"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Sex
+            </Form.Label>
+            <Col sm="9">
+              <div
+                id=""
+                name=""
+                className={classes.selectGender}
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  setSex(e.target.value);
+                }}
+              >
+                <div class="floatBlock">
+                  <label for="male">
+                    {" "}
+                    <input type="radio" value="Male" name="sex" /> Male &nbsp;
+                  </label>
+                </div>
+                <div class="floatBlock">
+                  <label for="female">
+                    {" "}
+                    <input type="radio" value="Female" name="sex" /> Female{" "}
+                  </label>
+                </div>
+              </div>
+            </Col>
+          </Form.Group>
+         
+          
+
+          <Form.Group
+            as={Row}
+            controlId="formGridZip"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Mobile No.
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                placeholder="Mobile  No."
+                onChange={(e) => setMobile(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            controlId="formGridEmail"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm>
+              Email
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                type="email"
+                placeholder="Enter your email"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            controlId="formGridAddress1"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Address
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                placeholder="1234 Main St"
+                onChange={(e) => setAddress(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+
+          {/*  <Form.Group as={Row} controlId="formGridAddress2">
+               <Form.Label column sm="3">Address 2</Form.Label>
+               <Col sm="9">
+              <Form.Control placeholder="Apartment, studio, or floor" />
+              </Col>
+            </Form.Group> */}
+          <Form.Group
+            as={Row}
+            controlId="formGridState"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              State
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                placeholder="State"
+                onChange={(e) => setState(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            controlId="formGridState"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Country
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                placeholder="Country"
+                onChange={(e) => setCountry(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+
+          <Form.Group
+            as={Row}
+            controlId="formGridCity"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              City
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                placeholder="City"
+                onChange={(e) => setCity(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+
+          {/* </Form.Row>
+           */}
+
+          <Form.Group
+            as={Row}
+            controlId="formGridZip"
+            className={classes.rowbottommargin}
+          >
+            <Form.Label column sm="3">
+              Zip
+            </Form.Label>
+            <Col sm="9">
+              <Form.Control
+                placeholder="Zip"
+                onChange={(e) => setZip(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <div className={classes.addDiscardDiv}>
+         
+          <Button
+            className={classes.btnaddPatient}
+            variant="success"
+            type="submit"
+            onClick={() => callAddPatient()}
+          >
+            Save
+          </Button>
+        </div>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
+export default AddModal;
+// import React, { useState } from "react";
+// import { Row, Modal, Button, Form, Col } from "react-bootstrap";
+
+// const AddModal = (props) => {
+//   const [name, setName] = useState("");
+//   const [date, setDate] = useState("");
+//   const [sex, setSex] = useState("");
+//   const [age, setAge] = useState("");
+//   const [email, setEmail] = useState("");
+//   const [DOB, setDOB] = useState("");
+//   const [address, setAddress] = useState("");
+//   const [city, setCity] = useState("");
+//   const [state, setState] = useState("");
+//   const [country, setCountry] = useState("");
+//   const [zip, setZip] = useState("");
+//   const [mobile, setMobile] = useState("");
+
+//   const [oldnewValue, setOldnewValue] = useState("Old");
+
+//   const callAddPatient = () => {
+//     let patientDetails = {
+//       firstName: name,
+//       dateAdmitted: date,
+//       gender: sex,
+//       age: age,
+//       emailID: email,
+//       oldnewValue: "New",
+//       dateofBirth: DOB,
+//       addressLine1: address,
+//       city: city,
+//       state: state,
+//       country: country,
+//       pinCode: zip,
+//       mobileNo1: mobile,
+//     };
+//     props.onHide();
+//     props.addPatient(patientDetails);
+//   };
+//   return (
+//     <Modal
+//       {...props}
+//       size="lg"
+//       aria-labelledby="contained-modal-title-vcenter"
+//       centered
+//     >
+//       <Modal.Header closeButton>
+//         <Modal.Title id="contained-modal-title-vcenter">
+//           New Patient
+//         </Modal.Title>
+//       </Modal.Header>
+//       <Modal.Body>
+//         <Form>
+//           {/* <Form.Row>
+//             <Form.Group as={Col} controlId="formGridName">
+//               <Form.Label>Select New Patient/Old Patient</Form.Label>
+//               <br />
+//               <Row>
+//                 <Col sm={6}>
+//                   <select
+//                     value={oldnewValue}
+//                     onChange={e => {
+//                       setOldnewValue(e.target.value);
+//                     }}
+//                     className="form-control"
+//                   >
+//                     <option value="Old">Old</option>
+//                     <option value="New">New</option>
+//                   </select>
+//                 </Col>
+//               </Row>
+//             </Form.Group>
+//           </Form.Row> */}
+//           <Form.Row>
+//             <Form.Group as={Col} controlId="formGridName">
+//               <Form.Label>Name</Form.Label>
+//               <Form.Control
+//                 type="text"
+//                 placeholder="Enter name"
+//                 onChange={(e) => setName(e.target.value)}
+//               />
+//             </Form.Group>
+//             <Form.Group as={Col} controlId="formGridEmail">
+//               <Form.Label>Email</Form.Label>
+//               <Form.Control
+//                 type="email"
+//                 placeholder="Enter email"
+//                 onChange={(e) => setEmail(e.target.value)}
+//               />
+//             </Form.Group>
+//           </Form.Row>
+//           <Form.Row>
+//             <Form.Group as={Col} controlId="formGridName">
+//               <Form.Label>Age</Form.Label>
+//               <Form.Control
+//                 type="text"
+//                 placeholder="Enter age"
+//                 onChange={(e) => setAge(e.target.value)}
+//               />
+//             </Form.Group>
+//             <Form.Group as={Col} controlId="formGridEmail">
+//               <Form.Label>Sex</Form.Label>
+//               <Form.Control
+//                 as="select"
+//                 defaultValue="Choose..."
+//                 onChange={(e) => {
+//                   setSex(e.target.value);
+//                 }}
+//               >
+//                 <option>Male</option>
+//                 <option>Female</option>
+//               </Form.Control>
+//             </Form.Group>
+// <Form.Group as={Col} controlId="formGridName">
+//   <Form.Label>Date of Birth</Form.Label>
+//   <Form.Control
+//     type="text"
+//     placeholder="DD/MM/YYYY"
+//     onChange={(e) => setDOB(e.target.value)}
+//   />
+// </Form.Group>
+//           </Form.Row>
+//           <Form.Row>
+//             <Form.Group as={Col} controlId="formGridAddress1">
+//               <Form.Label>Address</Form.Label>
+//               <Form.Control
+//                 placeholder="1234 Main St"
+//                 onChange={(e) => setAddress(e.target.value)}
+//               />
+//             </Form.Group>
+
+//             {/* <Form.Group as={Col} controlId="formGridAddress2">
+//               <Form.Label>Address 2</Form.Label>
+//               <Form.Control placeholder="Apartment, studio, or floor" />
+//             </Form.Group> */}
+//           </Form.Row>
+
+//           <Form.Row>
+//             <Form.Group as={Col} controlId="formGridCity">
+//               <Form.Label>City</Form.Label>
+//               <Form.Control
+//                 placeholder="City"
+//                 onChange={(e) => setCity(e.target.value)}
+//               />
+//             </Form.Group>
+
+//             <Form.Group as={Col} controlId="formGridState">
+//               <Form.Label>State</Form.Label>
+//               <Form.Control
+//                 placeholder="State"
+//                 onChange={(e) => setState(e.target.value)}
+//               />
+//             </Form.Group>
+//             <Form.Group as={Col} controlId="formGridState">
+//               <Form.Label>Country</Form.Label>
+//               <Form.Control
+//                 placeholder="Country"
+//                 onChange={(e) => setCountry(e.target.value)}
+//               />
+//             </Form.Group>
+//             {/* </Form.Row>
+//           <Form.Row> */}
+
+//             <Form.Group as={Col} controlId="formGridZip">
+//               <Form.Label>Zip</Form.Label>
+//               <Form.Control
+//                 placeholder="Zip"
+//                 onChange={(e) => setZip(e.target.value)}
+//               />
+//             </Form.Group>
+//           </Form.Row>
+//           <Form.Row>
+//             <Form.Group as={Col} controlId="formGridZip">
+//               <Form.Label>Date Admitted</Form.Label>
+//               <Form.Control
+//                 placeholder="Enter date admitted"
+//                 onChange={(e) => setDate(e.target.value)}
+//               />
+//             </Form.Group>
+//             <Form.Group as={Col} controlId="formGridZip">
+//               <Form.Label>Mobile Number</Form.Label>
+//               <Form.Control
+//                 placeholder="Mobile Number"
+//                 onChange={(e) => setMobile(e.target.value)}
+//               />
+//             </Form.Group>
+//           </Form.Row>
+//         </Form>
+//       </Modal.Body>
+//       <Modal.Footer>
+//         <Button
+//           variant="success"
+//           type="submit"
+//           onClick={() => callAddPatient()}
+//         >
+//           Add
+//         </Button>
+//         <Button variant="danger" onClick={props.onHide}>
+//           Discard
+//         </Button>
+//       </Modal.Footer>
+//     </Modal>
+//   );
+// };
+
+// export default AddModal;

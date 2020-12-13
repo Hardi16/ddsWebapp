@@ -1,0 +1,250 @@
+import React, { useState, useEffect } from "react";
+import { Table, Button, Collapse } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import { addDays } from 'date-fns';
+import classes from "../pages/DischargeSummary/DischargeSummary.module.css";
+import styles from "./Styles.module.css";
+
+const PatientInformation = (props) => {
+  const handeleChange = (e, label) => {
+    let obj =
+      localStorage.getItem("patientInformationObj") == null
+        ? {}
+        : JSON.parse(localStorage.getItem("patientInformationObj"));
+    obj[label] = e.target.value;
+    localStorage.setItem("patientInformationObj", JSON.stringify(obj));
+  };
+  const handeleDateChange = (date, label) => {
+    date = date.toString().split(" ");
+    let dateGood = date[2] + " " + date[1] + " " + date[3];
+    let obj =
+      localStorage.getItem("patientInformationObj") == null
+        ? {}
+        : JSON.parse(localStorage.getItem("patientInformationObj"));
+    obj[label] = dateGood;
+    localStorage.setItem("patientInformationObj", JSON.stringify(obj));
+  };
+  useEffect(() => {
+    let date = new Date().toString().split(" ");
+    let dateGood = date[2] + " " + date[1] + " " + date[3];
+    localStorage.setItem("dateOfAdmission", dateGood);
+    localStorage.setItem("dateOfDischarge", dateGood);
+    let patientInformationObj =
+      localStorage.getItem("patientInformationObj") == null
+        ? {}
+        : JSON.parse(localStorage.getItem("patientInformationObj"));
+    patientInformationObj["Date Of Admission"] = dateGood;
+    patientInformationObj["Date Of Discharge"] = dateGood;
+    localStorage.setItem(
+      "patientInformationObj",
+      JSON.stringify(patientInformationObj)
+    );
+  }, []);
+
+  console.log("dateOfAdmission", props.dateOfAdmission);
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <div className={styles.patientTableDiv}>
+        <Table responsive size="sm" className={styles.patientInfoTable}>
+          <tbody>
+            <tr>
+              <td className={styles.tableCell}>Date Of Admission</td>
+              <td className={styles.tableCell}>
+              <img style={{"width":"20px"}}
+              className={classes.imgActionsDsShow}
+              src={require("../assets/calendar.png")}
+              /> 
+             <DatePicker
+                  className={classes.datepickerCreatePg}
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  maxDate={addDays(new Date(),0)}
+                  dateFormat="dd/MMM/yyyy"
+                  maxDate={new Date()}
+                  selected={props.dateOfAdmission}
+                  onChange={(date) => {
+                    // date = convertDate(date);
+                    console.log("date", date);
+                    props.setDateOfAdmission(date);
+                    localStorage.setItem("dateOfAdmission", date);
+                    handeleDateChange(date, "Date Of Admission");
+                    props.setPrompt(Math.random());
+                  }}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.tableCell}>Date Of Discharge</td>
+              <td className={styles.tableCell}>
+              <img style={{"width":"20px"}}
+              className={classes.imgActionsDsShow}
+              src={require("../assets/calendar.png")}
+              /> 
+                <DatePicker
+                  className={classes.datepickerCreatePg}
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  maxDate={addDays(new Date(),0)}
+                  dateFormat="dd/MMM/yyyy"
+                  maxDate={new Date()}
+                  selected={props.dateOfDischarge}
+                  onChange={(date) => {
+                    console.log("date", date);
+                    props.setDateOfDischarge(date);
+                    localStorage.setItem("dateOfDischarge", date);
+                    handeleDateChange(date, "Date Of Discharge");
+                    props.setPrompt(Math.random());
+                  }}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.tableCell}>IPD No.</td>
+              <td className={styles.tableCell}>
+                <textarea
+                  className={styles.tableTextBox}
+                  rows={1}
+                  placeholder={
+                    localStorage.getItem("patientInformationObj") == null ||
+                    JSON.parse(localStorage.getItem("patientInformationObj"))[
+                      "IDP No."
+                    ] == null
+                      ? "Type Here"
+                      : JSON.parse(
+                          localStorage.getItem("patientInformationObj")
+                        )["IDP No."]
+                  }
+                  onChange={(e) => handeleChange(e, "IDP No.")}
+                ></textarea>
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.tableCell}>MRN No.</td>
+              <td className={styles.tableCell}>
+                <textarea
+                  className={styles.tableTextBox}
+                  rows={1}
+                  placeholder={
+                    localStorage.getItem("patientInformationObj") == null ||
+                    JSON.parse(localStorage.getItem("patientInformationObj"))[
+                      "MRN No."
+                    ] == null
+                      ? "Type Here"
+                      : JSON.parse(
+                          localStorage.getItem("patientInformationObj")
+                        )["MRN No."]
+                  }
+                  onChange={(e) => handeleChange(e, "MRN No.")}
+                ></textarea>
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.tableCell}>Room No.</td>
+              <td className={styles.tableCell}>
+                <textarea
+                  className={styles.tableTextBox}
+                  rows={1}
+                  placeholder={
+                    localStorage.getItem("patientInformationObj") == null ||
+                    JSON.parse(localStorage.getItem("patientInformationObj"))[
+                      "Room No."
+                    ] == null
+                      ? "Type Here"
+                      : JSON.parse(
+                          localStorage.getItem("patientInformationObj")
+                        )["Room No."]
+                  }
+                  onChange={(e) => handeleChange(e, "Room No.")}
+                ></textarea>
+              </td>
+            </tr>
+          </tbody>
+        </Table>
+        {/* <i
+        class="fa fa-caret-down"
+        onClick={() => setOpen(!open)}
+        aria-controls="example-collapse-text"
+        aria-expanded={open}
+      ></i>
+      <div className={styles.patientTableDiv}>
+        <Collapse in={true}>
+          <Table responsive size="sm" className={styles.patientInfoTable}>
+            <tbody>
+              <tr>
+                <td className={styles.tableCell}>Date Of Admission</td>
+                <td className={styles.tableCell}>
+                  <DatePicker
+                    className={classes.datepickerCreatePg}
+                    selected={props.dateOfAdmission}
+                    onChange={(date) => {
+                      console.log("date", date);
+                      props.setDateOfAdmission(date);
+                      localStorage.setItem("dateOfAdmission", date);
+                      handeleDateChange(date, "Date Of Admission");
+                      props.setPrompt(Math.random());
+                    }}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td className={styles.tableCell}>Date Of Discharge</td>
+                <td className={styles.tableCell}>
+                  <DatePicker
+                    className={classes.datepickerCreatePg}
+                    selected={props.dateOfDischarge}
+                    onChange={(date) => {
+                      console.log("date", date);
+                      props.setDateOfDischarge(date);
+                      localStorage.setItem("dateOfDischarge", date);
+                      handeleDateChange(date, "Date Of Discharge");
+                      props.setPrompt(Math.random());
+                    }}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td className={styles.tableCell}>IPD No.</td>
+                <td className={styles.tableCell}>
+                  <textarea
+                    className={styles.tableTextBox}
+                    rows={1}
+                    placeholder="Type Here"
+                    onChange={(e) => handeleChange(e, "idpNo")}
+                  ></textarea>
+                </td>
+              </tr>
+              <tr>
+                <td className={styles.tableCell}>MRN No.</td>
+                <td className={styles.tableCell}>
+                  <textarea
+                    className={styles.tableTextBox}
+                    rows={1}
+                    placeholder="Type Here"
+                    onChange={(e) => handeleChange(e, "mrnNo")}
+                  ></textarea>
+                </td>
+              </tr>
+              <tr>
+                <td className={styles.tableCell}>Room No.</td>
+                <td className={styles.tableCell}>
+                  <textarea
+                    className={styles.tableTextBox}
+                    rows={1}
+                    placeholder="Type Here"
+                    onChange={(e) => handeleChange(e, "roomNo")}
+                  ></textarea>
+                </td>
+              </tr>
+            </tbody>
+          </Table>
+        </Collapse>
+      </div> */}
+      </div>
+    </>
+  );
+};
+
+export default PatientInformation;

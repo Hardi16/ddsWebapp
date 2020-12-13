@@ -1,0 +1,59 @@
+import React, { useState } from "react";
+import classes from "../pages//DischargeSummary/DischargeSummary.module.css";
+import { Dropdown } from "react-bootstrap";
+import { Redirect } from "react-router";
+
+const HamburgerDropdown = props => {
+  const [redirect, setRedirect] = useState(null);
+
+  const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+    <button
+      className={classes.hamburgerBtn}
+      ref={ref}
+      onClick={e => {
+        e.preventDefault();
+        onClick(e);
+      }}
+    >
+      <img
+        className={classes.hamburger}
+        src="https://i.ya-webdesign.com/images/hamburger-menu-icon-png-white-12.png"
+      ></img>
+    </button>
+  ));
+  const handleLogout = () => {
+    localStorage.clear();
+    setRedirect(<Redirect to="/dischargeSummary" />);
+  };
+  return (
+    <div className={classes.hamburgerDiv}>
+      {redirect}
+      <Dropdown>
+        <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
+          Custom toggle
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item
+            eventKey="1"
+            onClick={() => {
+              setRedirect(<Redirect to="/dischargeSummaryPage" />);
+            }}
+          >
+            Home
+          </Dropdown.Item>
+          <Dropdown.Item eventKey="1">Reset Password</Dropdown.Item>
+          <Dropdown.Item
+            eventKey="2"
+            onClick={() => {
+              handleLogout();
+            }}
+          >
+            Logout
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    </div>
+  );
+};
+
+export default HamburgerDropdown;

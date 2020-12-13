@@ -1,0 +1,430 @@
+import React, { useState, useEffect } from "react";
+import { Button, Badge } from "react-bootstrap";
+import styles from "./Styles.module.css";
+import classes from "../pages/DischargeSummary/DischargeSummary.module.css";
+import { hostAddress } from "../assets/config";
+import { currentServer } from "../assets/config";
+import { Redirect } from "react-router";
+import HamburgerDropdown from "./HamburgerDropdown";
+import SearchDiagnosis from "./SearchDiagnosis";
+import axios from "axios";
+import convert from "xml-js";
+import DatePicker from "react-datepicker";
+
+const DSCreateLeftPaneHistoryOfPresentIllness = (props) => {
+  const [lmpDate, setLmpDate] = useState(new Date());
+
+  const [
+    historyOfPresentIllnessContent,
+    setHistoryOfPresentIllnessContent,
+  ] = useState(null);
+  const [prompt, setPrompt] = useState(null);
+
+  let pageNumber =
+    localStorage.getItem("historyOfIllnessPageNumber") == null
+      ? 0
+      : localStorage.getItem("historyOfIllnessPageNumber");
+
+  useEffect(() => {
+    renderPhysicalExamListTwo();
+  }, [props.leftPrompt, prompt]);
+
+  const renderPhysicalExamListTwo = () => {
+    let historyOfIllnessSelectedOne = localStorage.getItem(
+      "historyOfIllnessSelectedOne"
+    );
+    let historyOfIllnessSelectedOneId = localStorage.getItem(
+      "historyOfIllnessSelectedOneId"
+    );
+    let data = {
+      Complaint: "Labour Pain with Discharge",
+      complaint_id: "18000",
+    };
+
+    let allPagesOfSelectedOne = [];
+    if (localStorage.getItem("historyOfIllnessPages") != null) {
+      allPagesOfSelectedOne = JSON.parse(
+        localStorage.getItem("historyOfIllnessPages")
+      );
+      renderSubsequentScreenPanes(allPagesOfSelectedOne);
+    } else {
+      axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+      axios
+        .put(
+          hostAddress +
+            currentServer +
+            "/RestEasy/PatientWebService/fetchComplaintQuestionnaire",
+          data
+        )
+        .then((response) => {
+          console.log("fetchComplaintQuestionnaire resp", response.data);
+          allPagesOfSelectedOne = response.data["Complaint"];
+          let obj =
+            localStorage.getItem("historyOfIllnessPages") != null
+              ? JSON.parse(localStorage.getItem("historyOfIllnessPages"))
+              : {};
+          obj = allPagesOfSelectedOne;
+          localStorage.setItem("historyOfIllnessPages", JSON.stringify(obj));
+          renderSubsequentScreenPanes(allPagesOfSelectedOne);
+        })
+
+        .catch((err) => console.log("err", err));
+    }
+  };
+
+  const renderSubsequentScreenPanes = (allPagesOfSelectedOne) => {
+    let historyOfIllnessSelectedOne = localStorage.getItem(
+      "historyOfIllnessSelectedOne"
+    );
+
+    let sectionContent = [];
+    let mainHeading = [];
+    console.log("allPagesOfSelectedOne", allPagesOfSelectedOne);
+    allPagesOfSelectedOne = allPagesOfSelectedOne.filter(
+      (item) =>
+        item["question"].trim() != "History of present illness" &&
+        item["question"].trim() != "Past Medical History" &&
+        item["question"].trim() != "Past Surgical History" &&
+        item["question"].trim() != "Family History"
+    );
+    for (let i in allPagesOfSelectedOne) {
+      mainHeading[i] = allPagesOfSelectedOne[i]["question"].trim();
+      let sectionsOfThePage = JSON.parse(
+        allPagesOfSelectedOne[i]["questionOptionsXml"]
+      )["subitems"];
+      console.log(
+        "mainheading",
+        i,
+        mainHeading[i],
+        ",",
+        JSON.parse(allPagesOfSelectedOne[i]["questionOptionsXml"])
+      );
+      sectionContent[i] =
+        sectionsOfThePage == null ||
+        allPagesOfSelectedOne[i]["questionOptionsXml"] == null
+          ? null
+          : sectionsOfThePage.map((ele) => {
+              // console.log(
+              //   "damn",
+              //   JSON.parse(localStorage.getItem("historyOfPresentIllnessObj"))[
+              //     mainHeading[i]
+              //   ][ele["itemName"]]
+              // );
+              console.log("ele", ele["itemName"], mainHeading[i]);
+
+              return (
+                <div
+                  className={
+                    ele["optionValue"] == null
+                      ? styles.generalsSectionRow
+                      : styles.generalsSection
+                  }
+                >
+                  <div className={styles.generalSecionLabel}>
+                    {ele["itemName"]}
+                  </div>
+                  <div className={styles.generalsSectionBtnGrp}>
+                    {ele["optionValue"] === null ? (
+                      mainHeading[i] === "Obs Profile" ? (
+                        mainHeading[i] === "Obs Profile" &&
+                        ele["itemName"] == "LMP" ? (
+                          <DatePicker
+                            className={styles.datepickerCreatePgGreyWhiteText}
+                            selected={lmpDate}
+                            dateFormat="dd/MM/yyyy"
+                            maxDate={new Date()}
+                            popperPlacement="bottom-end"
+                            onChange={(date) => {
+                              localStorage.setItem("lmpDate", date);
+                              props.setPrompt(Math.random());
+                              setPrompt(Math.random());
+                              setLmpDate(date);
+                            }}
+                          />
+                        ) : mainHeading[i] === "Obs Profile" &&
+                          ele["itemName"] === "EDD" ? (
+                          <form>
+                            <input
+                              type="text"
+                              // placeholder={
+                              //   new Date(Date.parse(lmpDate) + 24272494500)
+                              //     .toString()
+                              //     .split(" ")[2] +
+                              //   " " +
+                              //   new Date(Date.parse(lmpDate) + 24272494500)
+                              //     .toString()
+                              //     .split(" ")[1] +
+                              //   " " +
+                              //   new Date(Date.parse(lmpDate) + 24272494500)
+                              //     .toString()
+                              //     .split(" ")[3]
+                              // }
+                              value={
+                                // ele["itemName"]
+                                new Date(Date.parse(lmpDate) + 24272494500)
+                                  .toString()
+                                  .split(" ")[2] +
+                                " " +
+                                new Date(Date.parse(lmpDate) + 24272494500)
+                                  .toString()
+                                  .split(" ")[1] +
+                                " " +
+                                new Date(Date.parse(lmpDate) + 24272494500)
+                                  .toString()
+                                  .split(" ")[3]
+                              }
+                              className={styles.vitalsTextAreaEDD}
+                            ></input>
+                          </form>
+                        ) : (
+                          <form>
+                            <input
+                              type="text"
+                              value={
+                                Date.parse(lmpDate) + 24272494500 >
+                                Date.parse(new Date())
+                                  ? getWeeksFromMs(
+                                      Date.parse(new Date()) -
+                                        Date.parse(lmpDate)
+                                    )
+                                  : getWeeksFromMs(24272494500)
+                              }
+                              className={styles.vitalsTextAreaEDD}
+                            ></input>
+                          </form>
+                        )
+                      ) : (
+                        <>
+                          <input
+                            type="text"
+                            placeholder={
+                              localStorage.getItem(
+                                "historyOfPresentIllnessObj"
+                              ) == null ||
+                              JSON.parse(
+                                localStorage.getItem(
+                                  "historyOfPresentIllnessObj"
+                                )
+                              )[mainHeading[i]] == null ||
+                              JSON.parse(
+                                localStorage.getItem(
+                                  "historyOfPresentIllnessObj"
+                                )
+                              )[mainHeading[i]][ele["itemName"]] == null
+                                ? "Type Here"
+                                : JSON.parse(
+                                    localStorage.getItem(
+                                      "historyOfPresentIllnessObj"
+                                    )
+                                  )[mainHeading[i]][ele["itemName"]]
+                            }
+                            className={styles.vitalsTextArea}
+                            onChange={(e) => {
+                              console.log(
+                                mainHeading[i],
+                                ele["itemName"],
+                                e.target.value
+                              );
+                              let obj =
+                                localStorage.getItem(
+                                  "historyOfPresentIllnessObj"
+                                ) == null
+                                  ? {}
+                                  : JSON.parse(
+                                      localStorage.getItem(
+                                        "historyOfPresentIllnessObj"
+                                      )
+                                    );
+                              if (obj[mainHeading[i]] == null)
+                                obj[mainHeading[i]] = {};
+                              if (obj[mainHeading[i]][ele["itemName"]] == null)
+                                obj[mainHeading[i]][ele["itemName"]] = {};
+                              obj[mainHeading[i]][ele["itemName"]] =
+                                e.target.value;
+                              localStorage.setItem(
+                                "historyOfPresentIllnessObj",
+                                JSON.stringify(obj)
+                              );
+                            }}
+                          ></input>
+                        </>
+                      ) //text field option
+                    ) : (
+                      ele["optionValue"].map((val) => {
+                        return null;
+                      })
+                    )}
+                  </div>
+                </div>
+              );
+            });
+    }
+    setHistoryOfPresentIllnessContent(
+      <>
+        <div className={styles.prevNextBtnDiv}>
+          <div className={styles.prevNextBtnTop}>
+            <Button
+              variant="secondary"
+              className={styles.prevBtn}
+              onClick={() => {
+                if (pageNumber > 0) {
+                  pageNumber = pageNumber - 1;
+                  localStorage.setItem(
+                    "historyOfIllnessPageNumber",
+                    pageNumber
+                  );
+                  handleDone();
+                  // renderSubsequentScreenPanes(allPagesOfSelectedOne);
+                  renderSubsequentScreenPanes(allPagesOfSelectedOne);
+                } else {
+                  setPrompt(Math.random());
+                }
+              }}
+            >
+              <i class="fa fa-arrow-left"></i>
+            </Button>
+            <Button
+              variant="secondary"
+              className={styles.endBtn}
+              onClick={() => {
+                handleDone();
+                setPrompt(Math.random());
+              }}
+            >
+              End
+            </Button>
+            <Button
+              variant="secondary"
+              className={styles.nextBtn}
+              onClick={() => {
+                if (pageNumber < sectionContent.length - 1) {
+                  pageNumber++;
+                  localStorage.setItem(
+                    "historyOfIllnessPageNumber",
+                    pageNumber
+                  );
+                  handleDone();
+                  // renderSubsequentScreenPanes(allPagesOfSelectedOne);
+                  renderSubsequentScreenPanes(allPagesOfSelectedOne);
+                }
+              }}
+            >
+              <i class="fa fa-arrow-right"></i>
+            </Button>
+          </div>
+        </div>
+        <div className={styles.vitalsDiv}>
+          <div className={styles.vitalsHead}>
+            <h3>{mainHeading[pageNumber]}</h3>
+          </div>
+          <div className={styles.generalsBody}>
+            {sectionContent[pageNumber]}
+          </div>
+        </div>
+      </>
+    );
+
+    // else if (historyOfIllnessSelectedOne != "CNS Examination") {
+    //   console.log("allPagesOfSelectedOne", allPagesOfSelectedOne);
+    //   let sectionContent = [];
+    //   let mainHeading = [];
+    //   for (let i in allPagesOfSelectedOne) {
+    //     mainHeading[i] = allPagesOfSelectedOne[i]["question"].trim();
+    //     let sectionsOfThePage = JSON.parse(
+    //       allPagesOfSelectedOne[i]["questionOptionsXml"]
+    //     )["subitems"];
+    //     console.log("sectionsOfThePage", sectionsOfThePage);
+    //   }
+    // }
+    // else if (historyOfIllnessSelectedOne === "Vitals")
+  };
+
+  function convertDate(inputFormat) {
+    return (
+      new Date(Date.parse(inputFormat)).toString().split(" ")[2] +
+      " " +
+      new Date(Date.parse(inputFormat)).toString().split(" ")[1] +
+      " " +
+      new Date(Date.parse(inputFormat)).toString().split(" ")[3]
+    );
+  }
+  const getWeeksFromMs = (mil) => {
+    console.log(
+      "mil",
+      mil,
+      Math.floor(Math.abs(mil) / (1000 * 7 * 24 * 60 * 60))
+    );
+    return Math.floor(Math.abs(mil) / (1000 * 7 * 24 * 60 * 60));
+  };
+  const handleDone = () => {
+    let obj =
+      localStorage.getItem("historyOfPresentIllnessObj") == null
+        ? {}
+        : JSON.parse(localStorage.getItem("historyOfPresentIllnessObj"));
+    if (obj["Obs Profile"] == null) obj["Obs Profile"] = {};
+
+    obj["Obs Profile"]["LMP"] = convertDate(lmpDate);
+    obj["Obs Profile"]["EDD"] =
+      new Date(Date.parse(lmpDate) + 24272494500).toString().split(" ")[2] +
+      " " +
+      new Date(Date.parse(lmpDate) + 24272494500).toString().split(" ")[1] +
+      " " +
+      new Date(Date.parse(lmpDate) + 24272494500).toString().split(" ")[3];
+    obj["Obs Profile"]["Weeks"] =
+      Date.parse(lmpDate) + 24272494500 > Date.parse(new Date())
+        ? getWeeksFromMs(Date.parse(new Date()) - Date.parse(lmpDate))
+        : getWeeksFromMs(24272494500);
+
+    localStorage.setItem("historyOfPresentIllnessObj", JSON.stringify(obj));
+    props.setCreateDsStateChange(
+      JSON.stringify(localStorage.getItem("historyOfPresentIllnessObj"))
+    );
+  };
+
+  return (
+    <>
+      <div className={classes.leftPaneHeaderDSCreate}>
+        {/* <div className={classes.leftHeaderImageContainer}>
+          <img
+            alt=""
+            className={classes.leftHeaderImage}
+            src="https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png"
+          ></img>
+        </div> */}
+        <div className={classes.leftHeaderHeading}>
+          <div className={classes.leftHeaderHeadingTitle}>
+            <Button
+              className={classes.createPageClinicNameBtn}
+              onClick={() =>
+                props.setRedirect(<Redirect to="/dischargeSummaryPage" />)
+              }
+            >
+              {localStorage.getItem("clinicName")}
+            </Button>
+          </div>
+          <div className={classes.leftHeaderSubHeading}>
+            {localStorage.getItem("doctorName")}
+          </div>
+          <div className={classes.leftHeaderSubHeadingRight}>
+            {localStorage.getItem("docSpecialityName")}
+          </div>
+        </div>
+        {/* <HamburgerDropdown></HamburgerDropdown> */}
+      </div>
+      <div className={classes.leftPaneSearchCreatePage}></div>
+      <div className={classes.leftPaneContentCreate}>
+        <div className={classes.leftHeaders}>
+          <div className={styles.phyExamMainHead}>
+            <h4>History of Present Illness & Obs Profile</h4>
+            <hr />
+          </div>
+        </div>
+        <div className={styles.physicalExamContent}>
+          {historyOfPresentIllnessContent}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default DSCreateLeftPaneHistoryOfPresentIllness;
