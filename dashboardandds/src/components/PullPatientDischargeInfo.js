@@ -7,6 +7,7 @@ import { currentServer } from "../assets/config";
 import axios from "axios";
 import html2pdf from "html2pdf.js";
 import _ from "lodash";
+import removeLocalStorage from "../assets/removeLocalStorage";
 import SaveAsProtocolModal from "./SaveAsProtocolModal";
 
 const useConstructor = (callBack = () => {}) => {
@@ -230,73 +231,6 @@ const PullPatientDischargeInfo = (props) => {
   //   }
   // },[])
 
-  const removeLocalStorage = () => {
-    localStorage.removeItem("cardsLabel");
-    localStorage.removeItem("savedObject");
-    localStorage.removeItem("deletedSection");
-    localStorage.removeItem("physicalExamAtDischargeObj");
-    localStorage.removeItem("physicalExamOnAdmissionObj");
-    localStorage.removeItem("mediToAddArr");
-    localStorage.removeItem("mediObj");
-    localStorage.removeItem("brandValue");
-    localStorage.removeItem("mediToAddWithBrackArr");
-    localStorage.removeItem("freqValObj");
-    localStorage.removeItem("dispositionTo");
-    localStorage.removeItem("mediObjWithBrack");
-    localStorage.removeItem("patientInformationObj");
-    localStorage.removeItem("quantValObj");
-    localStorage.removeItem("allMedicineDeets");
-    localStorage.removeItem("phyExamSelectedOne");
-    localStorage.removeItem("conditionAtDischarge");
-    localStorage.removeItem("chiefComplaint");
-    localStorage.removeItem("dietaryInstructions");
-    localStorage.removeItem("courseInTheHospital");
-    localStorage.removeItem("dateOfDischarge");
-    localStorage.removeItem("durationOptions");
-    localStorage.removeItem("historyOfIllnessPages");
-    localStorage.removeItem("investigationsAtTheHospital");
-    localStorage.removeItem("phyExamSelectedOneId");
-    localStorage.removeItem("treatmentGiven");
-    localStorage.removeItem("procedureFindings");
-    localStorage.removeItem("therapyOrdersContent");
-    localStorage.removeItem("therapyOrders");
-    localStorage.removeItem("procedureDone");
-    localStorage.removeItem("phyExamAllPagesOfSelectedOne");
-    localStorage.removeItem("cardStyler");
-    localStorage.removeItem("pastSurgicalHistoryObj");
-    localStorage.removeItem("diagnosisOnDischarge");
-    localStorage.removeItem("scheduleDate");
-    localStorage.removeItem("conditionAtDischargeContent");
-    localStorage.removeItem("allergies");
-    localStorage.removeItem("phyExamPageNumber");
-    localStorage.removeItem("vitalsOnAdmissionObj");
-    localStorage.removeItem("physicalExamContent");
-    localStorage.removeItem("familyHistoryObj");
-    localStorage.removeItem("remarksOptions");
-    localStorage.removeItem("pastMedicalHistoryObj");
-    localStorage.removeItem("activityOrdersContent");
-    localStorage.removeItem("dateOfAdmission");
-    localStorage.removeItem("plansForMedicalFollowUpObj");
-    localStorage.removeItem("vitalsOnDischargeObj");
-    localStorage.removeItem("lsObj");
-    localStorage.removeItem("uploadFiles");
-    localStorage.removeItem("routeOptions");
-    localStorage.removeItem("dispositionToContent");
-    localStorage.removeItem("healthRadarMonitoringDurationCondition");
-    localStorage.removeItem("diagnosisOnAdmission");
-    localStorage.removeItem("dietaryInstructionsContent");
-    localStorage.removeItem("activityOrders");
-    localStorage.removeItem("physicalExamAtDischargeObjNad");
-    localStorage.removeItem("dispostionTo");
-    localStorage.removeItem("historyOfPresentIllnessObj");
-    localStorage.removeItem("patientsSignTextbox");
-    localStorage.removeItem("siteObj");
-    localStorage.removeItem("savedObject");
-    localStorage.removeItem("advisedInvestigations");
-    localStorage.removeItem("adviceOnDischarge");
-    localStorage.removeItem("protocolSet");
-    localStorage.removeItem("isDirtySave");
-  };
   const handleDischarge = () => {
     let data = {
       approvedStatus: 4,
@@ -1184,7 +1118,7 @@ const PullPatientDischargeInfo = (props) => {
             );
           }
           if (cardTextOrArrToStringCase.includes(item)) {
-            alert(item);
+            // alert(item);
             return (
               <Card.Body>
                 <div>
@@ -1221,18 +1155,31 @@ const PullPatientDischargeInfo = (props) => {
             "Condition at Discharge",
             "Discharged To",
             "Allergies",
+            "Toxicity",
+            "Site",
           ];
           if (cardObjToStringCase.includes(item)) {
+            let lsKeyName =
+              item == "Toxicity" || item == "Site" || item == "Chief Complaint"
+                ? camelCaseNameWObj
+                : camelCaseName;
             let obj =
-              localStorage.getItem(camelCaseName) == null ||
-              localStorage.getItem(camelCaseName) == ""
+              localStorage.getItem(lsKeyName) == null ||
+              localStorage.getItem(lsKeyName) == ""
                 ? {}
-                : JSON.parse(localStorage.getItem(camelCaseName));
+                : JSON.parse(localStorage.getItem(lsKeyName));
             let arr = [];
             for (let objitem in obj) {
               let key = objitem;
               let val = obj[key];
               if (val == true) arr.push(key);
+            }
+            if (
+              item == "Chief Complaint" &&
+              localStorage.getItem(camelCaseName) != null &&
+              (localStorage.getItem(camelCaseName) != null) != ""
+            ) {
+              arr.push(localStorage.getItem(camelCaseName));
             }
             if (!(arr.length < 1 || (arr.length == 1 && arr[0] == ""))) {
               let subfields = arr.map((subItem) => {

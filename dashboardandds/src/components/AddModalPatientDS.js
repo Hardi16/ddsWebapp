@@ -185,7 +185,7 @@ const AddModal = (props) => {
       setDoctorsDropdown(doctorsDrodownVar);
       //code dropdown
       codeDrodownVar = countryList.map((item) => {
-        console.log("countryList item", item);
+        // console.log("countryList item", item);
         return (
           <Dropdown.Item
             href="#/action-1"

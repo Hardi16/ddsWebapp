@@ -52,7 +52,7 @@ const SaveNewProtocolCreatePageModal = (props) => {
           <Redirect
             to={{
               pathname: "/dischargeSummaryPage",
-              state: { patient: props.patient },
+              state: { patient: JSON.parse(localStorage.getItem("patient")) },
             }}
           />
         );

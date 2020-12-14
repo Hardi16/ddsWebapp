@@ -2,64 +2,11 @@ import React, { useState } from "react";
 import classes from "./Styles.module.css";
 import { Row, Col, Card, Form, Button } from "react-bootstrap";
 import { Redirect } from "react-router";
+import removeLocalStorage from "../assets/removeLocalStorage";
 
 const DischargeSummaryForNew = (props) => {
   console.log("DischargeSummaryForNew props", props);
   const [redirect, setRedirect] = useState(null);
-  const removeLocalStorage = () => {
-    localStorage.removeItem("cardsLabel");
-    localStorage.removeItem("savedObject");
-    localStorage.removeItem("deletedSection");
-    localStorage.removeItem("conditionAtDischarge");
-    localStorage.removeItem("chiefComplaint");
-    localStorage.removeItem("dietaryInstructions");
-    localStorage.removeItem("courseInTheHospital");
-    localStorage.removeItem("dateOfDischarge");
-    localStorage.removeItem("durationOptions");
-    localStorage.removeItem("historyOfIllnessPages");
-    localStorage.removeItem("investigationsAtTheHospital");
-    localStorage.removeItem("phyExamSelectedOneId");
-    localStorage.removeItem("treatmentGiven");
-    localStorage.removeItem("procedureFindings");
-    localStorage.removeItem("therapyOrdersContent");
-    localStorage.removeItem("therapyOrders");
-    localStorage.removeItem("procedureDone");
-    localStorage.removeItem("phyExamAllPagesOfSelectedOne");
-    localStorage.removeItem("cardStyler");
-    localStorage.removeItem("pastSurgicalHistoryObj");
-    localStorage.removeItem("diagnosisOnDischarge");
-    localStorage.removeItem("scheduleDate");
-    localStorage.removeItem("conditionAtDischargeContent");
-    localStorage.removeItem("allergies");
-    localStorage.removeItem("phyExamPageNumber");
-    localStorage.removeItem("vitalsOnAdmissionObj");
-    localStorage.removeItem("physicalExamContent");
-    localStorage.removeItem("familyHistoryObj");
-    localStorage.removeItem("remarksOptions");
-    localStorage.removeItem("pastMedicalHistoryObj");
-    localStorage.removeItem("activityOrdersContent");
-    localStorage.removeItem("dateOfAdmission");
-    localStorage.removeItem("plansForMedicalFollowUpObj");
-    localStorage.removeItem("vitalsOnDischargeObj");
-    localStorage.removeItem("lsObj");
-    localStorage.removeItem("uploadFiles");
-    localStorage.removeItem("routeOptions");
-    localStorage.removeItem("dispositionToContent");
-    localStorage.removeItem("healthRadarMonitoringDurationCondition");
-    localStorage.removeItem("diagnosisOnAdmission");
-    localStorage.removeItem("dietaryInstructionsContent");
-    localStorage.removeItem("activityOrders");
-    localStorage.removeItem("physicalExamAtDischargeObjNad");
-    localStorage.removeItem("dispostionTo");
-    localStorage.removeItem("historyOfPresentIllnessObj");
-    localStorage.removeItem("patientsSignTextbox");
-    localStorage.removeItem("siteObj");
-    localStorage.removeItem("savedObject");
-    localStorage.removeItem("advisedInvestigations");
-    localStorage.removeItem("adviceOnDischarge");
-    localStorage.removeItem("protocolSet");
-    localStorage.removeItem("isDirtySave");
-  };
   const handleRightLower = () => {
     localStorage.setItem(
       "patient",

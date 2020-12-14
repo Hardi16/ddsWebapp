@@ -23,6 +23,7 @@ import { Redirect } from "react-router";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import HamburgerDropdown from "../../components/HamburgerDropdown";
+import removeLocalStorage from "../../assets/removeLocalStorage";
 
 const DischargeSummary = (props) => {
   const [redirect, setRedirect] = useState(null);
@@ -319,26 +320,28 @@ const DischargeSummary = (props) => {
       ) {
         let arr = obj["groupedDetails"];
         let obsObj = {};
-        let obj2 = {};
+        let obj1 = {}; //arr--[] of pages
         arr.forEach((item) => {
+          // every page
           let key = item["_name"];
-          let valArr = item["_description"].split(",");
-          let obj1 = {};
+          let valArr = item["_description"].split(","); // subsections of each page, comma sep eg:clinci-nad, abc-xyz,...
+          let obj2 = {};
           valArr.forEach((ele) => {
-            let k1 = ele.split("-")[0]; //clinically
-            let v1 = ele.split("-")[1]; //nad
+            //every section of each oage
+            let k1 = ele.split("-")[0]; //clinically--subsection label
+            let v1 = ele.split("-")[1]; //nad--subsection value
             let obj3 = {};
             obj3[v1] = true;
-            obj1[k1] = obj3;
+            obj2[k1] = obj3;
           });
-          obj2[key] = obj1;
+          obj1[key] = obj2;
         });
 
         let phyExamLSObj =
           localStorage.getItem("physicalExamOnAdmissionObj") == null
             ? {}
             : JSON.parse(localStorage.getItem("physicalExamOnAdmissionObj"));
-        phyExamLSObj[obj["_name"]] = obj2;
+        phyExamLSObj[obj["_name"]] = obj1;
         localStorage.setItem(
           "physicalExamOnAdmissionObj",
           JSON.stringify(phyExamLSObj)
@@ -753,60 +756,6 @@ const DischargeSummary = (props) => {
   function pad2(n) {
     return n < 10 ? "0" + n : n;
   }
-  const removeLocalStorage = () => {
-    localStorage.removeItem("cardsLabel");
-    localStorage.removeItem("savedObject");
-    localStorage.removeItem("deletedSection");
-    localStorage.removeItem("conditionAtDischarge");
-    localStorage.removeItem("chiefComplaint");
-    localStorage.removeItem("dietaryInstructions");
-    localStorage.removeItem("courseInTheHospital");
-    localStorage.removeItem("dateOfDischarge");
-    localStorage.removeItem("durationOptions");
-    localStorage.removeItem("historyOfIllnessPages");
-    localStorage.removeItem("investigationsAtTheHospital");
-    localStorage.removeItem("phyExamSelectedOneId");
-    localStorage.removeItem("treatmentGiven");
-    localStorage.removeItem("procedureFindings");
-    localStorage.removeItem("therapyOrdersContent");
-    localStorage.removeItem("therapyOrders");
-    localStorage.removeItem("procedureDone");
-    localStorage.removeItem("phyExamAllPagesOfSelectedOne");
-    localStorage.removeItem("cardStyler");
-    localStorage.removeItem("pastSurgicalHistoryObj");
-    localStorage.removeItem("diagnosisOnDischarge");
-    localStorage.removeItem("scheduleDate");
-    localStorage.removeItem("conditionAtDischargeContent");
-    localStorage.removeItem("allergies");
-    localStorage.removeItem("phyExamPageNumber");
-    localStorage.removeItem("vitalsOnAdmissionObj");
-    localStorage.removeItem("physicalExamContent");
-    localStorage.removeItem("familyHistoryObj");
-    localStorage.removeItem("remarksOptions");
-    localStorage.removeItem("pastMedicalHistoryObj");
-    localStorage.removeItem("activityOrdersContent");
-    localStorage.removeItem("dateOfAdmission");
-    localStorage.removeItem("plansForMedicalFollowUpObj");
-    localStorage.removeItem("vitalsOnDischargeObj");
-    localStorage.removeItem("lsObj");
-    localStorage.removeItem("uploadFiles");
-    localStorage.removeItem("routeOptions");
-    localStorage.removeItem("dispositionToContent");
-    localStorage.removeItem("healthRadarMonitoringDurationCondition");
-    localStorage.removeItem("diagnosisOnAdmission");
-    localStorage.removeItem("dietaryInstructionsContent");
-    localStorage.removeItem("activityOrders");
-    localStorage.removeItem("physicalExamAtDischargeObjNad");
-    localStorage.removeItem("dispostionTo");
-    localStorage.removeItem("historyOfPresentIllnessObj");
-    localStorage.removeItem("patientsSignTextbox");
-    localStorage.removeItem("siteObj");
-    localStorage.removeItem("savedObject");
-    localStorage.removeItem("advisedInvestigations");
-    localStorage.removeItem("adviceOnDischarge");
-    localStorage.removeItem("protocolSet");
-    localStorage.removeItem("isDirtySave");
-  };
   const renderPatients = (patientArr) => {
     let patientList = patientArr
       .slice(0)
@@ -933,6 +882,7 @@ const DischargeSummary = (props) => {
                   }),
           };
 
+          //mongo below
           axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
           axios
             .get(hostAddress + currentServer + "/ping")
@@ -1065,6 +1015,7 @@ const DischargeSummary = (props) => {
             .catch((err) => console.log("pingError", err));
 
           //imp: non-mongo impl for heroku below. Uncomment the above part for the full part with mongo
+
           // console.log("getClinicPatients sql api call");
           // axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
           // axios

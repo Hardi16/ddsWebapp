@@ -403,6 +403,7 @@ const DischargeSummaryCreate = (props) => {
         localStorage.getItem("deletedSection") +
         localStorage.getItem("conditionAtDischarge") +
         localStorage.getItem("chiefComplaint") +
+        localStorage.getItem("chiefComplaintObj") +
         localStorage.getItem("dietaryInstructions") +
         localStorage.getItem("courseInTheHospital") +
         localStorage.getItem("dateOfDischarge") +
@@ -557,15 +558,33 @@ const DischargeSummaryCreate = (props) => {
       "Allergies",
     ];
     if (cardObjToStringCase.includes(sectionName)) {
-      let obj = JSON.parse(localStorage.getItem(camelCaseName));
+      console.log("sectionName:", sectionName);
+      let lsKeyName =
+        sectionName == "Chief Complaint" ? camelCaseNameWObj : camelCaseName;
+      let obj =
+        localStorage.getItem(lsKeyName) == null ||
+        localStorage.getItem(lsKeyName) == ""
+          ? {}
+          : JSON.parse(localStorage.getItem(lsKeyName));
       let arr = [];
       for (let objitem in obj) {
         let key = objitem;
         let val = obj[key];
         if (val == true) arr.push(key);
       }
+      if (
+        sectionName == "Chief Complaint" &&
+        localStorage.getItem(camelCaseName) != null &&
+        (localStorage.getItem(camelCaseName) != null) != ""
+      ) {
+        arr.push(localStorage.getItem(camelCaseName));
+      }
       saveObj["_description"] = arr.toString();
       saveObj["finalValue"] = arr.toString();
+      if (sectionName == "Chief Complaint") {
+        console.log("chiefCom", saveObj);
+        alert();
+      }
     }
     let cardObjToObjCase = [
       "Patient Information",
@@ -578,7 +597,8 @@ const DischargeSummaryCreate = (props) => {
         sectionName == "Patient Information" ? true : false;
       saveObj["isTabularForm"] = true;
       let piObj =
-        JSON.parse(localStorage.getItem(camelCaseNameWObj)) == null
+        JSON.parse(localStorage.getItem(camelCaseNameWObj)) == null ||
+        localStorage.getItem(camelCaseNameWObj) == ""
           ? {}
           : JSON.parse(localStorage.getItem(camelCaseNameWObj));
       saveObj["groupedDetails"] = Object.keys(piObj).map((item) => {
@@ -592,7 +612,8 @@ const DischargeSummaryCreate = (props) => {
     let signObjects = ["Doctor's Signature", "Patient's Signature"];
     if (signObjects.includes(sectionName)) {
       let val =
-        localStorage.getItem(camelCaseName) == null
+        localStorage.getItem(camelCaseName) == null ||
+        localStorage.getItem(camelCaseName) == ""
           ? ""
           : localStorage.getItem(camelCaseName);
       let ptLine =
@@ -609,7 +630,7 @@ const DischargeSummaryCreate = (props) => {
       !signObjects.includes(sectionName)
     ) {
       let obj = JSON.parse(localStorage.getItem(camelCaseNameWObj));
-      if (obj == null) {
+      if (obj == null || obj == "") {
         let val =
           localStorage.getItem(camelCaseName) == null
             ? ""
@@ -815,7 +836,6 @@ const DischargeSummaryCreate = (props) => {
       JSON.parse(localStorage.getItem("physicalExamOnAdmissionObj")) == null
         ? {}
         : JSON.parse(localStorage.getItem("physicalExamOnAdmissionObj"));
-    let grpArr = [];
     for (let i in obj) {
       let grpObj = {
         _id: id,
@@ -838,20 +858,20 @@ const DischargeSummaryCreate = (props) => {
         titleColor: 0,
         titleVisibility: 0,
       };
-      //i gen phy exam
+      //i gen phy exam---main section
       let jarr = [];
       for (let j in obj[i]) {
-        // j skin,heent
+        // j skin,heent--pages inside a section
         console.log("jvalues", j);
 
         let karr = [];
         for (let k in obj[i][j]) {
           console.log("kvalues", k);
 
-          //k clinically
+          //k clinically--subsection inside a page
           let lval = "";
           for (let l in obj[i][j][k]) {
-            //l NAD
+            //l NAD--value of each sub section
             console.log("lvalues", k, l);
             if (obj[i][j][k][l]) lval = l;
           }
@@ -1344,7 +1364,7 @@ const DischargeSummaryCreate = (props) => {
           response.data
         );
         let patientDetails = {};
-        if (response.data != null) {
+        if (response.data != null && response.data["patientList"] != null) {
           for (let i in response.data["patientList"]) {
             if (
               response.data["patientList"][i]["patientID"] ==
@@ -1630,6 +1650,7 @@ const DischargeSummaryCreate = (props) => {
               // localStorage.setItem("evolkoId", evolkoId);
 
               if (
+                localStorage.getItem("isDirtySave") == null ||
                 !localStorage.getItem("isDirtySave") ||
                 localStorage.getItem("isDirtySave") == "false"
               )
